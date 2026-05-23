@@ -4,355 +4,285 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>NokSourdough Invoice System</title>
-
 <link rel="stylesheet" href="style.css">
-
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 </head>
 
 <body>
 
 <div class="layout">
+  <div class="sidebar">
+    <div class="logo">NokSourdough</div>
+    <div class="menu">
+      <button onclick="showPage('dashboard')">Dashboard</button>
+      <button onclick="showPage('customers')">Customers</button>
+      <button onclick="showPage('products')">Products</button>
+      <button onclick="showPage('invoices')">Invoices</button>
+      <button onclick="showPage('reports')">Reports</button>
+      <button onclick="showPage('settings')">Settings</button>
+    </div>
+  </div>
 
-<div class="sidebar">
+  <div class="content">
 
-<div class="logo">
-NokSourdough
+    <div id="dashboard" class="page active">
+      <h1>Dashboard</h1>
+      <div class="cards">
+        <div class="card"><div class="card-title">Customers</div><div id="customersCount" class="card-value">0</div></div>
+        <div class="card"><div class="card-title">Products</div><div id="productsCount" class="card-value">0</div></div>
+        <div class="card"><div class="card-title">Invoices</div><div id="invoicesCount" class="card-value">0</div></div>
+        <div class="card"><div class="card-title">Past Due</div><div id="pastDueCount" class="card-value">0</div></div>
+        <div class="card"><div class="card-title">Total Sales</div><div id="dashboardSalesTotal" class="card-value">฿0.00</div></div>
+        <div class="card"><div class="card-title">Unpaid Invoices</div><div id="dashboardUnpaidCount" class="card-value">0</div></div>
+        <div class="card"><div class="card-title">Unpaid Balance</div><div id="dashboardUnpaidTotal" class="card-value">฿0.00</div></div>
+      </div>
+    </div>
+
+    <div id="customers" class="page">
+      <h1>Customers</h1>
+
+      <div class="toolbar">
+        <button id="openCustomerModalBtn" class="primary">Add New Customer</button>
+      </div>
+
+      <div class="section">
+        <h2>Customer List</h2>
+        <table>
+          <thead>
+            <tr>
+              <th>Name</th>
+              <th>Phone</th>
+              <th>Email</th>
+              <th>Tax ID</th>
+              <th>Terms</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody id="customerTableBody"></tbody>
+        </table>
+      </div>
+    </div>
+
+    <div id="products" class="page">
+      <h1>Products</h1>
+
+      <div class="section">
+        <h2>Add Product</h2>
+        <input id="productName" placeholder="Product Name">
+        <input id="productPrice" type="number" placeholder="Price">
+        <button id="saveProductBtn" class="primary">Save Product</button>
+      </div>
+
+      <div class="section">
+        <h2>Product List</h2>
+        <table>
+          <thead>
+            <tr><th>Name</th><th>Price</th></tr>
+          </thead>
+          <tbody id="productTableBody"></tbody>
+        </table>
+      </div>
+    </div>
+
+    <div id="invoices" class="page">
+      <h1>Invoices</h1>
+
+      <div class="cards">
+        <div class="card"><div class="card-title">Sales</div><div id="salesTotal" class="card-value">฿0.00</div></div>
+        <div class="card"><div class="card-title">Paid</div><div id="paidTotal" class="card-value">฿0.00</div></div>
+        <div class="card"><div class="card-title">Unpaid</div><div id="unpaidTotal" class="card-value">฿0.00</div></div>
+      </div>
+
+      <div class="toolbar">
+        <button id="openInvoiceModalBtn" class="primary">Create Invoice</button>
+      </div>
+
+      <div class="section">
+        <h2>Invoice List</h2>
+
+        <select id="invoiceFilter">
+          <option value="all">All Invoices</option>
+          <option value="Paid">Paid</option>
+          <option value="Unpaid">Unpaid</option>
+          <option value="Past Due">Past Due</option>
+        </select>
+
+        <table>
+          <thead>
+            <tr>
+              <th>#</th>
+              <th>Customer</th>
+              <th>Date</th>
+              <th>Due</th>
+              <th>Total</th>
+              <th>Status</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody id="invoiceListBody"></tbody>
+        </table>
+      </div>
+    </div>
+
+    <div id="reports" class="page">
+      <h1>Reports</h1>
+
+      <div class="section">
+        <div class="grid-3">
+          <select id="reportCustomer"></select>
+          <input id="reportStartDate" type="date">
+          <input id="reportEndDate" type="date">
+        </div>
+
+        <div class="grid-3">
+          <select id="reportStatus">
+            <option value="all">All Status</option>
+            <option value="Paid">Paid</option>
+            <option value="Unpaid">Unpaid</option>
+            <option value="Past Due">Past Due</option>
+          </select>
+
+          <select id="reportMonth">
+            <option value="">All Months</option>
+            <option value="01">January</option>
+            <option value="02">February</option>
+            <option value="03">March</option>
+            <option value="04">April</option>
+            <option value="05">May</option>
+            <option value="06">June</option>
+            <option value="07">July</option>
+            <option value="08">August</option>
+            <option value="09">September</option>
+            <option value="10">October</option>
+            <option value="11">November</option>
+            <option value="12">December</option>
+          </select>
+
+          <input id="reportYear" type="number" placeholder="Year">
+        </div>
+
+        <button id="runReportBtn" class="primary">Run Report</button>
+      </div>
+
+      <div class="cards">
+        <div class="card"><div class="card-title">Total Sales</div><div id="reportTotalSales" class="card-value">฿0.00</div></div>
+        <div class="card"><div class="card-title">Paid Sales</div><div id="reportPaidSales" class="card-value">฿0.00</div></div>
+        <div class="card"><div class="card-title">Unpaid Sales</div><div id="reportUnpaidSales" class="card-value">฿0.00</div></div>
+        <div class="card"><div class="card-title">Invoice Count</div><div id="reportInvoiceCount" class="card-value">0</div></div>
+      </div>
+
+      <div class="section">
+        <h2>Report Results</h2>
+        <table>
+          <thead>
+            <tr><th>Invoice #</th><th>Customer</th><th>Date</th><th>Due</th><th>Total</th><th>Status</th></tr>
+          </thead>
+          <tbody id="reportTableBody"></tbody>
+        </table>
+      </div>
+    </div>
+
+    <div id="settings" class="page">
+      <h1>Company Settings</h1>
+
+      <div class="section">
+        <input id="companyName" placeholder="Company Name">
+        <input id="companyPhone" placeholder="Phone">
+        <input id="companyEmail" placeholder="Email">
+        <input id="companyWebsite" placeholder="Website">
+        <input id="taxId" placeholder="Tax ID">
+        <input id="companyLogo" placeholder="Logo URL">
+        <textarea id="companyAddress" placeholder="Address"></textarea>
+        <button id="saveCompanyBtn" class="success">Save Company</button>
+      </div>
+    </div>
+
+  </div>
 </div>
 
-<div class="menu">
-<button onclick="showPage('dashboard')">Dashboard</button>
-<button onclick="showPage('customers')">Customers</button>
-<button onclick="showPage('products')">Products</button>
-<button onclick="showPage('invoices')">Invoices</button>
-<button onclick="showPage('settings')">Settings</button>
+<div id="customerModal" class="modal">
+  <div class="modal-content">
+    <button class="modal-close" onclick="closeCustomerModal()">X</button>
+    <h2 id="customerModalTitle">Add New Customer</h2>
+
+    <input type="hidden" id="editingCustomerId">
+
+    <input id="customerName" placeholder="Customer Name">
+    <input id="customerPhone" placeholder="Phone">
+    <input id="customerEmail" placeholder="Email">
+    <input id="customerTaxId" placeholder="Tax ID">
+    <textarea id="customerAddress" placeholder="Address"></textarea>
+
+    <select id="customerTerms">
+      <option>COD</option>
+      <option>Net 15</option>
+      <option selected>Net 30</option>
+      <option>Net 45</option>
+      <option>Net 60</option>
+    </select>
+
+    <button id="saveCustomerBtn" class="success">Save Customer</button>
+  </div>
 </div>
 
-</div>
-
-<div class="content">
-
-<!-- DASHBOARD -->
-
-<div id="dashboard" class="page active">
-
-<h1>Dashboard</h1>
-
-<div class="cards">
-
-<div class="card">
-<div class="card-title">Customers</div>
-<div id="customersCount" class="card-value">0</div>
-</div>
-
-<div class="card">
-<div class="card-title">Products</div>
-<div id="productsCount" class="card-value">0</div>
-</div>
-
-<div class="card">
-<div class="card-title">Invoices</div>
-<div id="invoicesCount" class="card-value">0</div>
-</div>
-
-<div class="card">
-<div class="card-title">Past Due</div>
-<div id="pastDueCount" class="card-value">0</div>
-</div>
-
-<div class="card">
-<div class="card-title">Total Sales</div>
-<div id="dashboardSalesTotal" class="card-value">฿0.00</div>
-</div>
-
-<div class="card">
-<div class="card-title">Unpaid Invoices</div>
-<div id="dashboardUnpaidCount" class="card-value">0</div>
-</div>
-
-<div class="card">
-<div class="card-title">Unpaid Balance</div>
-<div id="dashboardUnpaidTotal" class="card-value">฿0.00</div>
-</div>
-
-</div>
-
-</div>
-
-<!-- CUSTOMERS -->
-
-<div id="customers" class="page">
-
-<h1>Customers</h1>
-
-<div class="section">
-
-<input id="customerName" placeholder="Customer Name">
-
-<input id="customerPhone" placeholder="Phone">
-
-<input id="customerEmail" placeholder="Email">
-
-<input id="customerTaxId" placeholder="Tax ID">
-
-<textarea id="customerAddress" placeholder="Address"></textarea>
-
-<select id="customerTerms">
-<option>COD</option>
-<option>Net 15</option>
-<option selected>Net 30</option>
-<option>Net 45</option>
-<option>Net 60</option>
-</select>
-
-<button id="saveCustomerBtn" class="primary">
-Save Customer
-</button>
-
-</div>
-
-<div class="section">
-
-<h2>Customer List</h2>
-
-<table>
-<thead>
-<tr>
-<th>Name</th>
-<th>Phone</th>
-<th>Email</th>
-<th>Terms</th>
-</tr>
-</thead>
-
-<tbody id="customerTableBody"></tbody>
-
-</table>
-
-</div>
-
-</div>
-
-<!-- PRODUCTS -->
-
-<div id="products" class="page">
-
-<h1>Products</h1>
-
-<div class="section">
-
-<input id="productName" placeholder="Product Name">
-
-<input id="productPrice" type="number" placeholder="Price">
-
-<button id="saveProductBtn" class="primary">
-Save Product
-</button>
-
-</div>
-
-<div class="section">
-
-<h2>Product List</h2>
-
-<table>
-<thead>
-<tr>
-<th>Name</th>
-<th>Price</th>
-</tr>
-</thead>
-
-<tbody id="productTableBody"></tbody>
-
-</table>
-
-</div>
-
-</div>
-
-<!-- INVOICES -->
-
-<div id="invoices" class="page">
-
-<h1>Create Invoice</h1>
-
-<div class="cards">
-
-<div class="card">
-<div class="card-title">Sales</div>
-<div id="salesTotal" class="card-value">฿0.00</div>
-</div>
-
-<div class="card">
-<div class="card-title">Paid</div>
-<div id="paidTotal" class="card-value">฿0.00</div>
-</div>
-
-<div class="card">
-<div class="card-title">Unpaid</div>
-<div id="unpaidTotal" class="card-value">฿0.00</div>
-</div>
-
-</div>
-
-<div class="section">
-
-<input id="invoiceNumber" readonly>
-
-<div class="grid-2">
-
-<select id="invoiceCustomer"></select>
-
-<select id="invoiceTerms">
-<option>COD</option>
-<option>Net 15</option>
-<option selected>Net 30</option>
-<option>Net 45</option>
-<option>Net 60</option>
-</select>
-
-</div>
-
-<div id="selectedCustomerInfo"
-style="padding:15px;background:#f3f4f6;border-radius:8px;margin-bottom:15px;">
-</div>
-
-<div class="grid-2">
-
-<input id="invoiceDate" type="date">
-
-<input id="invoiceDueDate" type="date">
-
-</div>
-
-<h2>Invoice Items</h2>
-
-<select id="invoiceProduct"></select>
-
-<input id="invoiceQty" type="number" value="1">
-
-<button id="addItemBtn" class="primary">
-Add Item
-</button>
-
-<table>
-
-<thead>
-<tr>
-<th>Item</th>
-<th>Qty</th>
-<th>Price</th>
-<th>Total</th>
-</tr>
-</thead>
-
-<tbody id="invoiceItemsBody"></tbody>
-
-</table>
-
-<div class="invoice-total">
-฿<span id="invoiceTotal">0.00</span>
-</div>
-
-<textarea
-id="invoiceNotes"
-placeholder="Notes"></textarea>
-
-<button
-id="saveInvoiceBtn"
-class="success">
-Create Invoice
-</button>
-
-</div>
-
-<div class="section">
-
-<h2>Invoice List</h2>
-
-<select id="invoiceFilter">
-<option value="all">All Invoices</option>
-<option value="Paid">Paid</option>
-<option value="Unpaid">Unpaid</option>
-<option value="Past Due">Past Due</option>
-</select>
-
-<table>
-
-<thead>
-<tr>
-<th>#</th>
-<th>Customer</th>
-<th>Date</th>
-<th>Due</th>
-<th>Total</th>
-<th>Status</th>
-<th>Actions</th>
-</tr>
-</thead>
-
-<tbody id="invoiceListBody"></tbody>
-
-</table>
-
-</div>
-
-</div>
-
-<!-- SETTINGS -->
-
-<div id="settings" class="page">
-
-<h1>Company Settings</h1>
-
-<div class="section">
-
-<input id="companyName" placeholder="Company Name">
-
-<input id="companyPhone" placeholder="Phone">
-
-<input id="companyEmail" placeholder="Email">
-
-<input id="companyWebsite" placeholder="Website">
-
-<input id="taxId" placeholder="Tax ID">
-
-<input id="companyLogo" placeholder="Logo URL">
-
-<textarea
-id="companyAddress"
-placeholder="Address"></textarea>
-
-<button id="saveCompanyBtn"
-class="success">
-Save Company
-</button>
-
-</div>
-
-</div>
-
-</div>
-
+<div id="invoiceModal" class="modal">
+  <div class="modal-content wide">
+    <button class="modal-close" onclick="closeInvoiceModal()">X</button>
+    <h2 id="invoiceModalTitle">Create Invoice</h2>
+
+    <input type="hidden" id="editingInvoiceId">
+
+    <input id="invoiceNumber" readonly>
+
+    <div class="grid-2">
+      <select id="invoiceCustomer"></select>
+      <select id="invoiceTerms">
+        <option>COD</option>
+        <option>Net 15</option>
+        <option selected>Net 30</option>
+        <option>Net 45</option>
+        <option>Net 60</option>
+      </select>
+    </div>
+
+    <div id="selectedCustomerInfo" class="info-box"></div>
+
+    <div class="grid-2">
+      <input id="invoiceDate" type="date">
+      <input id="invoiceDueDate" type="date" readonly>
+    </div>
+
+    <div class="section inner">
+      <h3>Invoice Items</h3>
+      <div class="grid-3">
+        <select id="invoiceProduct"></select>
+        <input id="invoiceQty" type="number" value="1">
+        <button id="addItemBtn" class="primary">Add Item</button>
+      </div>
+
+      <table>
+        <thead>
+          <tr><th>Item</th><th>Qty</th><th>Price</th><th>Total</th><th>Remove</th></tr>
+        </thead>
+        <tbody id="invoiceItemsBody"></tbody>
+      </table>
+
+      <div class="invoice-total">฿<span id="invoiceTotal">0.00</span></div>
+    </div>
+
+    <textarea id="invoiceNotes" placeholder="Notes"></textarea>
+
+    <button id="saveInvoiceBtn" class="success">Save Invoice</button>
+  </div>
 </div>
 
 <script>
-
 function showPage(page){
-
-document.querySelectorAll(".page").forEach(p=>{
-p.classList.remove("active");
-});
-
-document.getElementById(page)
-.classList.add("active");
-
+  document.querySelectorAll(".page").forEach(p=>p.classList.remove("active"));
+  document.getElementById(page).classList.add("active");
 }
-
 </script>
 
 <script src="app.js"></script>
-
 </body>
 </html>
