@@ -344,7 +344,7 @@ async function loadInvoiceNumber() {
     document.getElementById("invoiceNumber").value =
         data[0].next_number;
 }
-            ]);
+            
 
         document.getElementById("invoiceNumber").value = 1000;
 
