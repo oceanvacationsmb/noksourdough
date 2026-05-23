@@ -1050,7 +1050,7 @@ async function printInvoicePdf(id) {
     });
 
     const logo = company.company_logo
-        ? `<img src="${company.company_logo}" style="max-width:120px;max-height:80px;margin-bottom:10px;">`
+        ? `<img src="${company.company_logo}" style="max-width:60px;max-height:60px;margin-bottom:10px;">`
         : "";
 
     const html = `
@@ -1084,19 +1084,21 @@ async function printInvoicePdf(id) {
         }
 
         .company-name{
-            font-size:38px;
-            font-weight:800;
-            letter-spacing:1px;
-            margin:0 0 12px 0;
-            color:#111827;
-        }
+    font-size:22px;
+    font-weight:700;
+    margin:0 0 4px 0;
+    color:#111827;
+}
 
-        .company-info{
-    font-size:14px;
-    line-height:1.25;
+    .company-info{
+    font-size:13px;
+    line-height:1.15;
     color:#374151;
 }
 
+.company-info div{
+    margin:1px 0;
+}
 .company-info div{
     margin:2px 0;
 }
@@ -1219,19 +1221,38 @@ async function printInvoicePdf(id) {
         <div class="invoice-header">
 
             <div class="company-card">
-                ${logo}
 
-                <div class="company-name">
-                    ${company.company_name || "Company"}
+                <div style="
+                display:flex;
+                align-items:flex-start;
+                gap:12px;
+                ">
+
+                    <div style="
+                    width:60px;
+                    min-width:60px;
+                    ">
+                        ${logo}
+                    </div>
+
+                    <div>
+
+                        <div class="company-name">
+                            ${company.company_name || "Company"}
+                        </div>
+
+                        <div class="company-info">
+                            <div>${company.company_address || ""}</div>
+                            <div>${company.company_phone || ""}</div>
+                            <div>${company.company_email || ""}</div>
+                            <div>${company.website || ""}</div>
+                            <div>Tax ID: ${company.tax_id || ""}</div>
+                        </div>
+
+                    </div>
+
                 </div>
 
-                <div class="company-info">
-    <div>${company.company_address || ""}</div>
-    <div>${company.company_phone || ""}</div>
-    <div>${company.company_email || ""}</div>
-    <div>${company.website || ""}</div>
-    <div>Tax ID: ${company.tax_id || ""}</div>
-</div>
             </div>
 
             <div class="invoice-card">
