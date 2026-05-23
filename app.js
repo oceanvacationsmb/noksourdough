@@ -1059,296 +1059,344 @@ async function printInvoicePdf(id) {
     <title>Invoice ${inv.invoice_number}</title>
 
     <style>
-        body{
-            font-family:Arial, sans-serif;
-            padding:35px;
-            color:#111827;
-            background:white;
-        }
+    body{
+        font-family:Arial, sans-serif;
+        padding:35px;
+        color:#111827;
+        background:white;
+    }
 
-        .page{
-            page-break-after:always;
-        }
+    .page{
+        page-break-after:always;
+    }
 
-        .invoice-header{
-            display:flex;
-            justify-content:space-between;
-            align-items:flex-start;
-            border-bottom:4px solid #111827;
-            padding-bottom:22px;
-            margin-bottom:28px;
-        }
+    .invoice-header{
+        display:flex;
+        justify-content:space-between;
+        align-items:flex-start;
+        border-bottom:4px solid #111827;
+        padding-bottom:22px;
+        margin-bottom:20px;
+    }
 
-        .company-card{
-            max-width:58%;
-        }
+    .company-card{
+        max-width:68%;
+    }
 
-        .company-name{
-    font-size:22px;
-    font-weight:700;
-    margin:0 0 4px 0;
-    color:#111827;
-}
+    .company-name{
+        font-size:22px;
+        font-weight:700;
+        margin:0 0 4px 0;
+        color:#111827;
+    }
 
     .company-info{
-    font-size:13px;
-    line-height:1.15;
-    color:#374151;
-}
+        font-size:13px;
+        line-height:1.15;
+        color:#374151;
+    }
 
-.company-info div{
-    margin:1px 0;
-}
-.company-info div{
-    margin:2px 0;
-}
+    .company-info div{
+        margin:2px 0;
+    }
 
-        .invoice-card{
-            background:#f3f4f6;
-            border-radius:12px;
-            padding:18px 22px;
-            min-width:245px;
-            text-align:left;
+    .invoice-card{
+        background:#f3f4f6;
+        border-radius:12px;
+        padding:18px 22px;
+        min-width:220px;
+        text-align:left;
+    }
+
+    .invoice-title{
+        font-size:32px;
+        font-weight:800;
+        margin:0;
+        color:#111827;
+        line-height:1.05;
+    }
+
+    .invoice-meta-row{
+        display:grid;
+        grid-template-columns:repeat(4,1fr);
+        margin:20px 0 28px 0;
+        border:2px solid #111827;
+        border-radius:8px;
+        overflow:hidden;
+        background:#ffffff;
+    }
+
+    .invoice-meta-row div{
+        text-align:center;
+        padding:12px 10px;
+        border-right:1px solid #d1d5db;
+    }
+
+    .invoice-meta-row div:last-child{
+        border-right:none;
+    }
+
+    .invoice-meta-row span{
+        display:block;
+        font-size:12px;
+        color:#6b7280;
+        text-transform:uppercase;
+        letter-spacing:.5px;
+        margin-bottom:4px;
+    }
+
+    .invoice-meta-row b{
+        display:block;
+        font-size:15px;
+        color:#111827;
+        font-weight:700;
+    }
+
+    .bill-card{
+        background:#f9fafb;
+        border:1px solid #e5e7eb;
+        border-radius:12px;
+        padding:14px 18px;
+        margin:0 0 24px 0;
+    }
+
+    .section-title{
+        font-size:18px;
+        font-weight:800;
+        margin:0 0 10px 0;
+        color:#111827;
+    }
+
+    .customer-name{
+        font-size:16px;
+        font-weight:800;
+        margin-bottom:6px;
+    }
+
+    .customer-info{
+        font-size:14px;
+        line-height:1.35;
+        color:#374151;
+    }
+
+    .customer-tax{
+        margin-top:8px;
+    }
+
+    table{
+        width:100%;
+        border-collapse:collapse;
+        margin-top:18px;
+        font-size:14px;
+    }
+
+    th{
+        background:#111827;
+        color:white;
+        padding:12px;
+        text-align:left;
+        border:1px solid #111827;
+    }
+
+    td{
+        padding:12px;
+        border:1px solid #d1d5db;
+    }
+
+    tbody tr:nth-child(even){
+        background:#f9fafb;
+    }
+
+    .total-box{
+        margin-top:22px;
+        display:flex;
+        justify-content:flex-end;
+    }
+
+    .total-inner{
+        background:transparent;
+        color:#000000;
+        padding:0;
+        border-radius:0;
+        font-size:22px;
+        font-weight:800;
+        min-width:auto;
+        text-align:right;
+        border:none;
+    }
+
+    .delivery-title{
+        font-size:34px;
+        font-weight:800;
+        border-bottom:4px solid #111827;
+        padding-bottom:15px;
+        margin-bottom:25px;
+    }
+
+    .signature-box{
+        margin-top:45px;
+        font-size:16px;
+        line-height:2.2;
+    }
+
+    @media print{
+        body{
+            padding:25px;
         }
+    }
+</style>
+</head>
 
-        .invoice-title{
-            font-size:32px;
-            font-weight:800;
-            margin:0 0 16px 0;
-            color:#111827;
-            line-height:1.05;
-        }
+  <body>
 
-        .invoice-meta p{
-            margin:8px 0;
-            font-size:15px;
-        }
+<div class="page">
 
-        .bill-card{
-            background:#f9fafb;
-            border:1px solid #e5e7eb;
-            border-radius:12px;
-            padding:18px 20px;
-            margin:0 0 28px 0;
-        }
+    <div class="invoice-header">
 
-        .section-title{
-            font-size:18px;
-            font-weight:800;
-            margin:0 0 12px 0;
-            color:#111827;
-        }
+        <div class="company-card">
 
-        .customer-name{
-            font-size:16px;
-            font-weight:800;
-            margin-bottom:8px;
-        }
-
-        .customer-info{
-            font-size:14px;
-            line-height:1.55;
-            color:#374151;
-        }
-
-        table{
-            width:100%;
-            border-collapse:collapse;
-            margin-top:18px;
-            font-size:14px;
-        }
-
-        th{
-            background:#111827;
-            color:white;
-            padding:12px;
-            text-align:left;
-            border:1px solid #111827;
-        }
-
-        td{
-            padding:12px;
-            border:1px solid #d1d5db;
-        }
-
-        tbody tr:nth-child(even){
-            background:#f9fafb;
-        }
-
-        .total-box{
-            margin-top:22px;
+            <div style="
             display:flex;
-            justify-content:flex-end;
-        }
-
-        .total-inner{
-            background:#111827;
-            color:white;
-            padding:18px 24px;
-            border-radius:12px;
-            font-size:24px;
-            font-weight:800;
-            min-width:260px;
-            text-align:right;
-        }
-
-        .delivery-title{
-            font-size:34px;
-            font-weight:800;
-            border-bottom:4px solid #111827;
-            padding-bottom:15px;
-            margin-bottom:25px;
-        }
-
-        .signature-box{
-            margin-top:45px;
-            font-size:16px;
-            line-height:2.2;
-        }
-
-        @media print{
-            body{
-                padding:25px;
-            }
-        }
-    </style>
-    </head>
-
-    <body>
-
-    <div class="page">
-
-        <div class="invoice-header">
-
-            <div class="company-card">
+            align-items:flex-start;
+            gap:12px;
+            ">
 
                 <div style="
-                display:flex;
-                align-items:flex-start;
-                gap:12px;
+                width:60px;
+                min-width:60px;
                 ">
+                    ${logo}
+                </div>
 
-                    <div style="
-                    width:60px;
-                    min-width:60px;
-                    ">
-                        ${logo}
+                <div>
+
+                    <div class="company-name">
+                        ${company.company_name || "Company"}
                     </div>
 
-                    <div>
-
-                        <div class="company-name">
-                            ${company.company_name || "Company"}
-                        </div>
-
-                        <div class="company-info">
-                            <div>${company.company_address || ""}</div>
-                            <div>${company.company_phone || ""}</div>
-                            <div>${company.company_email || ""}</div>
-                            <div>${company.website || ""}</div>
-                            <div>Tax ID: ${company.tax_id || ""}</div>
-                        </div>
-
+                    <div class="company-info">
+                        <div>${company.company_address || ""}</div>
+                        <div>${company.company_phone || ""}</div>
+                        <div>${company.company_email || ""}</div>
+                        <div>${company.website || ""}</div>
+                        <div>Tax ID: ${company.tax_id || ""}</div>
                     </div>
 
                 </div>
 
             </div>
 
-            <div class="invoice-card">
-                <div class="invoice-title">
-                    INVOICE<br>ORIGINAL
-                </div>
-
-                <div class="invoice-meta">
-                    <p><b>Invoice #:</b> ${inv.invoice_number}</p>
-                    <p><b>Date:</b> ${formatDateDDMMYYYY(inv.invoice_date)}</p>
-                    <p><b>Due:</b> ${formatDateDDMMYYYY(inv.due_date)}</p>
-                    <p><b>Status:</b> ${inv.status || ""}</p>
-                </div>
-            </div>
-
         </div>
 
-        <div class="bill-card">
-            <div class="section-title">Bill To</div>
-
-            <div class="customer-name">
-                ${customer.name || ""}
-            </div>
-
-            <div class="customer-info">
-                ${customer.address || ""}<br>
-                ${customer.phone || ""}<br>
-                ${customer.email || ""}<br>
-                Tax ID: ${customer.tax_id || ""}
-            </div>
-        </div>
-
-        <table>
-            <thead>
-                <tr>
-                    <th>Item</th>
-                    <th style="width:90px;">Qty</th>
-                    <th style="width:150px;">Price</th>
-                    <th style="width:150px;">Total</th>
-                </tr>
-            </thead>
-
-            <tbody>
-                ${rows}
-            </tbody>
-        </table>
-
-        <div class="total-box">
-            <div class="total-inner">
-                Total: ${MONEY}${Number(inv.total || 0).toFixed(2)}
+        <div class="invoice-card">
+            <div class="invoice-title">
+                INVOICE<br>ORIGINAL
             </div>
         </div>
 
     </div>
 
-    <div class="page">
-
-        <div class="delivery-title">
-            DELIVERY NOTE COPY
+    <div class="invoice-meta-row">
+        <div>
+            <span>Invoice #</span>
+            <b>${inv.invoice_number}</b>
         </div>
 
-        <div class="bill-card">
-            <p><b>Invoice #:</b> ${inv.invoice_number}</p>
-            <p><b>Customer:</b> ${customer.name || ""}</p>
-            <p><b>Date:</b> ${formatDateDDMMYYYY(inv.invoice_date)}</p>
+        <div>
+            <span>Date</span>
+            <b>${formatDateDDMMYYYY(inv.invoice_date)}</b>
         </div>
 
-        <table>
-            <thead>
-                <tr>
-                    <th>Item</th>
-                    <th style="width:120px;">Qty</th>
-                </tr>
-            </thead>
-
-            <tbody>
-                ${items.map(item => `
-                    <tr>
-                        <td>${item.description || ""}</td>
-                        <td>${item.quantity || ""}</td>
-                    </tr>
-                `).join("")}
-            </tbody>
-        </table>
-
-        <div class="signature-box">
-            <p>Received By: __________________________</p>
-            <p>Signature: ____________________________</p>
+        <div>
+            <span>Due</span>
+            <b>${formatDateDDMMYYYY(inv.due_date)}</b>
         </div>
 
+        <div>
+            <span>Status</span>
+            <b>${inv.status || ""}</b>
+        </div>
     </div>
 
-    <script>window.print();</script>
-    </body>
-    </html>
-    `;
+    <div class="bill-card">
+        <div class="section-title">Bill To</div>
+
+        <div class="customer-name">
+            ${customer.name || ""}
+        </div>
+
+        <div class="customer-info">
+            ${customer.address || ""}<br>
+            ${customer.phone || ""}<br>
+            ${customer.email || ""}<br>
+            <div class="customer-tax">Tax ID: ${customer.tax_id || ""}</div>
+        </div>
+    </div>
+
+    <table>
+        <thead>
+            <tr>
+                <th>Item</th>
+                <th style="width:90px;">Qty</th>
+                <th style="width:150px;">Price</th>
+                <th style="width:150px;">Total</th>
+            </tr>
+        </thead>
+
+        <tbody>
+            ${rows}
+        </tbody>
+    </table>
+
+    <div class="total-box">
+        <div class="total-inner">
+            Total: ${MONEY}${Number(inv.total || 0).toFixed(2)}
+        </div>
+    </div>
+
+</div>
+
+<div class="page">
+
+    <div class="delivery-title">
+        DELIVERY NOTE COPY
+    </div>
+
+    <div class="bill-card">
+        <p><b>Invoice #:</b> ${inv.invoice_number}</p>
+        <p><b>Customer:</b> ${customer.name || ""}</p>
+        <p><b>Date:</b> ${formatDateDDMMYYYY(inv.invoice_date)}</p>
+    </div>
+
+    <table>
+        <thead>
+            <tr>
+                <th>Item</th>
+                <th style="width:120px;">Qty</th>
+            </tr>
+        </thead>
+
+        <tbody>
+            ${items.map(item => `
+                <tr>
+                    <td>${item.description || ""}</td>
+                    <td>${item.quantity || ""}</td>
+                </tr>
+            `).join("")}
+        </tbody>
+    </table>
+
+    <div class="signature-box">
+        <p>Received By: __________________________</p>
+        <p>Signature: ____________________________</p>
+    </div>
+
+</div>
+
+<script>window.print();</script>
+</body>
+</html>
+`;
 
     const win = window.open("", "_blank");
     win.document.write(html);
