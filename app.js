@@ -1242,30 +1242,46 @@ const rowsThai = items.map(item => {
         margin-bottom:12px;
     }
 
-    .customer-grid{
-        display:grid;
-        grid-template-columns:1.25fr 1fr;
-        gap:22px;
-        align-items:start;
-    }
+   .customer-grid{
+    display:grid;
+    grid-template-columns:1.15fr .85fr;
+    gap:28px;
+    align-items:start;
+}
 
     .customer-address{
-        font-size:14px;
-        line-height:1.65;
-        color:#111827;
-        padding-right:20px;
-        border-right:1px solid #d1d5db;
-    }
+    font-size:15px;
+    line-height:1.85;
+    color:#111827;
+    padding-right:28px;
+    border-right:1px solid #d1d5db;
+}
 
     .customer-contact{
-        font-size:14px;
-        line-height:1.9;
-        color:#111827;
-    }
+    font-size:14px;
+    color:#111827;
+    display:flex;
+    flex-direction:column;
+    gap:18px;
+    padding-left:12px;
+}
 
-    .customer-contact div{
-        margin-bottom:4px;
-    }
+.contact-row{
+    display:grid;
+    grid-template-columns:30px 90px 1fr;
+    align-items:center;
+    column-gap:10px;
+}
+
+.contact-icon{
+    font-size:22px;
+    text-align:center;
+}
+
+.contact-label{
+    font-weight:700;
+    color:#111827;
+}
 
     .info-row{
         display:flex;
@@ -1408,21 +1424,48 @@ const rowsThai = items.map(item => {
         </div>
 
         <div class="customer-grid">
-            <div class="customer-address">
-                <div class="info-row">
-                    <span class="info-icon">⌖</span>
-                    <div>${customer.address || ""}</div>
-                </div>
-            </div>
 
-            <div class="customer-contact">
-                <div><b>Tax ID:</b> ${customer.tax_id || ""}</div>
-                <div><b>Phone:</b> ${customer.phone || ""}</div>
-                <div><b>Fax:</b> 038-723517</div>
-                <div><b>Email:</b> ${customer.email || ""}</div>
+    <div class="customer-address">
+
+        <div class="info-row">
+            <span class="info-icon">📍</span>
+
+            <div>
+                ${customer.address || ""}
             </div>
         </div>
+
     </div>
+
+    <div class="customer-contact">
+
+        <div class="contact-row">
+            <span class="contact-icon">🪪</span>
+            <span class="contact-label">Tax ID:</span>
+            <span>${customer.tax_id || ""}</span>
+        </div>
+
+        <div class="contact-row">
+            <span class="contact-icon">📞</span>
+            <span class="contact-label">Phone:</span>
+            <span>${customer.phone || ""}</span>
+        </div>
+
+        <div class="contact-row">
+            <span class="contact-icon">📠</span>
+            <span class="contact-label">Fax:</span>
+            <span>038-723517</span>
+        </div>
+
+        <div class="contact-row">
+            <span class="contact-icon">✉️</span>
+            <span class="contact-label">Email:</span>
+            <span>${customer.email || ""}</span>
+        </div>
+
+    </div>
+
+</div>
 
     <table>
         <thead>
