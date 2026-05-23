@@ -25,6 +25,7 @@ document.addEventListener("DOMContentLoaded", async () => {
 function hookupButtons() {
     document.getElementById("openCustomerModalBtn")?.addEventListener("click", openNewCustomerModal);
     document.getElementById("openInvoiceModalBtn")?.addEventListener("click", openNewInvoiceModal);
+    document.getElementById("openProductModalBtn")?.addEventListener("click", openNewProductModal);
     document.getElementById("saveCustomerBtn")?.addEventListener("click", saveCustomer);
     document.getElementById("saveProductBtn")?.addEventListener("click", saveProduct);
     document.getElementById("saveCompanyBtn")?.addEventListener("click", saveCompany);
@@ -55,6 +56,22 @@ function openNewCustomerModal() {
     document.getElementById("customerAddress").value = "";
     document.getElementById("customerTerms").value = "Net 30";
     openCustomerModal();
+}
+
+function openProductModal() {
+    document.getElementById("productModal").classList.add("show");
+}
+
+function closeProductModal() {
+    document.getElementById("productModal").classList.remove("show");
+}
+
+function openNewProductModal() {
+    document.getElementById("productModalTitle").innerText = "Add New Product";
+    document.getElementById("editingProductId").value = "";
+    document.getElementById("productName").value = "";
+    document.getElementById("productPrice").value = "";
+    openProductModal();
 }
 
 function openInvoiceModal() {
@@ -341,6 +358,8 @@ async function saveProduct() {
     document.getElementById("productName").value = "";
     document.getElementById("productPrice").value = "";
 
+    closeProductModal();
+
     await loadProducts();
     await loadDashboard();
 }
@@ -389,6 +408,50 @@ async function loadProducts() {
 }
 
 function editProduct(id) {
+
+    const product =
+        productsCache.find(
+            p => Number(p.id) === Number(id)
+        );
+
+    if (!product) return;
+
+    document.getElementById("productModalTitle").innerText =
+        "Edit Product";
+
+    document.getElementById("editingProductId").value =
+        product.id;
+
+    document.getElementById("productName").value =
+        product.name || "";
+
+    document.getElementById("productPrice").value =
+        product.price || "";
+
+    openProductModal();
+}
+
+async function deleteProduct(id) {
+
+    if (!confirm("Delete this product?"))
+        return;
+
+    const result =
+        await db
+        .from("products")
+        .delete()
+        .eq("id", id);
+
+    if (result.error) {
+        alert(result.error.message);
+        return;
+    }
+
+    await loadProducts();
+    await loadDashboard();
+}
+
+function editProduct(id) {
     const product = productsCache.find(p => Number(p.id) === Number(id));
 
     if (!product) {
@@ -407,6 +470,50 @@ async function deleteProduct(id) {
     if (!confirm("Delete this product?")) return;
 
     const result = await db.from("products").delete().eq("id", id);
+
+    if (result.error) {
+        alert(result.error.message);
+        return;
+    }
+
+    await loadProducts();
+    await loadDashboard();
+}
+
+function editProduct(id) {
+
+    const product =
+        productsCache.find(
+            p => Number(p.id) === Number(id)
+        );
+
+    if (!product) return;
+
+    document.getElementById("productModalTitle").innerText =
+        "Edit Product";
+
+    document.getElementById("editingProductId").value =
+        product.id;
+
+    document.getElementById("productName").value =
+        product.name || "";
+
+    document.getElementById("productPrice").value =
+        product.price || "";
+
+    openProductModal();
+}
+
+async function deleteProduct(id) {
+
+    if (!confirm("Delete this product?"))
+        return;
+
+    const result =
+        await db
+        .from("products")
+        .delete()
+        .eq("id", id);
 
     if (result.error) {
         alert(result.error.message);
