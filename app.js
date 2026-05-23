@@ -46,12 +46,40 @@ document.getElementById("saveCustomerBtn").onclick = async function () {
   loadCounts();
 };
 
+document.getElementById("addProductBtn").onclick = function () {
+  alert("Products will be next");
+};
+
+document.getElementById("createInvoiceBtn").onclick = function () {
+  alert("Invoices will be next");
+};
+
+document.getElementById("exportPdfBtn").onclick = function () {
+  window.print();
+};
+
 async function loadCounts() {
   const { count: customersCount } = await supabase
     .from("customers")
     .select("*", { count: "exact", head: true });
 
+  const { count: productsCount } = await supabase
+    .from("products")
+    .select("*", { count: "exact", head: true });
+
+  const { count: invoicesCount } = await supabase
+    .from("invoices")
+    .select("*", { count: "exact", head: true });
+
+  const { count: pastDueCount } = await supabase
+    .from("invoices")
+    .select("*", { count: "exact", head: true })
+    .eq("status", "past due");
+
   document.getElementById("customersCount").innerText = customersCount || 0;
+  document.getElementById("productsCount").innerText = productsCount || 0;
+  document.getElementById("invoicesCount").innerText = invoicesCount || 0;
+  document.getElementById("pastDueCount").innerText = pastDueCount || 0;
 }
 
 loadCounts();
