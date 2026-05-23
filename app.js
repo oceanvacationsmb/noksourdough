@@ -1081,8 +1081,8 @@ async function printInvoicePdf(id) {
             <div>
                 <h2>INVOICE ORIGINAL</h2>
                 <p><b>Invoice #:</b> ${inv.invoice_number}</p>
-                <p><b>Date:</b> ${inv.invoice_date || ""}</p>
-                <p><b>Due:</b> ${inv.due_date || ""}</p>
+                <p><b>Date:</b> ${formatDateDDMMYYYY(inv.invoice_date)}</p>
+                <p><b>Due:</b> ${formatDateDDMMYYYY(inv.due_date)}</p>
                 <p><b>Status:</b> ${inv.status || ""}</p>
             </div>
         </div>
@@ -1108,14 +1108,14 @@ async function printInvoicePdf(id) {
             <tbody>${rows}</tbody>
         </table>
 
-       <div class="total">Total: ${MONEY}${Number(inv.total || 0).toFixed(2)}</div>
+        <div class="total">Total: ${MONEY}${Number(inv.total || 0).toFixed(2)}</div>
     </div>
 
     <div class="page">
         <h1>DELIVERY NOTE COPY</h1>
         <p><b>Invoice #:</b> ${inv.invoice_number}</p>
         <p><b>Customer:</b> ${customer.name || ""}</p>
-        <p><b>Date:</b> ${inv.invoice_date || ""}</p>
+        <p><b>Date:</b> ${formatDateDDMMYYYY(inv.invoice_date)}</p>
 
         <table>
             <thead>
