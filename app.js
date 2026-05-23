@@ -23,19 +23,30 @@ document.addEventListener("DOMContentLoaded", async () => {
 });
 
 function hookupButtons() {
+
     document.getElementById("openCustomerModalBtn")?.addEventListener("click", openNewCustomerModal);
     document.getElementById("openInvoiceModalBtn")?.addEventListener("click", openNewInvoiceModal);
     document.getElementById("openProductModalBtn")?.addEventListener("click", openNewProductModal);
+
     document.getElementById("saveCustomerBtn")?.addEventListener("click", saveCustomer);
     document.getElementById("saveProductBtn")?.addEventListener("click", saveProduct);
     document.getElementById("saveCompanyBtn")?.addEventListener("click", saveCompany);
+
     document.getElementById("addItemBtn")?.addEventListener("click", addInvoiceItem);
     document.getElementById("saveInvoiceBtn")?.addEventListener("click", saveInvoice);
+
     document.getElementById("invoiceCustomer")?.addEventListener("change", updateTermsFromCustomer);
     document.getElementById("invoiceTerms")?.addEventListener("change", calculateDueDate);
     document.getElementById("invoiceDate")?.addEventListener("change", calculateDueDate);
+
     document.getElementById("invoiceFilter")?.addEventListener("change", loadInvoices);
+
     document.getElementById("runReportBtn")?.addEventListener("click", runReport);
+
+    document.getElementById("reportPeriodType")?.addEventListener(
+        "change",
+        toggleReportPeriod
+    );
 }
 
 function openCustomerModal() {
@@ -55,6 +66,7 @@ function openNewCustomerModal() {
     document.getElementById("customerTaxId").value = "";
     document.getElementById("customerAddress").value = "";
     document.getElementById("customerTerms").value = "Net 30";
+    document.getElementById("customerPriceCategory").value = "1";
     openCustomerModal();
 }
 
