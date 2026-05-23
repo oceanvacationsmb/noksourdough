@@ -196,21 +196,33 @@ th{background:#f3f4f6}
 <div id="sidePanel" class="side-panel">
     <button id="closePanel" class="close-btn">X</button>
 
-    <h2>Add Customer</h2>
+    <h2 id="panelTitle">Add Customer</h2>
 
-    <label>Customer Name</label>
-    <input id="customerName" type="text">
+    <div id="customerForm">
+        <label>Customer Name</label>
+        <input id="customerName" type="text">
 
-    <label>Phone</label>
-    <input id="customerPhone" type="text">
+        <label>Phone</label>
+        <input id="customerPhone" type="text">
 
-    <label>Email</label>
-    <input id="customerEmail" type="email">
+        <label>Email</label>
+        <input id="customerEmail" type="email">
 
-    <label>Address</label>
-    <textarea id="customerAddress"></textarea>
+        <label>Address</label>
+        <textarea id="customerAddress"></textarea>
 
-    <button id="saveCustomerBtn" class="save-btn">Save Customer</button>
+        <button id="saveCustomerBtn" class="save-btn">Save Customer</button>
+    </div>
+
+    <div id="productForm" style="display:none;">
+        <label>Product Name</label>
+        <input id="productName" type="text">
+
+        <label>Price</label>
+        <input id="productPrice" type="number">
+
+        <button id="saveProductBtn" class="save-btn">Save Product</button>
+    </div>
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
