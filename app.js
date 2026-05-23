@@ -1,5 +1,6 @@
 const SUPABASE_URL = "https://rbowvjsylgpdunpbrgye.supabase.co";
-const SUPABASE_KEY = "PASTE_YOUR_SB_PUBLISHABLE_KEY_HERE";
+const SUPABASE_KEY = "sb_publishable_5ES5DIUJCJnFMLVQFFgl4g_2LIISqZF
+";
 
 const db = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 const MONEY = "฿";
