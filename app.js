@@ -160,3 +160,94 @@ async function loadCounts() {
     console.log(e);
   }
 }
+
+async function saveCompanyProfile() {
+
+    const companyName =
+        document.getElementById("companyName").value;
+
+    const companyPhone =
+        document.getElementById("companyPhone").value;
+
+    const companyEmail =
+        document.getElementById("companyEmail").value;
+
+    const companyAddress =
+        document.getElementById("companyAddress").value;
+
+    const companyWebsite =
+        document.getElementById("companyWebsite").value;
+
+    const taxId =
+        document.getElementById("taxId").value;
+
+    const existing =
+        await db
+        .from("company_settings")
+        .select("*")
+        .limit(1);
+
+    if (existing.data.length > 0) {
+
+        await db
+        .from("company_settings")
+        .update({
+            company_name: companyName,
+            company_phone: companyPhone,
+            company_email: companyEmail,
+            company_address: companyAddress,
+            website: companyWebsite,
+            tax_id: taxId
+        })
+        .eq("id", existing.data[0].id);
+
+    } else {
+
+        await db
+        .from("company_settings")
+        .insert([
+            {
+                company_name: companyName,
+                company_phone: companyPhone,
+                company_email: companyEmail,
+                company_address: companyAddress,
+                website: companyWebsite,
+                tax_id: taxId
+            }
+        ]);
+
+    }
+
+    alert("Company profile saved");
+}
+
+async function loadCompanyProfile() {
+
+    const result =
+        await db
+        .from("company_settings")
+        .select("*")
+        .limit(1);
+
+    if (!result.data.length) return;
+
+    const company = result.data[0];
+
+    document.getElementById("companyName").value =
+        company.company_name || "";
+
+    document.getElementById("companyPhone").value =
+        company.company_phone || "";
+
+    document.getElementById("companyEmail").value =
+        company.company_email || "";
+
+    document.getElementById("companyAddress").value =
+        company.company_address || "";
+
+    document.getElementById("companyWebsite").value =
+        company.website || "";
+
+    document.getElementById("taxId").value =
+        company.tax_id || "";
+}
