@@ -6,11 +6,7 @@
 <title>NokSourdough Invoice System</title>
 
 <style>
-*{
-    margin:0;
-    padding:0;
-    box-sizing:border-box;
-}
+*{margin:0;padding:0;box-sizing:border-box}
 
 body{
     font-family:Arial,sans-serif;
@@ -20,14 +16,12 @@ body{
 .header{
     background:#1f2937;
     color:white;
-    padding:20px;
+    padding:20px 25px;
     font-size:28px;
     font-weight:bold;
 }
 
-.container{
-    padding:20px;
-}
+.container{padding:25px}
 
 .cards{
     display:grid;
@@ -43,21 +37,16 @@ body{
     box-shadow:0 2px 8px rgba(0,0,0,.08);
 }
 
-.card-title{
-    color:#666;
-    font-size:14px;
-}
+.card-title{color:#555;font-size:15px}
 
 .card-value{
-    font-size:32px;
+    font-size:34px;
     font-weight:bold;
     margin-top:10px;
     color:#2563eb;
 }
 
-.toolbar{
-    margin-bottom:20px;
-}
+.toolbar{margin-bottom:25px}
 
 button{
     background:#2563eb;
@@ -67,26 +56,22 @@ button{
     border-radius:8px;
     cursor:pointer;
     margin-right:10px;
+    font-size:15px;
 }
 
-button:hover{
-    background:#1d4ed8;
-}
+button:hover{background:#1d4ed8}
 
 .section{
     background:white;
     border-radius:10px;
-    padding:20px;
+    padding:25px;
     box-shadow:0 2px 8px rgba(0,0,0,.08);
 }
 
 table{
     width:100%;
     border-collapse:collapse;
-}
-
-th{
-    background:#f3f4f6;
+    margin-top:15px;
 }
 
 th,td{
@@ -95,107 +80,140 @@ th,td{
     text-align:left;
 }
 
-.status-paid{
-    color:green;
+th{background:#f3f4f6}
+
+.status-paid{color:green;font-weight:bold}
+.status-unpaid{color:red;font-weight:bold}
+.status-due{color:orange;font-weight:bold}
+
+.side-panel{
+    position:fixed;
+    top:0;
+    right:-430px;
+    width:420px;
+    height:100%;
+    background:white;
+    box-shadow:-4px 0 12px rgba(0,0,0,.25);
+    padding:25px;
+    transition:.3s;
+    z-index:999;
+}
+
+.side-panel.open{right:0}
+
+.side-panel h2{margin-bottom:20px}
+
+.side-panel label{
+    display:block;
+    margin-top:12px;
     font-weight:bold;
 }
 
-.status-unpaid{
-    color:red;
-    font-weight:bold;
+.side-panel input,
+.side-panel textarea{
+    width:100%;
+    padding:12px;
+    margin-top:6px;
+    border:1px solid #ccc;
+    border-radius:8px;
 }
 
-.status-due{
-    color:orange;
-    font-weight:bold;
+.side-panel textarea{height:90px}
+
+.close-btn{
+    background:#ef4444;
+    float:right;
+    margin-bottom:15px;
+}
+
+.save-btn{
+    margin-top:20px;
+    width:100%;
 }
 </style>
 </head>
 
 <body>
 
-<div class="header">
-NokSourdough Invoice System
-</div>
+<div class="header">NokSourdough Invoice System</div>
 
 <div class="container">
 
 <div class="cards">
+    <div class="card">
+        <div class="card-title">Customers</div>
+        <div class="card-value" id="customersCount">0</div>
+    </div>
 
-<div class="card">
-<div class="card-title">Customers</div>
-<div class="card-value">0</div>
-</div>
+    <div class="card">
+        <div class="card-title">Products</div>
+        <div class="card-value" id="productsCount">0</div>
+    </div>
 
-<div class="card">
-<div class="card-title">Products</div>
-<div class="card-value">0</div>
-</div>
+    <div class="card">
+        <div class="card-title">Invoices</div>
+        <div class="card-value" id="invoicesCount">0</div>
+    </div>
 
-<div class="card">
-<div class="card-title">Invoices</div>
-<div class="card-value">0</div>
-</div>
-
-<div class="card">
-<div class="card-title">Past Due</div>
-<div class="card-value">0</div>
-</div>
-
+    <div class="card">
+        <div class="card-title">Past Due</div>
+        <div class="card-value" id="pastDueCount">0</div>
+    </div>
 </div>
 
 <div class="toolbar">
-<button id="addCustomerBtn">Add Customer</button>
-<button id="addProductBtn">Add Product</button>
-<button id="createInvoiceBtn">Create Invoice</button>
-<button id="exportPdfBtn">Export PDF</button>
+    <button id="addCustomerBtn">Add Customer</button>
+    <button id="addProductBtn">Add Product</button>
+    <button id="createInvoiceBtn">Create Invoice</button>
+    <button id="exportPdfBtn">Export PDF</button>
 </div>
 
 <div class="section">
+    <h2>Recent Invoices</h2>
 
-<h2 style="margin-bottom:15px;">Recent Invoices</h2>
+    <table>
+        <thead>
+            <tr>
+                <th>Invoice #</th>
+                <th>Customer</th>
+                <th>Date</th>
+                <th>Due Date</th>
+                <th>Total</th>
+                <th>Status</th>
+            </tr>
+        </thead>
 
-<table>
-
-<thead>
-<tr>
-<th>Invoice #</th>
-<th>Customer</th>
-<th>Date</th>
-<th>Due Date</th>
-<th>Total</th>
-<th>Status</th>
-</tr>
-</thead>
-
-<tbody>
-
-<tr>
-<td>1001</td>
-<td>Sample Customer</td>
-<td>05/23/2026</td>
-<td>06/01/2026</td>
-<td>$125.00</td>
-<td class="status-unpaid">UNPAID</td>
-</tr>
-
-<tr>
-<td>1002</td>
-<td>Sample Customer 2</td>
-<td>05/23/2026</td>
-<td>05/30/2026</td>
-<td>$300.00</td>
-<td class="status-paid">PAID</td>
-</tr>
-
-</tbody>
-
-</table>
-
+        <tbody id="invoiceTable">
+            <tr>
+                <td colspan="6">No invoices yet</td>
+            </tr>
+        </tbody>
+    </table>
 </div>
 
 </div>
 
+<div id="sidePanel" class="side-panel">
+    <button id="closePanel" class="close-btn">X</button>
+
+    <h2>Add Customer</h2>
+
+    <label>Customer Name</label>
+    <input id="customerName" type="text">
+
+    <label>Phone</label>
+    <input id="customerPhone" type="text">
+
+    <label>Email</label>
+    <input id="customerEmail" type="email">
+
+    <label>Address</label>
+    <textarea id="customerAddress"></textarea>
+
+    <button id="saveCustomerBtn" class="save-btn">Save Customer</button>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script src="app.js"></script>
 
 </body>
