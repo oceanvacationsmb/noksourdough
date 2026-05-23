@@ -1,17 +1,145 @@
 <!DOCTYPE html>
 <html>
 <head>
+<meta charset="utf-8">
 <title>NokSourdough Invoice System</title>
+
+<style>
+body{
+    margin:0;
+    font-family:Arial,sans-serif;
+    background:#f5f6fa;
+}
+
+.header{
+    background:#1f2937;
+    color:white;
+    padding:20px;
+    font-size:28px;
+    font-weight:bold;
+}
+
+.container{
+    padding:20px;
+}
+
+.cards{
+    display:grid;
+    grid-template-columns:repeat(4,1fr);
+    gap:20px;
+}
+
+.card{
+    background:white;
+    padding:20px;
+    border-radius:10px;
+    box-shadow:0 2px 8px rgba(0,0,0,.1);
+}
+
+.card h3{
+    margin:0;
+}
+
+.number{
+    font-size:32px;
+    margin-top:10px;
+    color:#2563eb;
+}
+
+.buttons{
+    margin-top:25px;
+}
+
+button{
+    padding:12px 20px;
+    border:none;
+    border-radius:8px;
+    background:#2563eb;
+    color:white;
+    cursor:pointer;
+    margin-right:10px;
+}
+
+table{
+    width:100%;
+    margin-top:25px;
+    border-collapse:collapse;
+    background:white;
+}
+
+th,td{
+    border:1px solid #ddd;
+    padding:12px;
+    text-align:left;
+}
+
+th{
+    background:#f3f4f6;
+}
+</style>
 </head>
+
 <body>
 
-<h1>NokSourdough Invoice System</h1>
+<div class="header">
+NokSourdough Invoice System
+</div>
 
+<div class="container">
+
+<div class="cards">
+
+<div class="card">
+<h3>Total Customers</h3>
+<div class="number">0</div>
+</div>
+
+<div class="card">
+<h3>Total Products</h3>
+<div class="number">0</div>
+</div>
+
+<div class="card">
+<h3>Total Invoices</h3>
+<div class="number">0</div>
+</div>
+
+<div class="card">
+<h3>Past Due</h3>
+<div class="number">0</div>
+</div>
+
+</div>
+
+<div class="buttons">
 <button>Add Customer</button>
 <button>Add Product</button>
 <button>Create Invoice</button>
+<button>Export PDF</button>
+</div>
 
-<p>System is working.</p>
+<table>
+<tr>
+<th>Invoice #</th>
+<th>Customer</th>
+<th>Date</th>
+<th>Due Date</th>
+<th>Total</th>
+<th>Status</th>
+</tr>
+
+<tr>
+<td>1001</td>
+<td>Sample Customer</td>
+<td>05/22/2026</td>
+<td>06/01/2026</td>
+<td>$125.00</td>
+<td>Unpaid</td>
+</tr>
+
+</table>
+
+</div>
 
 </body>
 </html>
