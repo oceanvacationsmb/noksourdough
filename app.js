@@ -323,7 +323,10 @@ async function deleteCustomer(id) {
 async function saveProduct() {
     const id = document.getElementById("editingProductId").value;
     const name = document.getElementById("productName").value.trim();
-    const price = document.getElementById("productPrice").value;
+
+    const price1 = document.getElementById("productPrice1").value;
+    const price2 = document.getElementById("productPrice2").value;
+    const price3 = document.getElementById("productPrice3").value;
 
     if (!name) {
         alert("Product name required");
@@ -336,7 +339,10 @@ async function saveProduct() {
         result = await db.from("products")
             .update({
                 name,
-                price: Number(price)
+                price: Number(price1),
+                price_1: Number(price1),
+                price_2: Number(price2 || price1),
+                price_3: Number(price3 || price1)
             })
             .eq("id", id);
     } else {
@@ -344,10 +350,30 @@ async function saveProduct() {
             .insert([
                 {
                     name,
-                    price: Number(price)
+                    price: Number(price1),
+                    price_1: Number(price1),
+                    price_2: Number(price2 || price1),
+                    price_3: Number(price3 || price1)
                 }
             ]);
     }
+
+    if (result.error) {
+        alert(result.error.message);
+        return;
+    }
+
+    document.getElementById("editingProductId").value = "";
+    document.getElementById("productName").value = "";
+    document.getElementById("productPrice1").value = "";
+    document.getElementById("productPrice2").value = "";
+    document.getElementById("productPrice3").value = "";
+
+    closeProductModal();
+
+    await loadProducts();
+    await loadDashboard();
+}
 
     if (result.error) {
         alert(result.error.message);
@@ -387,13 +413,15 @@ async function loadProducts() {
         if (table) {
             table.innerHTML += `
             <tr>
-                <td>${product.name}</td>
-                <td>${MONEY}${Number(product.price || 0).toFixed(2)}</td>
-                <td>
-                    <button class="primary" onclick="editProduct(${product.id})">Edit</button>
-                    <button class="danger" onclick="deleteProduct(${product.id})">Delete</button>
-                </td>
-            </tr>
+    <td>${product.name}</td>
+    <td>${MONEY}${Number(product.price_1 || product.price || 0).toFixed(2)}</td>
+    <td>${MONEY}${Number(product.price_2 || product.price || 0).toFixed(2)}</td>
+    <td>${MONEY}${Number(product.price_3 || product.price || 0).toFixed(2)}</td>
+    <td>
+        <button class="primary" onclick="editProduct(${product.id})">Edit</button>
+        <button class="danger" onclick="deleteProduct(${product.id})">Delete</button>
+    </td>
+</tr>
             `;
         }
 
@@ -498,8 +526,14 @@ function editProduct(id) {
     document.getElementById("productName").value =
         product.name || "";
 
-    document.getElementById("productPrice").value =
-        product.price || "";
+    document.getElementById("productPrice1").value =
+        product.price_1 || product.price || "";
+
+    document.getElementById("productPrice2").value =
+        product.price_2 || product.price || "";
+
+    document.getElementById("productPrice3").value =
+        product.price_3 || product.price || "";
 
     openProductModal();
 }
