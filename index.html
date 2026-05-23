@@ -217,12 +217,19 @@
     <textarea id="customerAddress" placeholder="Address"></textarea>
 
     <select id="customerTerms">
-      <option>None</option>
-      <option>Net 15</option>
-      <option selected>Net 30</option>
-      <option>Net 45</option>
-      <option>Net 60</option>
-    </select>
+  <option>None</option>
+  <option>COD</option>
+  <option>Net 15</option>
+  <option selected>Net 30</option>
+  <option>Net 45</option>
+  <option>Net 60</option>
+</select>
+
+<select id="customerPriceCategory">
+  <option value="1">Price Category 1</option>
+  <option value="2">Price Category 2</option>
+  <option value="3">Price Category 3</option>
+</select>
 
     <button id="saveCustomerBtn" class="success">Save Customer</button>
   </div>
@@ -301,16 +308,26 @@
             id="productName"
             placeholder="Product Name">
 
-        <input
-            id="productPrice"
-            type="number"
-            placeholder="Price">
+       <input
+    id="productPrice1"
+    type="number"
+    placeholder="Price Category 1">
 
-        <button
-            id="saveProductBtn"
-            class="success">
-            Save Product
-        </button>
+<input
+    id="productPrice2"
+    type="number"
+    placeholder="Price Category 2">
+
+<input
+    id="productPrice3"
+    type="number"
+    placeholder="Price Category 3">
+
+<button
+    id="saveProductBtn"
+    class="success">
+    Save Product
+</button>
 
     </div>
 
