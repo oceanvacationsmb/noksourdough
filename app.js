@@ -87,7 +87,9 @@ function openNewProductModal() {
     document.getElementById("productModalTitle").innerText = "Add New Product";
     document.getElementById("editingProductId").value = "";
     document.getElementById("productName").value = "";
-    document.getElementById("productPrice").value = "";
+    document.getElementById("productPrice1").value = "";
+    document.getElementById("productPrice2").value = "";
+    document.getElementById("productPrice3").value = "";
     openProductModal();
 }
 
@@ -114,6 +116,7 @@ async function openNewInvoiceModal() {
 
     openInvoiceModal();
 }
+
 function setToday() {
     const today = new Date().toISOString().split("T")[0];
     const invoiceDate = document.getElementById("invoiceDate");
