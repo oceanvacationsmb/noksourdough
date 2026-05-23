@@ -2,184 +2,257 @@ const SUPABASE_URL = "https://rbowvjsylgpdunpbrgye.supabase.co";
 const SUPABASE_KEY = "sb_publishable_5ES5DIUJCJnFMLVQFFgl4g_2LIISqZF";
 
 const db = window.supabase.createClient(
-  SUPABASE_URL,
-  SUPABASE_KEY
+    SUPABASE_URL,
+    SUPABASE_KEY
 );
 
-window.addEventListener("DOMContentLoaded", () => {
+let invoiceItems = [];
 
-  const sidePanel = document.getElementById("sidePanel");
-  const panelTitle = document.getElementById("panelTitle");
+document.addEventListener("DOMContentLoaded", async () => {
 
-  const customerForm = document.getElementById("customerForm");
-  const productForm = document.getElementById("productForm");
+    hookupButtons();
 
-  const addCustomerBtn = document.getElementById("addCustomerBtn");
-  const addProductBtn = document.getElementById("addProductBtn");
-  const closePanel = document.getElementById("closePanel");
-
-  const saveCustomerBtn = document.getElementById("saveCustomerBtn");
-  const saveProductBtn = document.getElementById("saveProductBtn");
-
-  if (addCustomerBtn) {
-    addCustomerBtn.onclick = function () {
-      panelTitle.innerText = "Add Customer";
-      customerForm.style.display = "block";
-      productForm.style.display = "none";
-      sidePanel.classList.add("open");
-    };
-  }
-
-  if (addProductBtn) {
-    addProductBtn.onclick = function () {
-      panelTitle.innerText = "Add Product";
-      customerForm.style.display = "none";
-      productForm.style.display = "block";
-      sidePanel.classList.add("open");
-    };
-  }
-
-  if (closePanel) {
-    closePanel.onclick = function () {
-      sidePanel.classList.remove("open");
-    };
-  }
-
-  if (saveCustomerBtn) {
-    saveCustomerBtn.onclick = saveCustomer;
-  }
-
-  if (saveProductBtn) {
-    saveProductBtn.onclick = saveProduct;
-  }
-
-  loadCounts();
+    await loadDashboard();
+    await loadCustomers();
+    await loadProducts();
+    await loadCompanyProfile();
+    await loadInvoiceNumber();
 
 });
 
+function hookupButtons() {
+
+    document
+        .getElementById("saveCustomerBtn")
+        ?.addEventListener("click", saveCustomer);
+
+    document
+        .getElementById("saveProductBtn")
+        ?.addEventListener("click", saveProduct);
+
+    document
+        .getElementById("saveCompanyBtn")
+        ?.addEventListener("click", saveCompany);
+
+    document
+        .getElementById("addItemBtn")
+        ?.addEventListener("click", addInvoiceItem);
+
+    document
+        .getElementById("saveInvoiceBtn")
+        ?.addEventListener("click", saveInvoice);
+
+}
+
+async function loadDashboard() {
+
+    const customers =
+        await db.from("customers")
+        .select("*", { count: "exact", head: true });
+
+    const products =
+        await db.from("products")
+        .select("*", { count: "exact", head: true });
+
+    const invoices =
+        await db.from("invoices")
+        .select("*", { count: "exact", head: true });
+
+    document.getElementById("customersCount").innerText =
+        customers.count || 0;
+
+    document.getElementById("productsCount").innerText =
+        products.count || 0;
+
+    document.getElementById("invoicesCount").innerText =
+        invoices.count || 0;
+
+}
+
 async function saveCustomer() {
 
-  const name = document.getElementById("customerName").value.trim();
-  const phone = document.getElementById("customerPhone").value.trim();
-  const email = document.getElementById("customerEmail").value.trim();
-  const address = document.getElementById("customerAddress").value.trim();
+    const name =
+        document.getElementById("customerName").value;
 
-  if (!name) {
-    alert("Customer name required");
-    return;
-  }
+    const phone =
+        document.getElementById("customerPhone").value;
 
-  const { error } = await db
-    .from("customers")
-    .insert([
-      {
-        name,
-        phone,
-        email,
-        address
-      }
-    ]);
+    const email =
+        document.getElementById("customerEmail").value;
 
-  if (error) {
-    alert(error.message);
-    return;
-  }
+    const address =
+        document.getElementById("customerAddress").value;
 
-  alert("Customer saved");
+    const terms =
+        document.getElementById("customerTerms").value;
 
-  document.getElementById("customerName").value = "";
-  document.getElementById("customerPhone").value = "";
-  document.getElementById("customerEmail").value = "";
-  document.getElementById("customerAddress").value = "";
+    const result =
+        await db
+        .from("customers")
+        .insert([
+            {
+                name,
+                phone,
+                email,
+                address,
+                payment_terms: terms
+            }
+        ]);
 
-  document.getElementById("sidePanel").classList.remove("open");
+    if (result.error) {
+        alert(result.error.message);
+        return;
+    }
 
-  loadCounts();
+    alert("Customer saved");
+
+    loadCustomers();
+    loadDashboard();
+}
+
+async function loadCustomers() {
+
+    const result =
+        await db
+        .from("customers")
+        .select("*")
+        .order("name");
+
+    const table =
+        document.getElementById("customerTableBody");
+
+    const select =
+        document.getElementById("invoiceCustomer");
+
+    if (table) table.innerHTML = "";
+    if (select) select.innerHTML = "";
+
+    result.data.forEach(customer => {
+
+        if (table) {
+
+            table.innerHTML += `
+            <tr>
+            <td>${customer.name || ""}</td>
+            <td>${customer.phone || ""}</td>
+            <td>${customer.email || ""}</td>
+            <td>${customer.payment_terms || ""}</td>
+            </tr>
+            `;
+
+        }
+
+        if (select) {
+
+            select.innerHTML += `
+            <option value="${customer.id}">
+            ${customer.name}
+            </option>
+            `;
+
+        }
+
+    });
+
 }
 
 async function saveProduct() {
 
-  const name = document.getElementById("productName").value.trim();
-  const price = document.getElementById("productPrice").value;
+    const name =
+        document.getElementById("productName").value;
 
-  if (!name) {
-    alert("Product name required");
-    return;
-  }
+    const price =
+        document.getElementById("productPrice").value;
 
-  const { error } = await db
-    .from("products")
-    .insert([
-      {
-        name: name,
-        price: Number(price)
-      }
-    ]);
+    const result =
+        await db
+        .from("products")
+        .insert([
+            {
+                name,
+                price
+            }
+        ]);
 
-  if (error) {
-    alert(error.message);
-    return;
-  }
+    if (result.error) {
+        alert(result.error.message);
+        return;
+    }
 
-  alert("Product saved");
+    alert("Product saved");
 
-  document.getElementById("productName").value = "";
-  document.getElementById("productPrice").value = "";
-
-  document.getElementById("sidePanel").classList.remove("open");
-
-  loadCounts();
+    loadProducts();
+    loadDashboard();
 }
 
-async function loadCounts() {
+async function loadProducts() {
 
-  try {
+    const result =
+        await db
+        .from("products")
+        .select("*")
+        .order("name");
 
-    const customers = await db
-      .from("customers")
-      .select("*", { count: "exact", head: true });
+    const table =
+        document.getElementById("productTableBody");
 
-    const products = await db
-      .from("products")
-      .select("*", { count: "exact", head: true });
+    const select =
+        document.getElementById("invoiceProduct");
 
-    const invoices = await db
-      .from("invoices")
-      .select("*", { count: "exact", head: true });
+    if (table) table.innerHTML = "";
+    if (select) select.innerHTML = "";
 
-    document.getElementById("customersCount").innerText =
-      customers.count || 0;
+    result.data.forEach(product => {
 
-    document.getElementById("productsCount").innerText =
-      products.count || 0;
+        if (table) {
 
-    document.getElementById("invoicesCount").innerText =
-      invoices.count || 0;
+            table.innerHTML += `
+            <tr>
+            <td>${product.name}</td>
+            <td>$${product.price}</td>
+            </tr>
+            `;
 
-  } catch (e) {
-    console.log(e);
-  }
+        }
+
+        if (select) {
+
+            select.innerHTML += `
+            <option
+            value="${product.id}"
+            data-price="${product.price}">
+            ${product.name}
+            </option>
+            `;
+
+        }
+
+    });
+
 }
 
-async function saveCompanyProfile() {
+async function saveCompany() {
 
-    const companyName =
+    const company_name =
         document.getElementById("companyName").value;
 
-    const companyPhone =
+    const company_phone =
         document.getElementById("companyPhone").value;
 
-    const companyEmail =
+    const company_email =
         document.getElementById("companyEmail").value;
 
-    const companyAddress =
+    const company_address =
         document.getElementById("companyAddress").value;
 
-    const companyWebsite =
+    const website =
         document.getElementById("companyWebsite").value;
 
-    const taxId =
+    const tax_id =
         document.getElementById("taxId").value;
+
+    const company_logo =
+        document.getElementById("companyLogo").value;
 
     const existing =
         await db
@@ -187,17 +260,18 @@ async function saveCompanyProfile() {
         .select("*")
         .limit(1);
 
-    if (existing.data.length > 0) {
+    if (existing.data.length) {
 
         await db
         .from("company_settings")
         .update({
-            company_name: companyName,
-            company_phone: companyPhone,
-            company_email: companyEmail,
-            company_address: companyAddress,
-            website: companyWebsite,
-            tax_id: taxId
+            company_name,
+            company_phone,
+            company_email,
+            company_address,
+            website,
+            tax_id,
+            company_logo
         })
         .eq("id", existing.data[0].id);
 
@@ -207,18 +281,19 @@ async function saveCompanyProfile() {
         .from("company_settings")
         .insert([
             {
-                company_name: companyName,
-                company_phone: companyPhone,
-                company_email: companyEmail,
-                company_address: companyAddress,
-                website: companyWebsite,
-                tax_id: taxId
+                company_name,
+                company_phone,
+                company_email,
+                company_address,
+                website,
+                tax_id,
+                company_logo
             }
         ]);
 
     }
 
-    alert("Company profile saved");
+    alert("Company saved");
 }
 
 async function loadCompanyProfile() {
@@ -231,23 +306,167 @@ async function loadCompanyProfile() {
 
     if (!result.data.length) return;
 
-    const company = result.data[0];
+    const c = result.data[0];
 
-    document.getElementById("companyName").value =
-        company.company_name || "";
+    companyName.value = c.company_name || "";
+    companyPhone.value = c.company_phone || "";
+    companyEmail.value = c.company_email || "";
+    companyAddress.value = c.company_address || "";
+    companyWebsite.value = c.website || "";
+    taxId.value = c.tax_id || "";
+    companyLogo.value = c.company_logo || "";
 
-    document.getElementById("companyPhone").value =
-        company.company_phone || "";
+}
 
-    document.getElementById("companyEmail").value =
-        company.company_email || "";
+async function loadInvoiceNumber() {
 
-    document.getElementById("companyAddress").value =
-        company.company_address || "";
+    const result =
+        await db
+        .from("invoice_counter")
+        .select("*")
+        .limit(1);
 
-    document.getElementById("companyWebsite").value =
-        company.website || "";
+    document.getElementById("invoiceNumber").value =
+        result.data[0].next_number;
 
-    document.getElementById("taxId").value =
-        company.tax_id || "";
+}
+
+function addInvoiceItem() {
+
+    const select =
+        document.getElementById("invoiceProduct");
+
+    const option =
+        select.options[select.selectedIndex];
+
+    const qty =
+        Number(
+            document.getElementById("invoiceQty").value
+        );
+
+    const price =
+        Number(option.dataset.price);
+
+    const total =
+        qty * price;
+
+    invoiceItems.push({
+        product_id: option.value,
+        description: option.text,
+        quantity: qty,
+        unit_price: price,
+        line_total: total
+    });
+
+    renderInvoiceItems();
+}
+
+function renderInvoiceItems() {
+
+    const body =
+        document.getElementById("invoiceItemsBody");
+
+    body.innerHTML = "";
+
+    let grandTotal = 0;
+
+    invoiceItems.forEach(item => {
+
+        grandTotal += item.line_total;
+
+        body.innerHTML += `
+        <tr>
+        <td>${item.description}</td>
+        <td>${item.quantity}</td>
+        <td>$${item.unit_price}</td>
+        <td>$${item.line_total}</td>
+        </tr>
+        `;
+
+    });
+
+    document.getElementById("invoiceTotal")
+        .innerText =
+        grandTotal.toFixed(2);
+
+}
+
+async function saveInvoice() {
+
+    const counter =
+        await db
+        .from("invoice_counter")
+        .select("*")
+        .limit(1);
+
+    const invoiceNumber =
+        counter.data[0].next_number;
+
+    const total =
+        Number(
+            document.getElementById("invoiceTotal")
+            .innerText
+        );
+
+    const invoice =
+        await db
+        .from("invoices")
+        .insert([
+            {
+                invoice_number: invoiceNumber,
+                customer_id:
+                    document.getElementById("invoiceCustomer").value,
+                invoice_date:
+                    document.getElementById("invoiceDate").value,
+                due_date:
+                    document.getElementById("invoiceDueDate").value,
+                payment_terms:
+                    document.getElementById("invoiceTerms").value,
+                notes:
+                    document.getElementById("invoiceNotes").value,
+                total: total,
+                status: "Unpaid"
+            }
+        ])
+        .select();
+
+    const invoiceId =
+        invoice.data[0].id;
+
+    for (const item of invoiceItems) {
+
+        await db
+        .from("invoice_items")
+        .insert([
+            {
+                invoice_id: invoiceId,
+                ...item
+            }
+        ]);
+
+    }
+
+    await db
+        .from("invoice_counter")
+        .update({
+            next_number:
+                invoiceNumber + 1
+        })
+        .eq(
+            "id",
+            counter.data[0].id
+        );
+
+    alert(
+        "Invoice #" +
+        invoiceNumber +
+        " saved"
+    );
+
+    invoiceItems = [];
+
+    renderInvoiceItems();
+
+    loadInvoiceNumber();
+    loadDashboard();
 }
