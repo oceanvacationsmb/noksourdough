@@ -1092,10 +1092,14 @@ async function printInvoicePdf(id) {
         }
 
         .company-info{
-            font-size:14px;
-            line-height:1.55;
-            color:#374151;
-        }
+    font-size:14px;
+    line-height:1.25;
+    color:#374151;
+}
+
+.company-info div{
+    margin:2px 0;
+}
 
         .invoice-card{
             background:#f3f4f6;
