@@ -624,24 +624,29 @@ async function loadCompanyProfile() {
 
     companyCache = result.data[0];
 
-    document.getElementById("companyName").value = companyCache.company_name || "";
-    document.getElementById("companyPhone").value = companyCache.company_phone || "";
-    document.getElementById("companyEmail").value = companyCache.company_email || "";
-    document.getElementById("companyAddress").value = companyCache.company_address || "";
-    document.getElementById("companyWebsite").value = companyCache.website || "";
-    document.getElementById("taxId").value = companyCache.tax_id || "";
-    document.getElementById("companyLogo").value = companyCache.company_logo || "";
+    document.getElementById("companyName")?.value = companyCache.company_name || "";
+    document.getElementById("companyPhone")?.value = companyCache.company_phone || "";
+    document.getElementById("companyEmail")?.value = companyCache.company_email || "";
+    document.getElementById("companyAddress")?.value = companyCache.company_address || "";
+    document.getElementById("companyWebsite")?.value = companyCache.website || "";
+    document.getElementById("taxId")?.value = companyCache.tax_id || "";
+    document.getElementById("companyLogo")?.value = companyCache.company_logo || "";
 }
 
 async function loadInvoiceNumber() {
     const result = await db.from("invoice_counter").select("*").limit(1);
 
+    const invoiceNumber =
+        document.getElementById("invoiceNumber");
+
+    if (!invoiceNumber) return;
+
     if (result.error || !result.data || result.data.length === 0) {
-        document.getElementById("invoiceNumber").value = "1000";
+        invoiceNumber.value = "1000";
         return;
     }
 
-    document.getElementById("invoiceNumber").value = result.data[0].next_number;
+    invoiceNumber.value = result.data[0].next_number;
 }
 
 function addInvoiceItem() {
