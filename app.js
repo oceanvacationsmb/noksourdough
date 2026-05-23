@@ -1146,10 +1146,18 @@ async function runReport() {
         if (month && year) {
             startDate = `${year}-${month}-01`;
 
-            const lastDay = new Date(Number(year), Number(month), 0)
-                .getDate();
+            const lastDay = new Date(Number(year), Number(month), 0).getDate();
 
             endDate = `${year}-${month}-${String(lastDay).padStart(2, "0")}`;
+        }
+    }
+
+    if (periodType === "year") {
+        const year = document.getElementById("reportYearOnly")?.value;
+
+        if (year) {
+            startDate = `${year}-01-01`;
+            endDate = `${year}-12-31`;
         }
     }
 
@@ -1212,8 +1220,8 @@ async function runReport() {
         <tr>
             <td>${inv.invoice_number}</td>
             <td>${customer ? customer.name : ""}</td>
-            <td>${inv.invoice_date || ""}</td>
-            <td>${inv.due_date || ""}</td>
+            <td>${formatDateDDMMYYYY(inv.invoice_date)}</td>
+            <td>${formatDateDDMMYYYY(inv.due_date)}</td>
             <td>${MONEY}${total.toFixed(2)}</td>
             <td>${inv.status || "Unpaid"}</td>
         </tr>
@@ -1310,4 +1318,14 @@ function populateReportYears() {
     if (reportYearOnly) {
         reportYearOnly.value = currentYear;
     }
+}
+
+function formatDateDDMMYYYY(dateValue) {
+    if (!dateValue) return "";
+
+    const parts = dateValue.split("-");
+
+    if (parts.length !== 3) return dateValue;
+
+    return `${parts[2]}/${parts[1]}/${parts[0]}`;
 }
