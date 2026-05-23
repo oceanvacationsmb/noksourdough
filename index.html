@@ -130,7 +130,7 @@
       </div>
     </div>
 
-    <div id="reports" class="page">
+  <div id="reports" class="page">
   <h1>Reports</h1>
 
   <div class="section">
@@ -147,6 +147,7 @@
 
       <select id="reportPeriodType">
         <option value="month">Month</option>
+        <option value="year">Full Year</option>
         <option value="dates">Dates</option>
       </select>
     </div>
@@ -168,6 +169,10 @@
       </select>
 
       <select id="reportYear"></select>
+    </div>
+
+    <div id="reportYearBox" class="grid-2" style="display:none;">
+      <select id="reportYearOnly"></select>
     </div>
 
     <div id="reportDateBox" class="grid-2" style="display:none;">
@@ -203,22 +208,22 @@
   </div>
 </div>
 
-    <div id="settings" class="page">
-      <h1>Company Settings</h1>
+<div id="settings" class="page">
+  <h1>Company Settings</h1>
 
-      <div class="section">
-        <input id="companyName" placeholder="Company Name">
-        <input id="companyPhone" placeholder="Phone">
-        <input id="companyEmail" placeholder="Email">
-        <input id="companyWebsite" placeholder="Website">
-        <input id="taxId" placeholder="Tax ID">
-        <input id="companyLogo" placeholder="Logo URL">
-        <textarea id="companyAddress" placeholder="Address"></textarea>
-        <button id="saveCompanyBtn" class="success">Save Company</button>
-      </div>
-    </div>
-
+  <div class="section">
+    <input id="companyName" placeholder="NOK SOURDOUGH">
+    <textarea id="companyAddress" placeholder="95, 29 Nongmaikaen 19, Muang Pattaya, Ban Lamung District, Chon Buri
+"></textarea>
+    <input id="companyPhone" placeholder="0875185187">
+    <input id="companyEmail" placeholder="nokmagia@gmail.com">
+    <input id="taxId" placeholder="3460100507671">
+    <input id="companyLogo" placeholder="https://oceanvacationsmb.github.io/noksourdough/nok_logo.png">
+    <button id="saveCompanyBtn" class="success">Save Company</button>
   </div>
+</div>
+
+</div>
 </div>
 
 <div id="customerModal" class="modal">
