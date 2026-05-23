@@ -320,11 +320,36 @@ async function loadCompanyProfile() {
 
 async function loadInvoiceNumber() {
 
-    const result =
-        await db
-        .from("invoice_counter")
-        .select("*")
-        .limit(1);
+    const { data, error } =
+    await db
+    .from("invoice_counter")
+    .select("*")
+    .limit(1);
+
+    console.log("invoice counter", data);
+    console.log("invoice error", error);
+
+    if (error) {
+        alert(error.message);
+        return;
+    }
+
+    if (!data || data.length === 0) {
+
+        document.getElementById("invoiceNumber").value = 1000;
+
+        return;
+    }
+
+    document.getElementById("invoiceNumber").value =
+        data[0].next_number;
+}
+            ]);
+
+        document.getElementById("invoiceNumber").value = 1000;
+
+        return;
+    }
 
     document.getElementById("invoiceNumber").value =
         result.data[0].next_number;
