@@ -1,85 +1,120 @@
 const SUPABASE_URL = "https://rbowvjsylgpdunpbrgye.supabase.co";
 const SUPABASE_KEY = "sb_publishable_5ES5DIUJCJnFMLVQFFgl4g_2LIISqZF";
 
-const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+const db = window.supabase.createClient(
+    SUPABASE_URL,
+    SUPABASE_KEY
+);
 
-document.getElementById("addCustomerBtn").onclick = function () {
-  document.getElementById("sidePanel").classList.add("open");
-};
+const sidePanel = document.getElementById("sidePanel");
+const addCustomerBtn = document.getElementById("addCustomerBtn");
+const closePanel = document.getElementById("closePanel");
+const saveCustomerBtn = document.getElementById("saveCustomerBtn");
 
-document.getElementById("closePanel").onclick = function () {
-  document.getElementById("sidePanel").classList.remove("open");
-};
+if (addCustomerBtn) {
+    addCustomerBtn.addEventListener("click", () => {
+        sidePanel.classList.add("open");
+    });
+}
 
-document.getElementById("saveCustomerBtn").onclick = async function () {
-  const name = document.getElementById("customerName").value;
-  const phone = document.getElementById("customerPhone").value;
-  const email = document.getElementById("customerEmail").value;
-  const address = document.getElementById("customerAddress").value;
+if (closePanel) {
+    closePanel.addEventListener("click", () => {
+        sidePanel.classList.remove("open");
+    });
+}
 
-  if (!name) {
-    alert("Customer name is required");
-    return;
-  }
+if (saveCustomerBtn) {
+    saveCustomerBtn.addEventListener("click", saveCustomer);
+}
 
-  const { error } = await supabase.from("customers").insert({
-    name: name,
-    phone: phone,
-    email: email,
-    address: address
-  });
+async function saveCustomer() {
 
-  if (error) {
-    alert(error.message);
-    return;
-  }
+    const name = document.getElementById("customerName").value.trim();
+    const phone = document.getElementById("customerPhone").value.trim();
+    const email = document.getElementById("customerEmail").value.trim();
+    const address = document.getElementById("customerAddress").value.trim();
 
-  alert("Customer saved");
+    if (!name) {
+        alert("Customer name is required");
+        return;
+    }
 
-  document.getElementById("customerName").value = "";
-  document.getElementById("customerPhone").value = "";
-  document.getElementById("customerEmail").value = "";
-  document.getElementById("customerAddress").value = "";
+    const { error } = await db
+        .from("customers")
+        .insert([
+            {
+                name,
+                phone,
+                email,
+                address
+            }
+        ]);
 
-  document.getElementById("sidePanel").classList.remove("open");
+    if (error) {
+        console.error(error);
+        alert(error.message);
+        return;
+    }
 
-  loadCounts();
-};
+    alert("Customer saved");
 
-document.getElementById("addProductBtn").onclick = function () {
-  alert("Products will be next");
-};
+    document.getElementById("customerName").value = "";
+    document.getElementById("customerPhone").value = "";
+    document.getElementById("customerEmail").value = "";
+    document.getElementById("customerAddress").value = "";
 
-document.getElementById("createInvoiceBtn").onclick = function () {
-  alert("Invoices will be next");
-};
+    sidePanel.classList.remove("open");
 
-document.getElementById("exportPdfBtn").onclick = function () {
-  window.print();
-};
+    loadCounts();
+}
 
 async function loadCounts() {
-  const { count: customersCount } = await supabase
-    .from("customers")
-    .select("*", { count: "exact", head: true });
 
-  const { count: productsCount } = await supabase
-    .from("products")
-    .select("*", { count: "exact", head: true });
+    try {
 
-  const { count: invoicesCount } = await supabase
-    .from("invoices")
-    .select("*", { count: "exact", head: true });
+        const customersResult = await db
+            .from("customers")
+            .select("*", {
+                count: "exact",
+                head: true
+            });
 
-  const { count: pastDueCount } = await supabase
-    .from("invoices")
-    .select("*", { count: "exact", head: true })
-    .eq("status", "past due");
+        const productsResult = await db
+            .from("products")
+            .select("*", {
+                count: "exact",
+                head: true
+            });
 
-  document.getElementById("customersCount").innerText = customersCount || 0;
-  document.getElementById("productsCount").innerText = productsCount || 0;
-  document.getElementById("invoicesCount").innerText = invoicesCount || 0;
-  document.getElementById("pastDueCount").innerText = pastDueCount || 0;
+        const invoicesResult = await db
+            .from("invoices")
+            .select("*", {
+                count: "exact",
+                head: true
+            });
+
+        document.getElementById("customersCount").innerText =
+            customersResult.count || 0;
+
+        document.getElementById("productsCount").innerText =
+            productsResult.count || 0;
+
+        document.getElementById("invoicesCount").innerText =
+            invoicesResult.count || 0;
+
+    } catch (err) {
+
+        console.error(err);
+
+    }
+}
+
+const exportPdfBtn = document.getElementById("exportPdfBtn");
+
+if (exportPdfBtn) {
+    exportPdfBtn.addEventListener("click", () => {
+        window.print();
+    });
 }
 
 loadCounts();
