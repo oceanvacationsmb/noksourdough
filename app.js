@@ -1080,8 +1080,14 @@ async function printInvoicePdf(id) {
     }
 
     .company-card{
-        max-width:68%;
-    }
+    max-width:72%;
+}
+
+.company-card img{
+    width:120px !important;
+    height:auto !important;
+    display:block;
+}
 
     .company-name{
         font-size:22px;
@@ -1117,14 +1123,14 @@ async function printInvoicePdf(id) {
     }
 
     .invoice-meta-row{
-        display:grid;
-        grid-template-columns:repeat(4,1fr);
-        margin:20px 0 28px 0;
-        border:2px solid #111827;
-        border-radius:8px;
-        overflow:hidden;
-        background:#ffffff;
-    }
+    display:grid;
+    grid-template-columns:repeat(3,1fr);
+    margin:20px 0 28px 0;
+    border:2px solid #111827;
+    border-radius:8px;
+    overflow:hidden;
+    background:#ffffff;
+}
 
     .invoice-meta-row div{
         text-align:center;
@@ -1261,12 +1267,15 @@ async function printInvoicePdf(id) {
             gap:12px;
             ">
 
-                <div style="
-                width:60px;
-                min-width:60px;
-                ">
-                    ${logo}
-                </div>
+               <div style="
+width:130px;
+min-width:130px;
+display:flex;
+align-items:flex-start;
+justify-content:center;
+">
+    ${logo}
+</div>
 
                 <div>
 
@@ -1296,100 +1305,95 @@ async function printInvoicePdf(id) {
 
     </div>
 
-    <div class="invoice-meta-row">
-        <div>
-            <span>Invoice #</span>
-            <b>${inv.invoice_number}</b>
-        </div>
-
-        <div>
-            <span>Date</span>
-            <b>${formatDateDDMMYYYY(inv.invoice_date)}</b>
-        </div>
-
-        <div>
-            <span>Due</span>
-            <b>${formatDateDDMMYYYY(inv.due_date)}</b>
-        </div>
-
-        <div>
-            <span>Status</span>
-            <b>${inv.status || ""}</b>
-        </div>
+   <div class="invoice-meta-row">
+    <div>
+        <span>Invoice #</span>
+        <b>${inv.invoice_number}</b>
     </div>
 
-    <div class="bill-card">
-        <div class="section-title">Bill To</div>
-
-        <div class="customer-name">
-            ${customer.name || ""}
-        </div>
-
-        <div class="customer-info">
-            ${customer.address || ""}<br>
-            ${customer.phone || ""}<br>
-            ${customer.email || ""}<br>
-            <div class="customer-tax">Tax ID: ${customer.tax_id || ""}</div>
-        </div>
+    <div>
+        <span>Date</span>
+        <b>${formatDateDDMMYYYY(inv.invoice_date)}</b>
     </div>
 
-    <table>
-        <thead>
-            <tr>
-                <th>Item</th>
-                <th style="width:90px;">Qty</th>
-                <th style="width:150px;">Price</th>
-                <th style="width:150px;">Total</th>
-            </tr>
-        </thead>
-
-        <tbody>
-            ${rows}
-        </tbody>
-    </table>
-
-    <div class="total-box">
-        <div class="total-inner">
-            Total: ${MONEY}${Number(inv.total || 0).toFixed(2)}
-        </div>
+    <div>
+        <span>Due</span>
+        <b>${formatDateDDMMYYYY(inv.due_date)}</b>
     </div>
+</div>
+
+<div class="bill-card">
+    <div class="section-title">Bill To</div>
+
+    <div class="customer-name">
+        ${customer.name || ""}
+    </div>
+
+    <div class="customer-info">
+        ${customer.address || ""}<br>
+        ${customer.phone || ""}<br>
+        ${customer.email || ""}<br>
+        <div class="customer-tax">Tax ID: ${customer.tax_id || ""}</div>
+    </div>
+</div>
+
+<table>
+    <thead>
+        <tr>
+            <th>Item</th>
+            <th style="width:90px;">Qty</th>
+            <th style="width:150px;">Price</th>
+            <th style="width:150px;">Total</th>
+        </tr>
+    </thead>
+
+    <tbody>
+        ${rows}
+    </tbody>
+</table>
+
+<div class="total-box">
+    <div class="total-inner">
+        Total: ${MONEY}${Number(inv.total || 0).toFixed(2)}
+    </div>
+</div>
 
 </div>
 
 <div class="page">
 
-    <div class="delivery-title">
-        DELIVERY NOTE COPY
-    </div>
+<div class="delivery-title">
+    DELIVERY NOTE COPY
+</div>
 
-    <div class="bill-card">
-        <p><b>Invoice #:</b> ${inv.invoice_number}</p>
-        <p><b>Customer:</b> ${customer.name || ""}</p>
-        <p><b>Date:</b> ${formatDateDDMMYYYY(inv.invoice_date)}</p>
-    </div>
+<div class="bill-card">
+    <p><b>Invoice #:</b> ${inv.invoice_number}</p>
+    <p><b>Customer:</b> ${customer.name || ""}</p>
+    <p><b>Date:</b> ${formatDateDDMMYYYY(inv.invoice_date)}</p>
+</div>
 
-    <table>
-        <thead>
+<table>
+    <thead>
+        <tr>
+            <th>Item</th>
+            <th style="width:120px;">Qty</th>
+        </tr>
+    </thead>
+
+    <tbody>
+        ${items.map(item => `
             <tr>
-                <th>Item</th>
-                <th style="width:120px;">Qty</th>
+                <td>${item.description || ""}</td>
+                <td>${item.quantity || ""}</td>
             </tr>
-        </thead>
+        `).join("")}
+    </tbody>
+</table>
 
-        <tbody>
-            ${items.map(item => `
-                <tr>
-                    <td>${item.description || ""}</td>
-                    <td>${item.quantity || ""}</td>
-                </tr>
-            `).join("")}
-        </tbody>
-    </table>
-
-    <div class="signature-box">
-        <p>Received By: __________________________</p>
-        <p>Signature: ____________________________</p>
-    </div>
+<div class="signature-box">
+    <p>Received By: __________________________</p>
+    <p>Signature: ____________________________</p>
+</div>
 
 </div>
 
