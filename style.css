@@ -240,3 +240,66 @@ th,td{
     padding:8px 12px;
     cursor:pointer;
 }
+
+@media (max-width: 768px) {
+
+    .layout{
+        display:block;
+    }
+
+    .sidebar{
+        width:100%;
+        padding:15px;
+    }
+
+    .logo{
+        font-size:20px;
+        margin-bottom:15px;
+    }
+
+    .menu{
+        display:grid;
+        grid-template-columns:1fr 1fr;
+        gap:8px;
+    }
+
+    .menu button{
+        margin-bottom:0;
+        text-align:center;
+        padding:12px;
+    }
+
+    .content{
+        padding:15px;
+    }
+
+    .cards{
+        grid-template-columns:1fr;
+    }
+
+    .grid-2,
+    .grid-3{
+        grid-template-columns:1fr;
+    }
+
+    .modal-content,
+    .modal-content.wide{
+        width:95%;
+        margin:15px auto;
+        padding:15px;
+    }
+
+    table{
+        display:block;
+        overflow-x:auto;
+        white-space:nowrap;
+    }
+
+    .card-value{
+        font-size:24px;
+    }
+
+    h1{
+        font-size:24px;
+    }
+}
