@@ -10,8 +10,12 @@ let productsCache = [];
 let companyCache = null;
 
 document.addEventListener("DOMContentLoaded", async () => {
+
     hookupButtons();
     setToday();
+
+    populateReportYears();
+    toggleReportPeriod();
 
     await loadCustomers();
     await loadProducts();
@@ -20,6 +24,7 @@ document.addEventListener("DOMContentLoaded", async () => {
     await loadDashboard();
     await loadInvoices();
     await runReport();
+
 });
 
 function hookupButtons() {
@@ -130,27 +135,40 @@ function calculateDueDate() {
     if (!invoiceDateInput || !dueDateInput || !termsInput) return;
 
     const start = new Date(invoiceDateInput.value || new Date());
-    let days = 30;
+    let days = 0;
 
-    if (termsInput.value === "NONE") days = 0;
+    if (termsInput.value === "None") days = 0;
+    if (termsInput.value === "COD") days = 0;
     if (termsInput.value === "Net 15") days = 15;
     if (termsInput.value === "Net 30") days = 30;
     if (termsInput.value === "Net 45") days = 45;
     if (termsInput.value === "Net 60") days = 60;
 
     start.setDate(start.getDate() + days);
-    dueDateInput.value = start.toISOString().split("T")[0];
+
+    dueDateInput.value =
+        start.toISOString().split("T")[0];
 }
 
 function updateTermsFromCustomer() {
-    const customerId = document.getElementById("invoiceCustomer")?.value;
-    const customer = customersCache.find(c => String(c.id) === String(customerId));
 
-    if (customer && customer.payment_terms) {
-        document.getElementById("invoiceTerms").value = customer.payment_terms;
+    const customerId =
+        document.getElementById("invoiceCustomer")?.value;
+
+    const customer =
+        customersCache.find(
+            c => String(c.id) === String(customerId)
+        );
+
+    if (customer) {
+
+        document.getElementById("invoiceTerms").value =
+            customer.payment_terms || "None";
+
     }
 
     showSelectedCustomerInfo();
+
     calculateDueDate();
 }
 
@@ -316,6 +334,7 @@ function editCustomer(id) {
     document.getElementById("customerTaxId").value = customer.tax_id || "";
     document.getElementById("customerAddress").value = customer.address || "";
     document.getElementById("customerTerms").value = customer.payment_terms || "Net 30";
+    document.getElementById("customerPriceCategory").value = customer.price_category || 1;
 
     openCustomerModal();
 }
@@ -1227,4 +1246,32 @@ function toggleReportPeriod() {
         monthBox.style.display = "none";
         dateBox.style.display = "grid";
     }
+}
+
+function populateReportYears() {
+
+    const select =
+        document.getElementById("reportYear");
+
+    if (!select) return;
+
+    const currentYear =
+        new Date().getFullYear();
+
+    select.innerHTML = "";
+
+    for (
+        let year = currentYear + 1;
+        year >= currentYear - 5;
+        year--
+    ) {
+
+        select.innerHTML += `
+        <option value="${year}">
+            ${year}
+        </option>
+        `;
+    }
+
+    select.value = currentYear;
 }
