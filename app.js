@@ -75,13 +75,39 @@ function updateTermsFromCustomer() {
 async function loadDashboard() {
     const customers = await db.from("customers").select("*", { count: "exact", head: true });
     const products = await db.from("products").select("*", { count: "exact", head: true });
-    const invoices = await db.from("invoices").select("*", { count: "exact", head: true }).eq("deleted", false);
-    const pastDue = await db.from("invoices").select("*", { count: "exact", head: true }).eq("status", "Past Due").eq("deleted", false);
+    const invoices = await db.from("invoices").select("*").eq("deleted", false);
+
+    const invoiceData = invoices.data || [];
+
+    let totalSales = 0;
+    let unpaidTotal = 0;
+    let unpaidCount = 0;
+    let pastDueCount = 0;
+
+    const today = new Date().toISOString().split("T")[0];
+
+    invoiceData.forEach(inv => {
+        const total = Number(inv.total || 0);
+        totalSales += total;
+
+        if (inv.status !== "Paid") {
+            unpaidCount++;
+            unpaidTotal += total;
+        }
+
+        if (inv.status !== "Paid" && inv.due_date && inv.due_date < today) {
+            pastDueCount++;
+        }
+    });
 
     document.getElementById("customersCount").innerText = customers.count || 0;
     document.getElementById("productsCount").innerText = products.count || 0;
-    document.getElementById("invoicesCount").innerText = invoices.count || 0;
-    document.getElementById("pastDueCount").innerText = pastDue.count || 0;
+    document.getElementById("invoicesCount").innerText = invoiceData.length;
+    document.getElementById("pastDueCount").innerText = pastDueCount;
+
+    document.getElementById("dashboardSalesTotal").innerText = "$" + totalSales.toFixed(2);
+    document.getElementById("dashboardUnpaidCount").innerText = unpaidCount;
+    document.getElementById("dashboardUnpaidTotal").innerText = "$" + unpaidTotal.toFixed(2);
 }
 
 async function saveCustomer() {
