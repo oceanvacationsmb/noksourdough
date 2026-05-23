@@ -1,14 +1,20 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-<meta charset="utf-8">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>NokSourdough Invoice System</title>
 
 <style>
-body{
+*{
     margin:0;
+    padding:0;
+    box-sizing:border-box;
+}
+
+body{
     font-family:Arial,sans-serif;
-    background:#f5f6fa;
+    background:#f4f6f9;
 }
 
 .header{
@@ -25,56 +31,83 @@ body{
 
 .cards{
     display:grid;
-    grid-template-columns:repeat(4,1fr);
+    grid-template-columns:repeat(auto-fit,minmax(220px,1fr));
     gap:20px;
+    margin-bottom:25px;
 }
 
 .card{
     background:white;
-    padding:20px;
     border-radius:10px;
-    box-shadow:0 2px 8px rgba(0,0,0,.1);
+    padding:20px;
+    box-shadow:0 2px 8px rgba(0,0,0,.08);
 }
 
-.card h3{
-    margin:0;
+.card-title{
+    color:#666;
+    font-size:14px;
 }
 
-.number{
+.card-value{
     font-size:32px;
+    font-weight:bold;
     margin-top:10px;
     color:#2563eb;
 }
 
-.buttons{
-    margin-top:25px;
+.toolbar{
+    margin-bottom:20px;
 }
 
 button{
-    padding:12px 20px;
-    border:none;
-    border-radius:8px;
     background:#2563eb;
     color:white;
+    border:none;
+    padding:12px 18px;
+    border-radius:8px;
     cursor:pointer;
     margin-right:10px;
 }
 
-table{
-    width:100%;
-    margin-top:25px;
-    border-collapse:collapse;
-    background:white;
+button:hover{
+    background:#1d4ed8;
 }
 
-th,td{
-    border:1px solid #ddd;
-    padding:12px;
-    text-align:left;
+.section{
+    background:white;
+    border-radius:10px;
+    padding:20px;
+    box-shadow:0 2px 8px rgba(0,0,0,.08);
+}
+
+table{
+    width:100%;
+    border-collapse:collapse;
 }
 
 th{
     background:#f3f4f6;
+}
+
+th,td{
+    padding:12px;
+    border:1px solid #ddd;
+    text-align:left;
+}
+
+.status-paid{
+    color:green;
+    font-weight:bold;
+}
+
+.status-unpaid{
+    color:red;
+    font-weight:bold;
+}
+
+.status-due{
+    color:orange;
+    font-weight:bold;
 }
 </style>
 </head>
@@ -90,35 +123,41 @@ NokSourdough Invoice System
 <div class="cards">
 
 <div class="card">
-<h3>Total Customers</h3>
-<div class="number">0</div>
+<div class="card-title">Customers</div>
+<div class="card-value">0</div>
 </div>
 
 <div class="card">
-<h3>Total Products</h3>
-<div class="number">0</div>
+<div class="card-title">Products</div>
+<div class="card-value">0</div>
 </div>
 
 <div class="card">
-<h3>Total Invoices</h3>
-<div class="number">0</div>
+<div class="card-title">Invoices</div>
+<div class="card-value">0</div>
 </div>
 
 <div class="card">
-<h3>Past Due</h3>
-<div class="number">0</div>
+<div class="card-title">Past Due</div>
+<div class="card-value">0</div>
 </div>
 
 </div>
 
-<div class="buttons">
-<button>Add Customer</button>
-<button>Add Product</button>
-<button>Create Invoice</button>
-<button>Export PDF</button>
+<div class="toolbar">
+<button id="addCustomerBtn">Add Customer</button>
+<button id="addProductBtn">Add Product</button>
+<button id="createInvoiceBtn">Create Invoice</button>
+<button id="exportPdfBtn">Export PDF</button>
 </div>
+
+<div class="section">
+
+<h2 style="margin-bottom:15px;">Recent Invoices</h2>
 
 <table>
+
+<thead>
 <tr>
 <th>Invoice #</th>
 <th>Customer</th>
@@ -127,19 +166,37 @@ NokSourdough Invoice System
 <th>Total</th>
 <th>Status</th>
 </tr>
+</thead>
+
+<tbody>
 
 <tr>
 <td>1001</td>
 <td>Sample Customer</td>
-<td>05/22/2026</td>
+<td>05/23/2026</td>
 <td>06/01/2026</td>
 <td>$125.00</td>
-<td>Unpaid</td>
+<td class="status-unpaid">UNPAID</td>
 </tr>
+
+<tr>
+<td>1002</td>
+<td>Sample Customer 2</td>
+<td>05/23/2026</td>
+<td>05/30/2026</td>
+<td>$300.00</td>
+<td class="status-paid">PAID</td>
+</tr>
+
+</tbody>
 
 </table>
 
 </div>
+
+</div>
+
+<script src="app.js"></script>
 
 </body>
 </html>
