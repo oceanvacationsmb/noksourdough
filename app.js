@@ -103,7 +103,7 @@ function calculateDueDate() {
     const start = new Date(invoiceDateInput.value || new Date());
     let days = 30;
 
-    if (termsInput.value === "COD") days = 0;
+    if (termsInput.value === "NONE") days = 0;
     if (termsInput.value === "Net 15") days = 15;
     if (termsInput.value === "Net 30") days = 30;
     if (termsInput.value === "Net 45") days = 45;
