@@ -849,20 +849,20 @@ async function saveInvoice() {
     }
 
     for (const item of invoiceItems) {
-        await db.from("invoice_items")
-            .insert([
-                {
-                    invoice_id: invoiceId,
-                    product_id: item.product_id,
-                    description: item.description,
-                    quantity: item.quantity,
-                    unit_price: item.unit_price,
-                    line_total: item.line_total
-                }
-            ]);
-    }
+    await db.from("invoice_items")
+        .insert([
+            {
+                invoice_id: invoiceId,
+                product_id: item.product_id,
+                description: item.description,
+                quantity: item.quantity,
+                unit_price: item.unit_price,
+                line_total: item.line_total
+            }
+        ]);
+}
 
-    alert(editingId ? "Invoice updated" : "Invoice #" + invoiceNumber + " saved");
+alert(editingId ? "Invoice updated" : "Invoice #" + invoiceNumber + " saved");
 
 closeInvoiceModal();
 
@@ -873,6 +873,8 @@ await loadInvoiceNumber();
 await loadDashboard();
 await loadInvoices();
 await runReport();
+
+await printInvoicePdf(invoiceId);
 }
 
 async function loadInvoices() {
