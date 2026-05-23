@@ -108,14 +108,12 @@ async function openNewInvoiceModal() {
     renderInvoiceItems();
 
     setToday();
-    document.getElementById("invoiceNotes").value = "";
 
     await loadInvoiceNumber();
     updateTermsFromCustomer();
 
     openInvoiceModal();
 }
-
 function setToday() {
     const today = new Date().toISOString().split("T")[0];
     const invoiceDate = document.getElementById("invoiceDate");
@@ -785,16 +783,15 @@ async function saveInvoice() {
     let invoiceNumber = document.getElementById("invoiceNumber").value;
     let invoiceId = editingId;
 
-    const invoiceData = {
-        customer_id: document.getElementById("invoiceCustomer").value,
-        invoice_date: document.getElementById("invoiceDate").value,
-        due_date: document.getElementById("invoiceDueDate").value,
-        payment_terms: document.getElementById("invoiceTerms").value,
-        notes: document.getElementById("invoiceNotes").value,
-        total: total,
-        balance: total,
-        deleted: false
-    };
+   const invoiceData = {
+    customer_id: document.getElementById("invoiceCustomer").value,
+    invoice_date: document.getElementById("invoiceDate").value,
+    due_date: document.getElementById("invoiceDueDate").value,
+    payment_terms: document.getElementById("invoiceTerms").value,
+    total: total,
+    balance: total,
+    deleted: false
+};
 
     if (editingId) {
         const result = await db.from("invoices")
@@ -854,16 +851,15 @@ async function saveInvoice() {
 
     alert(editingId ? "Invoice updated" : "Invoice #" + invoiceNumber + " saved");
 
-    closeInvoiceModal();
+closeInvoiceModal();
 
-    invoiceItems = [];
-    renderInvoiceItems();
-    document.getElementById("invoiceNotes").value = "";
+invoiceItems = [];
+renderInvoiceItems();
 
-    await loadInvoiceNumber();
-    await loadDashboard();
-    await loadInvoices();
-    await runReport();
+await loadInvoiceNumber();
+await loadDashboard();
+await loadInvoices();
+await runReport();
 }
 
 async function loadInvoices() {
@@ -979,29 +975,27 @@ async function editInvoice(id) {
     }
 
     const itemResult = await db.from("invoice_items")
-        .select("*")
-        .eq("invoice_id", id);
+    .select("*")
+    .eq("invoice_id", id);
 
-    const inv = invoiceResult.data;
+const inv = invoiceResult.data;
 
-    document.getElementById("invoiceModalTitle").innerText = "Edit Invoice";
-    document.getElementById("saveInvoiceBtn").innerText = "Save Invoice";
-    document.getElementById("editingInvoiceId").value = inv.id;
-    document.getElementById("invoiceNumber").value = inv.invoice_number;
-    document.getElementById("invoiceCustomer").value = inv.customer_id;
-    document.getElementById("invoiceTerms").value = inv.payment_terms || "Net 30";
-    document.getElementById("invoiceDate").value = inv.invoice_date || "";
-    document.getElementById("invoiceDueDate").value = inv.due_date || "";
-    document.getElementById("invoiceNotes").value = inv.notes || "";
+document.getElementById("invoiceModalTitle").innerText = "Edit Invoice";
+document.getElementById("saveInvoiceBtn").innerText = "Save Invoice";
+document.getElementById("editingInvoiceId").value = inv.id;
+document.getElementById("invoiceNumber").value = inv.invoice_number;
+document.getElementById("invoiceCustomer").value = inv.customer_id;
+document.getElementById("invoiceTerms").value = inv.payment_terms || "None";
+document.getElementById("invoiceDate").value = inv.invoice_date || "";
+document.getElementById("invoiceDueDate").value = inv.due_date || "";
 
-    invoiceItems = (itemResult.data || []).map(item => ({
-        product_id: item.product_id,
-        description: item.description,
-        quantity: Number(item.quantity || 0),
-        unit_price: Number(item.unit_price || 0),
-        line_total: Number(item.line_total || 0)
-    }));
-
+invoiceItems = (itemResult.data || []).map(item => ({
+    product_id: item.product_id,
+    description: item.description,
+    quantity: Number(item.quantity || 0),
+    unit_price: Number(item.unit_price || 0),
+    line_total: Number(item.line_total || 0)
+}));
     renderInvoiceItems();
     updateTermsFromCustomer();
     openInvoiceModal();
@@ -1101,8 +1095,7 @@ async function printInvoicePdf(id) {
             <tbody>${rows}</tbody>
         </table>
 
-        <div class="total">Total: ${MONEY}${Number(inv.total || 0).toFixed(2)}</div>
-        <p><b>Notes:</b> ${inv.notes || ""}</p>
+       <div class="total">Total: ${MONEY}${Number(inv.total || 0).toFixed(2)}</div>
     </div>
 
     <div class="page">
