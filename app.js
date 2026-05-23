@@ -628,13 +628,57 @@ async function loadInvoiceNumber() {
 }
 
 function addInvoiceItem() {
-    const select = document.getElementById("invoiceProduct");
-    const option = select.options[select.selectedIndex];
 
-    if (!option || !option.value) {
+    const customerId =
+        document.getElementById("invoiceCustomer").value;
+
+    const customer =
+        customersCache.find(
+            c => Number(c.id) === Number(customerId)
+        );
+
+    const category =
+        Number(customer?.price_category || 1);
+
+    const productId =
+        document.getElementById("invoiceProduct").value;
+
+    const product =
+        productsCache.find(
+            p => Number(p.id) === Number(productId)
+        );
+
+    if (!product) {
         alert("Select product");
         return;
     }
+
+    const qty =
+        Number(
+            document.getElementById("invoiceQty").value || 1
+        );
+
+    let price = 0;
+
+    if (category === 1)
+        price = Number(product.price_1 || product.price || 0);
+
+    if (category === 2)
+        price = Number(product.price_2 || product.price || 0);
+
+    if (category === 3)
+        price = Number(product.price_3 || product.price || 0);
+
+    invoiceItems.push({
+        product_id: product.id,
+        description: product.name,
+        quantity: qty,
+        unit_price: price,
+        line_total: qty * price
+    });
+
+    renderInvoiceItems();
+}
 
     const qty = Number(document.getElementById("invoiceQty").value || 1);
     const price = Number(option.dataset.price || 0);
@@ -657,26 +701,69 @@ function removeInvoiceItem(index) {
 }
 
 function renderInvoiceItems() {
-    const body = document.getElementById("invoiceItemsBody");
+
+    const body =
+        document.getElementById("invoiceItemsBody");
+
     body.innerHTML = "";
 
     let grandTotal = 0;
 
     invoiceItems.forEach((item, index) => {
+
+        item.line_total =
+            Number(item.quantity) *
+            Number(item.unit_price);
+
         grandTotal += Number(item.line_total || 0);
 
         body.innerHTML += `
         <tr>
+
             <td>${item.description}</td>
-            <td>${item.quantity}</td>
-            <td>${MONEY}${Number(item.unit_price || 0).toFixed(2)}</td>
-            <td>${MONEY}${Number(item.line_total || 0).toFixed(2)}</td>
-            <td><button class="danger" onclick="removeInvoiceItem(${index})">X</button></td>
+
+            <td>
+                <input
+                    type="number"
+                    value="${item.quantity}"
+                    min="1"
+                    onchange="
+                        invoiceItems[${index}].quantity =
+                        Number(this.value);
+                        renderInvoiceItems();
+                    ">
+            </td>
+
+            <td>
+                <input
+                    type="number"
+                    value="${item.unit_price}"
+                    step="0.01"
+                    onchange="
+                        invoiceItems[${index}].unit_price =
+                        Number(this.value);
+                        renderInvoiceItems();
+                    ">
+            </td>
+
+            <td>
+                ${MONEY}${Number(item.line_total).toFixed(2)}
+            </td>
+
+            <td>
+                <button
+                    class="danger"
+                    onclick="removeInvoiceItem(${index})">
+                    X
+                </button>
+            </td>
+
         </tr>
         `;
     });
 
-    document.getElementById("invoiceTotal").innerText = grandTotal.toFixed(2);
+    document.getElementById("invoiceTotal").innerText =
+        grandTotal.toFixed(2);
 }
 
 async function saveInvoice() {
