@@ -3,19 +3,20 @@ const SUPABASE_KEY = "sb_publishable_5ES5DIUJCJnFMLVQFFgl4g_2LIISqZF";
 
 const db = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
+const MONEY = "฿";
+
 let invoiceItems = [];
 let customersCache = [];
 
 document.addEventListener("DOMContentLoaded", async () => {
     hookupButtons();
-
     setToday();
 
-    await loadDashboard();
     await loadCustomers();
     await loadProducts();
     await loadCompanyProfile();
     await loadInvoiceNumber();
+    await loadDashboard();
     await loadInvoices();
 });
 
@@ -32,10 +33,9 @@ function hookupButtons() {
 
 function setToday() {
     const today = new Date().toISOString().split("T")[0];
-    const invoiceDate = document.getElementById("invoiceDate");
 
-    if (invoiceDate) {
-        invoiceDate.value = today;
+    if (document.getElementById("invoiceDate")) {
+        document.getElementById("invoiceDate").value = today;
     }
 
     calculateDueDate();
@@ -48,7 +48,7 @@ function calculateDueDate() {
 
     if (!invoiceDateInput || !dueDateInput || !termsInput) return;
 
-    const start = new Date(invoiceDateInput.value);
+    const start = new Date(invoiceDateInput.value || new Date());
     let days = 30;
 
     if (termsInput.value === "COD") days = 0;
@@ -62,14 +62,37 @@ function calculateDueDate() {
 }
 
 function updateTermsFromCustomer() {
-    const customerId = document.getElementById("invoiceCustomer").value;
+    const customerId = document.getElementById("invoiceCustomer")?.value;
     const customer = customersCache.find(c => String(c.id) === String(customerId));
 
     if (customer && customer.payment_terms) {
         document.getElementById("invoiceTerms").value = customer.payment_terms;
     }
 
+    showSelectedCustomerInfo();
     calculateDueDate();
+}
+
+function showSelectedCustomerInfo() {
+    const box = document.getElementById("selectedCustomerInfo");
+    if (!box) return;
+
+    const customerId = document.getElementById("invoiceCustomer")?.value;
+    const customer = customersCache.find(c => String(c.id) === String(customerId));
+
+    if (!customer) {
+        box.innerHTML = "";
+        return;
+    }
+
+    box.innerHTML = `
+        <strong>${customer.name || ""}</strong><br>
+        Phone: ${customer.phone || ""}<br>
+        Email: ${customer.email || ""}<br>
+        Tax ID: ${customer.tax_id || ""}<br>
+        Address: ${customer.address || ""}<br>
+        Terms: ${customer.payment_terms || ""}
+    `;
 }
 
 async function loadDashboard() {
@@ -105,9 +128,17 @@ async function loadDashboard() {
     document.getElementById("invoicesCount").innerText = invoiceData.length;
     document.getElementById("pastDueCount").innerText = pastDueCount;
 
-    document.getElementById("dashboardSalesTotal").innerText = "$" + totalSales.toFixed(2);
-    document.getElementById("dashboardUnpaidCount").innerText = unpaidCount;
-    document.getElementById("dashboardUnpaidTotal").innerText = "$" + unpaidTotal.toFixed(2);
+    if (document.getElementById("dashboardSalesTotal")) {
+        document.getElementById("dashboardSalesTotal").innerText = MONEY + totalSales.toFixed(2);
+    }
+
+    if (document.getElementById("dashboardUnpaidCount")) {
+        document.getElementById("dashboardUnpaidCount").innerText = unpaidCount;
+    }
+
+    if (document.getElementById("dashboardUnpaidTotal")) {
+        document.getElementById("dashboardUnpaidTotal").innerText = MONEY + unpaidTotal.toFixed(2);
+    }
 }
 
 async function saveCustomer() {
@@ -116,6 +147,8 @@ async function saveCustomer() {
     const email = document.getElementById("customerEmail").value;
     const address = document.getElementById("customerAddress").value;
     const terms = document.getElementById("customerTerms").value;
+    const taxInput = document.getElementById("customerTaxId");
+    const tax_id = taxInput ? taxInput.value : "";
 
     if (!name) {
         alert("Customer name required");
@@ -128,7 +161,8 @@ async function saveCustomer() {
             phone,
             email,
             address,
-            payment_terms: terms
+            payment_terms: terms,
+            tax_id
         }
     ]);
 
@@ -143,6 +177,7 @@ async function saveCustomer() {
     document.getElementById("customerPhone").value = "";
     document.getElementById("customerEmail").value = "";
     document.getElementById("customerAddress").value = "";
+    if (taxInput) taxInput.value = "";
 
     await loadCustomers();
     await loadDashboard();
@@ -227,7 +262,7 @@ async function loadProducts() {
             table.innerHTML += `
             <tr>
                 <td>${product.name}</td>
-                <td>$${Number(product.price || 0).toFixed(2)}</td>
+                <td>${MONEY}${Number(product.price || 0).toFixed(2)}</td>
             </tr>
             `;
         }
@@ -331,15 +366,15 @@ function renderInvoiceItems() {
 
     let grandTotal = 0;
 
-    invoiceItems.forEach(item => {
+    invoiceItems.forEach((item, index) => {
         grandTotal += item.line_total;
 
         body.innerHTML += `
         <tr>
             <td>${item.description}</td>
             <td>${item.quantity}</td>
-            <td>$${item.unit_price.toFixed(2)}</td>
-            <td>$${item.line_total.toFixed(2)}</td>
+            <td>${MONEY}${item.unit_price.toFixed(2)}</td>
+            <td>${MONEY}${item.line_total.toFixed(2)}</td>
         </tr>
         `;
     });
@@ -413,7 +448,11 @@ async function saveInvoice() {
 async function loadInvoices() {
     const filter = document.getElementById("invoiceFilter")?.value || "all";
 
-    let query = db.from("invoices").select("*").eq("deleted", false).order("id", { ascending: false });
+    let query = db
+        .from("invoices")
+        .select("*")
+        .eq("deleted", false)
+        .order("id", { ascending: false });
 
     if (filter !== "all") {
         query = query.eq("status", filter);
@@ -448,36 +487,35 @@ async function loadInvoices() {
             <td>${customer ? customer.name : ""}</td>
             <td>${inv.invoice_date || ""}</td>
             <td>${inv.due_date || ""}</td>
-            <td>$${total.toFixed(2)}</td>
+            <td>${MONEY}${total.toFixed(2)}</td>
             <td>${inv.status || "Unpaid"}</td>
             <td>
+                <button class="primary" onclick="editInvoice(${inv.id})">Edit</button>
                 <button class="success" onclick="markInvoicePaid(${inv.id})">Paid</button>
-                <button class="primary" onclick="markInvoiceUnpaid(${inv.id})">Unpaid</button>
                 <button class="danger" onclick="deleteInvoice(${inv.id})">Delete</button>
             </td>
         </tr>
         `;
     });
 
-    document.getElementById("salesTotal").innerText = "$" + sales.toFixed(2);
-    document.getElementById("paidTotal").innerText = "$" + paid.toFixed(2);
-    document.getElementById("unpaidTotal").innerText = "$" + unpaid.toFixed(2);
+    if (document.getElementById("salesTotal")) {
+        document.getElementById("salesTotal").innerText = MONEY + sales.toFixed(2);
+    }
+
+    if (document.getElementById("paidTotal")) {
+        document.getElementById("paidTotal").innerText = MONEY + paid.toFixed(2);
+    }
+
+    if (document.getElementById("unpaidTotal")) {
+        document.getElementById("unpaidTotal").innerText = MONEY + unpaid.toFixed(2);
+    }
 }
 
 async function markInvoicePaid(id) {
     await db.from("invoices").update({
         status: "Paid",
-        paid_date: new Date().toISOString().split("T")[0]
-    }).eq("id", id);
-
-    await loadInvoices();
-    await loadDashboard();
-}
-
-async function markInvoiceUnpaid(id) {
-    await db.from("invoices").update({
-        status: "Unpaid",
-        paid_date: null
+        paid_date: new Date().toISOString().split("T")[0],
+        balance: 0
     }).eq("id", id);
 
     await loadInvoices();
@@ -493,4 +531,8 @@ async function deleteInvoice(id) {
 
     await loadInvoices();
     await loadDashboard();
+}
+
+async function editInvoice(id) {
+    alert("Edit invoice will be built next. Invoice ID: " + id);
 }
