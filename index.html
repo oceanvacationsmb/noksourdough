@@ -10,23 +10,6 @@
 
 <body>
 
-<script>
-alert(`Hi Moti
-
-Tigit, Tigit, Togit
-
-Me Ani? Meeeeee
-
-Me Ani?
-
-Ma Ata TIOT?
-
-Me Ani
-
-Tsemi La Shasemo ????`);
-</script>
-
-  
 <div class="layout">
   <div class="sidebar">
     <div class="logo">NokSourdough</div>
@@ -378,5 +361,92 @@ function showPage(page){
 </script>
 
 <script src="app.js"></script>
+
+<div id="motiPopup" style="
+position:fixed;
+top:0;
+left:0;
+width:100%;
+height:100%;
+background:rgba(0,0,0,0.85);
+display:flex;
+align-items:center;
+justify-content:center;
+z-index:999999;
+">
+
+<div style="
+background:linear-gradient(135deg,#ff9800,#ff5722,#e91e63);
+padding:50px;
+border-radius:30px;
+text-align:center;
+color:white;
+font-family:Arial,sans-serif;
+box-shadow:0 0 40px rgba(0,0,0,.5);
+max-width:700px;
+width:90%;
+animation:popin .4s ease;
+">
+
+<h1 style="
+font-size:48px;
+margin-bottom:25px;
+">
+😂 HI MOTI 😂
+</h1>
+
+<div style="
+font-size:34px;
+font-weight:bold;
+line-height:1.8;
+">
+
+🔥 TIGIT... TIGIT... TOGIT... 🔥
+
+<br><br>
+
+🤔 ME ANI?
+
+<br>
+
+😎 MEEEEEEEEEEE !!!
+
+<br><br>
+
+🤔 ME ANI?
+
+<br><br>
+
+🤣 MA ATA TIOT ???
+
+<br><br>
+
+🚀 TSEMI LA SHASEMO ??? 🚀
+
+</div>
+
+</div>
+
+</div>
+
+<style>
+@keyframes popin{
+from{
+transform:scale(.7);
+opacity:0;
+}
+to{
+transform:scale(1);
+opacity:1;
+}
+}
+</style>
+
+<script>
+setTimeout(() => {
+    document.getElementById("motiPopup").remove();
+}, 7000);
+</script>
+  
 </body>
 </html>
