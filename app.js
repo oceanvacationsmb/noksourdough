@@ -657,14 +657,17 @@ function addInvoiceItem() {
 
     let price = 0;
 
-    if (category === 1)
+    if (category === 1) {
         price = Number(product.price_1 || product.price || 0);
+    }
 
-    if (category === 2)
+    if (category === 2) {
         price = Number(product.price_2 || product.price || 0);
+    }
 
-    if (category === 3)
+    if (category === 3) {
         price = Number(product.price_3 || product.price || 0);
+    }
 
     invoiceItems.push({
         product_id: product.id,
@@ -672,21 +675,6 @@ function addInvoiceItem() {
         quantity: qty,
         unit_price: price,
         line_total: qty * price
-    });
-
-    renderInvoiceItems();
-}
-
-    const qty = Number(document.getElementById("invoiceQty").value || 1);
-    const price = Number(option.dataset.price || 0);
-    const total = qty * price;
-
-    invoiceItems.push({
-        product_id: option.value,
-        description: option.text.trim(),
-        quantity: qty,
-        unit_price: price,
-        line_total: total
     });
 
     renderInvoiceItems();
@@ -1130,32 +1118,59 @@ async function printInvoicePdf(id) {
 
 async function runReport() {
     const customerId = document.getElementById("reportCustomer")?.value || "all";
-    const startDate = document.getElementById("reportStartDate")?.value;
-    const endDate = document.getElementById("reportEndDate")?.value;
     const status = document.getElementById("reportStatus")?.value || "all";
-    const month = document.getElementById("reportMonth")?.value;
-    const year = document.getElementById("reportYear")?.value;
+    const periodType = document.getElementById("reportPeriodType")?.value || "month";
+
+    let startDate = "";
+    let endDate = "";
+
+    if (periodType === "month") {
+        const month = document.getElementById("reportMonth")?.value;
+        const year = document.getElementById("reportYear")?.value;
+
+        if (month && year) {
+            startDate = `${year}-${month}-01`;
+
+            const lastDay = new Date(Number(year), Number(month), 0)
+                .getDate();
+
+            endDate = `${year}-${month}-${String(lastDay).padStart(2, "0")}`;
+        }
+    }
+
+    if (periodType === "dates") {
+        startDate = document.getElementById("reportStartDate")?.value;
+        endDate = document.getElementById("reportEndDate")?.value;
+    }
 
     let query = db.from("invoices")
         .select("*")
         .eq("deleted", false);
 
-    if (customerId !== "all") query = query.eq("customer_id", customerId);
-    if (status !== "all") query = query.eq("status", status);
-    if (startDate) query = query.gte("invoice_date", startDate);
-    if (endDate) query = query.lte("invoice_date", endDate);
+    if (customerId !== "all") {
+        query = query.eq("customer_id", customerId);
+    }
+
+    if (status !== "all") {
+        query = query.eq("status", status);
+    }
+
+    if (startDate) {
+        query = query.gte("invoice_date", startDate);
+    }
+
+    if (endDate) {
+        query = query.lte("invoice_date", endDate);
+    }
 
     const result = await query.order("invoice_date", { ascending: false });
 
-    let invoices = result.data || [];
-
-    if (month) {
-        invoices = invoices.filter(inv => inv.invoice_date && inv.invoice_date.split("-")[1] === month);
+    if (result.error) {
+        alert(result.error.message);
+        return;
     }
 
-    if (year) {
-        invoices = invoices.filter(inv => inv.invoice_date && inv.invoice_date.split("-")[0] === String(year));
-    }
+    const invoices = result.data || [];
 
     let totalSales = 0;
     let paidSales = 0;
@@ -1194,4 +1209,19 @@ async function runReport() {
     document.getElementById("reportPaidSales").innerText = MONEY + paidSales.toFixed(2);
     document.getElementById("reportUnpaidSales").innerText = MONEY + unpaidSales.toFixed(2);
     document.getElementById("reportInvoiceCount").innerText = invoices.length;
+}
+
+function toggleReportPeriod() {
+    const periodType = document.getElementById("reportPeriodType")?.value;
+
+    const monthBox = document.getElementById("reportMonthBox");
+    const dateBox = document.getElementById("reportDateBox");
+
+    if (periodType === "month") {
+        monthBox.style.display = "grid";
+        dateBox.style.display = "none";
+    } else {
+        monthBox.style.display = "none";
+        dateBox.style.display = "grid";
+    }
 }
