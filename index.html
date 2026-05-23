@@ -21,18 +21,18 @@ NokSourdough
 </div>
 
 <div class="menu">
-
 <button onclick="showPage('dashboard')">Dashboard</button>
 <button onclick="showPage('customers')">Customers</button>
 <button onclick="showPage('products')">Products</button>
 <button onclick="showPage('invoices')">Invoices</button>
 <button onclick="showPage('settings')">Settings</button>
-
 </div>
 
 </div>
 
 <div class="content">
+
+<!-- DASHBOARD -->
 
 <div id="dashboard" class="page active">
 
@@ -41,43 +41,45 @@ NokSourdough
 <div class="cards">
 
 <div class="card">
-    <div class="card-title">Customers</div>
-    <div id="customersCount" class="card-value">0</div>
+<div class="card-title">Customers</div>
+<div id="customersCount" class="card-value">0</div>
 </div>
 
 <div class="card">
-    <div class="card-title">Products</div>
-    <div id="productsCount" class="card-value">0</div>
+<div class="card-title">Products</div>
+<div id="productsCount" class="card-value">0</div>
 </div>
 
 <div class="card">
-    <div class="card-title">Invoices</div>
-    <div id="invoicesCount" class="card-value">0</div>
+<div class="card-title">Invoices</div>
+<div id="invoicesCount" class="card-value">0</div>
 </div>
 
 <div class="card">
-    <div class="card-title">Past Due</div>
-    <div id="pastDueCount" class="card-value">0</div>
+<div class="card-title">Past Due</div>
+<div id="pastDueCount" class="card-value">0</div>
 </div>
 
 <div class="card">
-    <div class="card-title">Total Sales</div>
-    <div id="dashboardSalesTotal" class="card-value">$0.00</div>
+<div class="card-title">Total Sales</div>
+<div id="dashboardSalesTotal" class="card-value">฿0.00</div>
 </div>
 
 <div class="card">
-    <div class="card-title">Unpaid Invoices</div>
-    <div id="dashboardUnpaidCount" class="card-value">0</div>
+<div class="card-title">Unpaid Invoices</div>
+<div id="dashboardUnpaidCount" class="card-value">0</div>
 </div>
 
 <div class="card">
-    <div class="card-title">Unpaid Balance</div>
-    <div id="dashboardUnpaidTotal" class="card-value">$0.00</div>
+<div class="card-title">Unpaid Balance</div>
+<div id="dashboardUnpaidTotal" class="card-value">฿0.00</div>
 </div>
 
 </div>
 
 </div>
+
+<!-- CUSTOMERS -->
 
 <div id="customers" class="page">
 
@@ -90,6 +92,8 @@ NokSourdough
 <input id="customerPhone" placeholder="Phone">
 
 <input id="customerEmail" placeholder="Email">
+
+<input id="customerTaxId" placeholder="Tax ID">
 
 <textarea id="customerAddress" placeholder="Address"></textarea>
 
@@ -129,6 +133,8 @@ Save Customer
 
 </div>
 
+<!-- PRODUCTS -->
+
 <div id="products" class="page">
 
 <h1>Products</h1>
@@ -165,14 +171,29 @@ Save Product
 
 </div>
 
+<!-- INVOICES -->
+
 <div id="invoices" class="page">
 
 <h1>Create Invoice</h1>
 
 <div class="cards">
-<div class="card"><div class="card-title">Total Sales</div><div id="salesTotal" class="card-value">$0</div></div>
-<div class="card"><div class="card-title">Paid</div><div id="paidTotal" class="card-value">$0</div></div>
-<div class="card"><div class="card-title">Unpaid</div><div id="unpaidTotal" class="card-value">$0</div></div>
+
+<div class="card">
+<div class="card-title">Sales</div>
+<div id="salesTotal" class="card-value">฿0.00</div>
+</div>
+
+<div class="card">
+<div class="card-title">Paid</div>
+<div id="paidTotal" class="card-value">฿0.00</div>
+</div>
+
+<div class="card">
+<div class="card-title">Unpaid</div>
+<div id="unpaidTotal" class="card-value">฿0.00</div>
+</div>
+
 </div>
 
 <div class="section">
@@ -180,7 +201,9 @@ Save Product
 <input id="invoiceNumber" readonly>
 
 <div class="grid-2">
+
 <select id="invoiceCustomer"></select>
+
 <select id="invoiceTerms">
 <option>COD</option>
 <option>Net 15</option>
@@ -188,30 +211,59 @@ Save Product
 <option>Net 45</option>
 <option>Net 60</option>
 </select>
+
+</div>
+
+<div id="selectedCustomerInfo"
+style="padding:15px;background:#f3f4f6;border-radius:8px;margin-bottom:15px;">
 </div>
 
 <div class="grid-2">
-<input id="invoiceDate" type="date" readonly>
-<input id="invoiceDueDate" type="date" readonly>
+
+<input id="invoiceDate" type="date">
+
+<input id="invoiceDueDate" type="date">
+
 </div>
 
-<select id="invoiceProduct"></select>
-<input id="invoiceQty" type="number" value="1" placeholder="Quantity">
+<h2>Invoice Items</h2>
 
-<button id="addItemBtn" class="primary">Add Item</button>
+<select id="invoiceProduct"></select>
+
+<input id="invoiceQty" type="number" value="1">
+
+<button id="addItemBtn" class="primary">
+Add Item
+</button>
 
 <table>
+
 <thead>
-<tr><th>Item</th><th>Qty</th><th>Price</th><th>Total</th></tr>
+<tr>
+<th>Item</th>
+<th>Qty</th>
+<th>Price</th>
+<th>Total</th>
+</tr>
 </thead>
+
 <tbody id="invoiceItemsBody"></tbody>
+
 </table>
 
-<div class="invoice-total">$<span id="invoiceTotal">0.00</span></div>
+<div class="invoice-total">
+฿<span id="invoiceTotal">0.00</span>
+</div>
 
-<textarea id="invoiceNotes" placeholder="Notes"></textarea>
+<textarea
+id="invoiceNotes"
+placeholder="Notes"></textarea>
 
-<button id="saveInvoiceBtn" class="success">Create Invoice</button>
+<button
+id="saveInvoiceBtn"
+class="success">
+Create Invoice
+</button>
 
 </div>
 
@@ -227,9 +279,10 @@ Save Product
 </select>
 
 <table>
+
 <thead>
 <tr>
-<th>Invoice #</th>
+<th>#</th>
 <th>Customer</th>
 <th>Date</th>
 <th>Due</th>
@@ -238,12 +291,16 @@ Save Product
 <th>Actions</th>
 </tr>
 </thead>
+
 <tbody id="invoiceListBody"></tbody>
+
 </table>
 
 </div>
 
 </div>
+
+<!-- SETTINGS -->
 
 <div id="settings" class="page">
 
@@ -263,7 +320,8 @@ Save Product
 
 <input id="companyLogo" placeholder="Logo URL">
 
-<textarea id="companyAddress"
+<textarea
+id="companyAddress"
 placeholder="Address"></textarea>
 
 <button id="saveCompanyBtn"
@@ -280,16 +338,18 @@ Save Company
 </div>
 
 <script>
+
 function showPage(page){
 
-document.querySelectorAll('.page').forEach(p=>{
-p.classList.remove('active');
+document.querySelectorAll(".page").forEach(p=>{
+p.classList.remove("active");
 });
 
 document.getElementById(page)
-.classList.add('active');
+.classList.add("active");
 
 }
+
 </script>
 
 <script src="app.js"></script>
