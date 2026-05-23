@@ -64,50 +64,27 @@
     </div>
 
    <div id="products" class="page">
+  <h1>Products</h1>
 
-    <h1>Products</h1>
+  <div class="toolbar">
+    <button id="openProductModalBtn" class="primary">Add New Product</button>
+  </div>
 
-    <div class="section">
+  <div class="section">
+    <h2>Product List</h2>
 
-        <h2>Add / Edit Product</h2>
+    <table>
+      <thead>
+        <tr>
+          <th>Name</th>
+          <th>Price</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
 
-        <input type="hidden" id="editingProductId">
-
-        <input id="productName" placeholder="Product Name">
-
-        <input
-            id="productPrice"
-            type="number"
-            placeholder="Price">
-
-        <button
-            id="saveProductBtn"
-            class="primary">
-            Save Product
-        </button>
-
-    </div>
-
-    <div class="section">
-
-        <h2>Product List</h2>
-
-        <table>
-
-            <thead>
-                <tr>
-                    <th>Name</th>
-                    <th>Price</th>
-                    <th>Actions</th>
-                </tr>
-            </thead>
-
-            <tbody id="productTableBody"></tbody>
-
-        </table>
-
-    </div>
-
+      <tbody id="productTableBody"></tbody>
+    </table>
+  </div>
 </div>
 
     <div id="invoices" class="page">
@@ -302,6 +279,43 @@
   </div>
 </div>
 
+<div id="productModal" class="modal">
+
+    <div class="modal-content">
+
+        <button
+            class="modal-close"
+            onclick="closeProductModal()">
+            X
+        </button>
+
+        <h2 id="productModalTitle">
+            Add New Product
+        </h2>
+
+        <input
+            type="hidden"
+            id="editingProductId">
+
+        <input
+            id="productName"
+            placeholder="Product Name">
+
+        <input
+            id="productPrice"
+            type="number"
+            placeholder="Price">
+
+        <button
+            id="saveProductBtn"
+            class="success">
+            Save Product
+        </button>
+
+    </div>
+
+</div>
+  
 <script>
 function showPage(page){
   document.querySelectorAll(".page").forEach(p=>p.classList.remove("active"));
