@@ -25,14 +25,11 @@ document.addEventListener("DOMContentLoaded", async () => {
 function hookupButtons() {
     document.getElementById("openCustomerModalBtn")?.addEventListener("click", openNewCustomerModal);
     document.getElementById("openInvoiceModalBtn")?.addEventListener("click", openNewInvoiceModal);
-
     document.getElementById("saveCustomerBtn")?.addEventListener("click", saveCustomer);
     document.getElementById("saveProductBtn")?.addEventListener("click", saveProduct);
     document.getElementById("saveCompanyBtn")?.addEventListener("click", saveCompany);
-
     document.getElementById("addItemBtn")?.addEventListener("click", addInvoiceItem);
     document.getElementById("saveInvoiceBtn")?.addEventListener("click", saveInvoice);
-
     document.getElementById("invoiceCustomer")?.addEventListener("change", updateTermsFromCustomer);
     document.getElementById("invoiceTerms")?.addEventListener("change", calculateDueDate);
     document.getElementById("invoiceDate")?.addEventListener("change", calculateDueDate);
@@ -275,7 +272,8 @@ async function loadCustomers() {
 }
 
 function editCustomer(id) {
-    const customer = customersCache.find(c => String(c.id) === String(id));
+    const customer = customersCache.find(c => Number(c.id) === Number(id));
+
     if (!customer) return;
 
     document.getElementById("customerModalTitle").innerText = "Edit Customer";
@@ -290,16 +288,25 @@ function editCustomer(id) {
     openCustomerModal();
 }
 
+async function deleteCustomer(id) {
+    if (!confirm("Delete this customer?")) return;
+
+    const result = await db.from("customers").delete().eq("id", id);
+
+    if (result.error) {
+        alert(result.error.message);
+        return;
+    }
+
+    await loadCustomers();
+    await loadDashboard();
+    await runReport();
+}
+
 async function saveProduct() {
-
-    const id =
-        document.getElementById("editingProductId")?.value || "";
-
-    const name =
-        document.getElementById("productName").value.trim();
-
-    const price =
-        document.getElementById("productPrice").value;
+    const id = document.getElementById("editingProductId").value;
+    const name = document.getElementById("productName").value.trim();
+    const price = document.getElementById("productPrice").value;
 
     if (!name) {
         alert("Product name required");
@@ -309,34 +316,26 @@ async function saveProduct() {
     let result;
 
     if (id) {
-
-        result = await db
-            .from("products")
+        result = await db.from("products")
             .update({
                 name,
                 price: Number(price)
             })
             .eq("id", id);
-
     } else {
-
-        result = await db
-            .from("products")
+        result = await db.from("products")
             .insert([
                 {
                     name,
                     price: Number(price)
                 }
             ]);
-
     }
 
     if (result.error) {
         alert(result.error.message);
         return;
     }
-
-    alert(id ? "Product updated" : "Product saved");
 
     document.getElementById("editingProductId").value = "";
     document.getElementById("productName").value = "";
@@ -347,61 +346,75 @@ async function saveProduct() {
 }
 
 async function loadProducts() {
+    const result = await db.from("products").select("*").order("name");
 
-    const result =
-        await db
-        .from("products")
-        .select("*")
-        .order("name");
+    if (result.error) {
+        alert(result.error.message);
+        return;
+    }
 
     productsCache = result.data || [];
 
-    const table =
-        document.getElementById("productTableBody");
-
-    const select =
-        document.getElementById("invoiceProduct");
+    const table = document.getElementById("productTableBody");
+    const select = document.getElementById("invoiceProduct");
 
     if (table) table.innerHTML = "";
 
-    if (select) select.innerHTML = "";
+    if (select) {
+        select.innerHTML = `<option value="">Select Product</option>`;
+    }
 
     productsCache.forEach(product => {
-
         if (table) {
-
             table.innerHTML += `
             <tr>
                 <td>${product.name}</td>
                 <td>${MONEY}${Number(product.price || 0).toFixed(2)}</td>
                 <td>
-                    <button class="primary"
-                        onclick="editProduct(${product.id})">
-                        Edit
-                    </button>
-
-                    <button class="danger"
-                        onclick="deleteProduct(${product.id})">
-                        Delete
-                    </button>
+                    <button class="primary" onclick="editProduct(${product.id})">Edit</button>
+                    <button class="danger" onclick="deleteProduct(${product.id})">Delete</button>
                 </td>
             </tr>
             `;
         }
 
         if (select) {
-
             select.innerHTML += `
-            <option
-                value="${product.id}"
-                data-price="${product.price}">
+            <option value="${product.id}" data-price="${product.price}">
                 ${product.name}
             </option>
             `;
         }
-
     });
+}
 
+function editProduct(id) {
+    const product = productsCache.find(p => Number(p.id) === Number(id));
+
+    if (!product) {
+        alert("Product not found");
+        return;
+    }
+
+    document.getElementById("editingProductId").value = product.id;
+    document.getElementById("productName").value = product.name || "";
+    document.getElementById("productPrice").value = product.price || "";
+
+    showPage("products");
+}
+
+async function deleteProduct(id) {
+    if (!confirm("Delete this product?")) return;
+
+    const result = await db.from("products").delete().eq("id", id);
+
+    if (result.error) {
+        alert(result.error.message);
+        return;
+    }
+
+    await loadProducts();
+    await loadDashboard();
 }
 
 async function saveCompany() {
@@ -463,21 +476,21 @@ async function loadCompanyProfile() {
 }
 
 async function loadInvoiceNumber() {
-    const { data, error } = await db.from("invoice_counter").select("*").limit(1);
+    const result = await db.from("invoice_counter").select("*").limit(1);
 
-    if (error || !data || data.length === 0) {
+    if (result.error || !result.data || result.data.length === 0) {
         document.getElementById("invoiceNumber").value = "1000";
         return;
     }
 
-    document.getElementById("invoiceNumber").value = data[0].next_number;
+    document.getElementById("invoiceNumber").value = result.data[0].next_number;
 }
 
 function addInvoiceItem() {
     const select = document.getElementById("invoiceProduct");
     const option = select.options[select.selectedIndex];
 
-    if (!option) {
+    if (!option || !option.value) {
         alert("Select product");
         return;
     }
@@ -562,6 +575,7 @@ async function saveInvoice() {
         await db.from("invoice_items").delete().eq("invoice_id", editingId);
     } else {
         const counter = await db.from("invoice_counter").select("*").limit(1);
+
         invoiceNumber = counter.data[0].next_number;
 
         const result = await db.from("invoices")
@@ -641,7 +655,7 @@ async function loadInvoices() {
     let unpaid = 0;
 
     (result.data || []).forEach(inv => {
-        const customer = customersCache.find(c => String(c.id) === String(inv.customer_id));
+        const customer = customersCache.find(c => Number(c.id) === Number(inv.customer_id));
         const total = Number(inv.total || 0);
 
         sales += total;
@@ -774,7 +788,7 @@ async function printInvoicePdf(id) {
     }
 
     const inv = invoiceResult.data;
-    const customer = customersCache.find(c => String(c.id) === String(inv.customer_id)) || {};
+    const customer = customersCache.find(c => Number(c.id) === Number(inv.customer_id)) || {};
     const company = companyCache || {};
     const items = itemResult.data || [];
 
@@ -929,7 +943,7 @@ async function runReport() {
 
     invoices.forEach(inv => {
         const total = Number(inv.total || 0);
-        const customer = customersCache.find(c => String(c.id) === String(inv.customer_id));
+        const customer = customersCache.find(c => Number(c.id) === Number(inv.customer_id));
 
         totalSales += total;
 
@@ -955,47 +969,4 @@ async function runReport() {
     document.getElementById("reportPaidSales").innerText = MONEY + paidSales.toFixed(2);
     document.getElementById("reportUnpaidSales").innerText = MONEY + unpaidSales.toFixed(2);
     document.getElementById("reportInvoiceCount").innerText = invoices.length;
-}
-
-function editProduct(id) {
-
-    const product =
-        productsCache.find(
-            p => String(p.id) === String(id)
-        );
-
-    if (!product) return;
-
-    document.getElementById("editingProductId").value =
-        product.id;
-
-    document.getElementById("productName").value =
-        product.name || "";
-
-    document.getElementById("productPrice").value =
-        product.price || "";
-
-}
-
-async function deleteProduct(id) {
-
-    if (!confirm("Delete this product?"))
-        return;
-
-    const result =
-        await db
-        .from("products")
-        .delete()
-        .eq("id", id);
-
-    if (result.error) {
-
-        alert(result.error.message);
-
-        return;
-    }
-
-    await loadProducts();
-    await loadDashboard();
-
 }
