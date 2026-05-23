@@ -624,13 +624,21 @@ async function loadCompanyProfile() {
 
     companyCache = result.data[0];
 
-    document.getElementById("companyName")?.value = companyCache.company_name || "";
-    document.getElementById("companyPhone")?.value = companyCache.company_phone || "";
-    document.getElementById("companyEmail")?.value = companyCache.company_email || "";
-    document.getElementById("companyAddress")?.value = companyCache.company_address || "";
-    document.getElementById("companyWebsite")?.value = companyCache.website || "";
-    document.getElementById("taxId")?.value = companyCache.tax_id || "";
-    document.getElementById("companyLogo")?.value = companyCache.company_logo || "";
+    const companyName = document.getElementById("companyName");
+    const companyPhone = document.getElementById("companyPhone");
+    const companyEmail = document.getElementById("companyEmail");
+    const companyAddress = document.getElementById("companyAddress");
+    const companyWebsite = document.getElementById("companyWebsite");
+    const taxId = document.getElementById("taxId");
+    const companyLogo = document.getElementById("companyLogo");
+
+    if (companyName) companyName.value = companyCache.company_name || "";
+    if (companyPhone) companyPhone.value = companyCache.company_phone || "";
+    if (companyEmail) companyEmail.value = companyCache.company_email || "";
+    if (companyAddress) companyAddress.value = companyCache.company_address || "";
+    if (companyWebsite) companyWebsite.value = companyCache.website || "";
+    if (taxId) taxId.value = companyCache.tax_id || "";
+    if (companyLogo) companyLogo.value = companyCache.company_logo || "";
 }
 
 async function loadInvoiceNumber() {
@@ -640,6 +648,14 @@ async function loadInvoiceNumber() {
         document.getElementById("invoiceNumber");
 
     if (!invoiceNumber) return;
+
+    if (result.error || !result.data || result.data.length === 0) {
+        invoiceNumber.value = "1000";
+        return;
+    }
+
+    invoiceNumber.value = result.data[0].next_number;
+}
 
     if (result.error || !result.data || result.data.length === 0) {
         invoiceNumber.value = "1000";
