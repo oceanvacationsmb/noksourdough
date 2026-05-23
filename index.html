@@ -154,14 +154,18 @@ Save Product
 
 <h1>Create Invoice</h1>
 
+<div class="cards">
+<div class="card"><div class="card-title">Total Sales</div><div id="salesTotal" class="card-value">$0</div></div>
+<div class="card"><div class="card-title">Paid</div><div id="paidTotal" class="card-value">$0</div></div>
+<div class="card"><div class="card-title">Unpaid</div><div id="unpaidTotal" class="card-value">$0</div></div>
+</div>
+
 <div class="section">
 
 <input id="invoiceNumber" readonly>
 
 <div class="grid-2">
-
 <select id="invoiceCustomer"></select>
-
 <select id="invoiceTerms">
 <option>COD</option>
 <option>Net 15</option>
@@ -169,60 +173,58 @@ Save Product
 <option>Net 45</option>
 <option>Net 60</option>
 </select>
-
 </div>
 
 <div class="grid-2">
-
-<input id="invoiceDate" type="date">
-
-<input id="invoiceDueDate" type="date">
-
+<input id="invoiceDate" type="date" readonly>
+<input id="invoiceDueDate" type="date" readonly>
 </div>
 
 <select id="invoiceProduct"></select>
+<input id="invoiceQty" type="number" value="1" placeholder="Quantity">
 
-<input
-id="invoiceQty"
-type="number"
-value="1"
-placeholder="Quantity">
-
-<button
-id="addItemBtn"
-class="primary">
-Add Item
-</button>
+<button id="addItemBtn" class="primary">Add Item</button>
 
 <table>
-
 <thead>
-<tr>
-<th>Item</th>
-<th>Qty</th>
-<th>Price</th>
-<th>Total</th>
-</tr>
+<tr><th>Item</th><th>Qty</th><th>Price</th><th>Total</th></tr>
 </thead>
-
 <tbody id="invoiceItemsBody"></tbody>
-
 </table>
 
-<div class="invoice-total">
-$
-<span id="invoiceTotal">0.00</span>
+<div class="invoice-total">$<span id="invoiceTotal">0.00</span></div>
+
+<textarea id="invoiceNotes" placeholder="Notes"></textarea>
+
+<button id="saveInvoiceBtn" class="success">Create Invoice</button>
+
 </div>
 
-<textarea
-id="invoiceNotes"
-placeholder="Notes"></textarea>
+<div class="section">
 
-<button
-id="saveInvoiceBtn"
-class="success">
-Create Invoice
-</button>
+<h2>Invoice List</h2>
+
+<select id="invoiceFilter">
+<option value="all">All Invoices</option>
+<option value="Paid">Paid</option>
+<option value="Unpaid">Unpaid</option>
+<option value="Past Due">Past Due</option>
+</select>
+
+<table>
+<thead>
+<tr>
+<th>Invoice #</th>
+<th>Customer</th>
+<th>Date</th>
+<th>Due</th>
+<th>Total</th>
+<th>Status</th>
+<th>Actions</th>
+</tr>
+</thead>
+<tbody id="invoiceListBody"></tbody>
+</table>
 
 </div>
 
