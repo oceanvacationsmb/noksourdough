@@ -1227,31 +1227,60 @@ async function runReport() {
 }
 
 function toggleReportPeriod() {
-    const periodType = document.getElementById("reportPeriodType")?.value;
 
-    const monthBox = document.getElementById("reportMonthBox");
-    const dateBox = document.getElementById("reportDateBox");
+    const periodType =
+        document.getElementById("reportPeriodType")?.value;
+
+    const monthBox =
+        document.getElementById("reportMonthBox");
+
+    const yearBox =
+        document.getElementById("reportYearBox");
+
+    const dateBox =
+        document.getElementById("reportDateBox");
 
     if (periodType === "month") {
+
         monthBox.style.display = "grid";
+        yearBox.style.display = "none";
         dateBox.style.display = "none";
-    } else {
+
+    }
+    else if (periodType === "year") {
+
         monthBox.style.display = "none";
+        yearBox.style.display = "grid";
+        dateBox.style.display = "none";
+
+    }
+    else {
+
+        monthBox.style.display = "none";
+        yearBox.style.display = "none";
         dateBox.style.display = "grid";
+
     }
 }
 
 function populateReportYears() {
 
-    const select =
+    const reportYear =
         document.getElementById("reportYear");
 
-    if (!select) return;
+    const reportYearOnly =
+        document.getElementById("reportYearOnly");
 
     const currentYear =
         new Date().getFullYear();
 
-    select.innerHTML = "";
+    if (reportYear) {
+        reportYear.innerHTML = "";
+    }
+
+    if (reportYearOnly) {
+        reportYearOnly.innerHTML = "";
+    }
 
     for (
         let year = currentYear + 1;
@@ -1259,12 +1288,26 @@ function populateReportYears() {
         year--
     ) {
 
-        select.innerHTML += `
+        const option = `
         <option value="${year}">
             ${year}
         </option>
         `;
+
+        if (reportYear) {
+            reportYear.innerHTML += option;
+        }
+
+        if (reportYearOnly) {
+            reportYearOnly.innerHTML += option;
+        }
     }
 
-    select.value = currentYear;
+    if (reportYear) {
+        reportYear.value = currentYear;
+    }
+
+    if (reportYearOnly) {
+        reportYearOnly.value = currentYear;
+    }
 }
