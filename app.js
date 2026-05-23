@@ -221,6 +221,7 @@ async function saveCustomer() {
     const address = document.getElementById("customerAddress").value.trim();
     const payment_terms = document.getElementById("customerTerms").value;
     const tax_id = document.getElementById("customerTaxId").value.trim();
+    const price_category = Number(document.getElementById("customerPriceCategory").value || 1);
 
     if (!name) {
         alert("Customer name required");
@@ -233,7 +234,8 @@ async function saveCustomer() {
         email,
         address,
         payment_terms,
-        tax_id
+        tax_id,
+        price_category
     };
 
     let result;
@@ -280,6 +282,7 @@ async function loadCustomers() {
                 <td>${customer.email || ""}</td>
                 <td>${customer.tax_id || ""}</td>
                 <td>${customer.payment_terms || ""}</td>
+                <td>${customer.price_category || 1}</td>
                 <td>
                     <button class="primary" onclick="editCustomer(${customer.id})">Edit</button>
                     <button class="danger" onclick="deleteCustomer(${customer.id})">Delete</button>
