@@ -901,8 +901,8 @@ async function loadInvoices() {
         <tr>
             <td>${inv.invoice_number}</td>
             <td>${customer ? customer.name : ""}</td>
-            <td>${inv.invoice_date || ""}</td>
-            <td>${inv.due_date || ""}</td>
+            <td>${formatDateDDMMYYYY(inv.invoice_date)}</td>
+            <td>${formatDateDDMMYYYY(inv.due_date)}</td>
             <td>${MONEY}${total.toFixed(2)}</td>
             <td>${inv.status || "Unpaid"}</td>
             <td>
