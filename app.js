@@ -1050,91 +1050,274 @@ async function printInvoicePdf(id) {
     });
 
     const logo = company.company_logo
-        ? `<img src="${company.company_logo}" style="max-width:140px;max-height:90px;margin-top:8px;">`
+        ? `<img src="${company.company_logo}" style="max-width:120px;max-height:80px;margin-bottom:10px;">`
         : "";
 
     const html = `
     <html>
     <head>
     <title>Invoice ${inv.invoice_number}</title>
+
     <style>
-        body{font-family:Arial;padding:30px;color:#111;}
-        .page{page-break-after:always;}
-        .top{display:flex;justify-content:space-between;align-items:flex-start;}
-        table{width:100%;border-collapse:collapse;margin-top:25px;}
-        th,td{border:1px solid #ccc;padding:10px;text-align:left;}
-        th{background:#f3f4f6;}
-        .total{text-align:right;font-size:24px;font-weight:bold;margin-top:20px;}
-        .box{background:#f3f4f6;padding:15px;margin-top:20px;}
+        body{
+            font-family:Arial, sans-serif;
+            padding:35px;
+            color:#111827;
+            background:white;
+        }
+
+        .page{
+            page-break-after:always;
+        }
+
+        .invoice-header{
+            display:flex;
+            justify-content:space-between;
+            align-items:flex-start;
+            border-bottom:4px solid #111827;
+            padding-bottom:22px;
+            margin-bottom:28px;
+        }
+
+        .company-card{
+            max-width:58%;
+        }
+
+        .company-name{
+            font-size:38px;
+            font-weight:800;
+            letter-spacing:1px;
+            margin:0 0 12px 0;
+            color:#111827;
+        }
+
+        .company-info{
+            font-size:14px;
+            line-height:1.55;
+            color:#374151;
+        }
+
+        .invoice-card{
+            background:#f3f4f6;
+            border-radius:12px;
+            padding:18px 22px;
+            min-width:245px;
+            text-align:left;
+        }
+
+        .invoice-title{
+            font-size:32px;
+            font-weight:800;
+            margin:0 0 16px 0;
+            color:#111827;
+            line-height:1.05;
+        }
+
+        .invoice-meta p{
+            margin:8px 0;
+            font-size:15px;
+        }
+
+        .bill-card{
+            background:#f9fafb;
+            border:1px solid #e5e7eb;
+            border-radius:12px;
+            padding:18px 20px;
+            margin:0 0 28px 0;
+        }
+
+        .section-title{
+            font-size:18px;
+            font-weight:800;
+            margin:0 0 12px 0;
+            color:#111827;
+        }
+
+        .customer-name{
+            font-size:16px;
+            font-weight:800;
+            margin-bottom:8px;
+        }
+
+        .customer-info{
+            font-size:14px;
+            line-height:1.55;
+            color:#374151;
+        }
+
+        table{
+            width:100%;
+            border-collapse:collapse;
+            margin-top:18px;
+            font-size:14px;
+        }
+
+        th{
+            background:#111827;
+            color:white;
+            padding:12px;
+            text-align:left;
+            border:1px solid #111827;
+        }
+
+        td{
+            padding:12px;
+            border:1px solid #d1d5db;
+        }
+
+        tbody tr:nth-child(even){
+            background:#f9fafb;
+        }
+
+        .total-box{
+            margin-top:22px;
+            display:flex;
+            justify-content:flex-end;
+        }
+
+        .total-inner{
+            background:#111827;
+            color:white;
+            padding:18px 24px;
+            border-radius:12px;
+            font-size:24px;
+            font-weight:800;
+            min-width:260px;
+            text-align:right;
+        }
+
+        .delivery-title{
+            font-size:34px;
+            font-weight:800;
+            border-bottom:4px solid #111827;
+            padding-bottom:15px;
+            margin-bottom:25px;
+        }
+
+        .signature-box{
+            margin-top:45px;
+            font-size:16px;
+            line-height:2.2;
+        }
+
+        @media print{
+            body{
+                padding:25px;
+            }
+        }
     </style>
     </head>
+
     <body>
 
     <div class="page">
-        <div class="top">
-            <div>
-                <h1>${company.company_name || "Company"}</h1>
+
+        <div class="invoice-header">
+
+            <div class="company-card">
                 ${logo}
-                <p>${company.company_address || ""}</p>
-                <p>${company.company_phone || ""}</p>
-                <p>${company.company_email || ""}</p>
-                <p>${company.website || ""}</p>
-                <p>Tax ID: ${company.tax_id || ""}</p>
+
+                <div class="company-name">
+                    ${company.company_name || "Company"}
+                </div>
+
+                <div class="company-info">
+                    ${company.company_address || ""}<br>
+                    ${company.company_phone || ""}<br>
+                    ${company.company_email || ""}<br>
+                    ${company.website || ""}<br>
+                    Tax ID: ${company.tax_id || ""}
+                </div>
             </div>
-            <div>
-                <h2>INVOICE ORIGINAL</h2>
-                <p><b>Invoice #:</b> ${inv.invoice_number}</p>
-                <p><b>Date:</b> ${formatDateDDMMYYYY(inv.invoice_date)}</p>
-                <p><b>Due:</b> ${formatDateDDMMYYYY(inv.due_date)}</p>
-                <p><b>Status:</b> ${inv.status || ""}</p>
+
+            <div class="invoice-card">
+                <div class="invoice-title">
+                    INVOICE<br>ORIGINAL
+                </div>
+
+                <div class="invoice-meta">
+                    <p><b>Invoice #:</b> ${inv.invoice_number}</p>
+                    <p><b>Date:</b> ${formatDateDDMMYYYY(inv.invoice_date)}</p>
+                    <p><b>Due:</b> ${formatDateDDMMYYYY(inv.due_date)}</p>
+                    <p><b>Status:</b> ${inv.status || ""}</p>
+                </div>
             </div>
+
         </div>
 
-        <div class="box">
-            <h3>Bill To</h3>
-            <p><b>${customer.name || ""}</b></p>
-            <p>${customer.address || ""}</p>
-            <p>${customer.phone || ""}</p>
-            <p>${customer.email || ""}</p>
-            <p>Tax ID: ${customer.tax_id || ""}</p>
+        <div class="bill-card">
+            <div class="section-title">Bill To</div>
+
+            <div class="customer-name">
+                ${customer.name || ""}
+            </div>
+
+            <div class="customer-info">
+                ${customer.address || ""}<br>
+                ${customer.phone || ""}<br>
+                ${customer.email || ""}<br>
+                Tax ID: ${customer.tax_id || ""}
+            </div>
         </div>
 
         <table>
             <thead>
                 <tr>
                     <th>Item</th>
-                    <th>Qty</th>
-                    <th>Price</th>
-                    <th>Total</th>
+                    <th style="width:90px;">Qty</th>
+                    <th style="width:150px;">Price</th>
+                    <th style="width:150px;">Total</th>
                 </tr>
             </thead>
-            <tbody>${rows}</tbody>
-        </table>
 
-        <div class="total">Total: ${MONEY}${Number(inv.total || 0).toFixed(2)}</div>
-    </div>
-
-    <div class="page">
-        <h1>DELIVERY NOTE COPY</h1>
-        <p><b>Invoice #:</b> ${inv.invoice_number}</p>
-        <p><b>Customer:</b> ${customer.name || ""}</p>
-        <p><b>Date:</b> ${formatDateDDMMYYYY(inv.invoice_date)}</p>
-
-        <table>
-            <thead>
-                <tr>
-                    <th>Item</th>
-                    <th>Qty</th>
-                </tr>
-            </thead>
             <tbody>
-                ${items.map(item => `<tr><td>${item.description || ""}</td><td>${item.quantity || ""}</td></tr>`).join("")}
+                ${rows}
             </tbody>
         </table>
 
-        <br><br>
-        <p>Received By: __________________________</p>
-        <p>Signature: ____________________________</p>
+        <div class="total-box">
+            <div class="total-inner">
+                Total: ${MONEY}${Number(inv.total || 0).toFixed(2)}
+            </div>
+        </div>
+
+    </div>
+
+    <div class="page">
+
+        <div class="delivery-title">
+            DELIVERY NOTE COPY
+        </div>
+
+        <div class="bill-card">
+            <p><b>Invoice #:</b> ${inv.invoice_number}</p>
+            <p><b>Customer:</b> ${customer.name || ""}</p>
+            <p><b>Date:</b> ${formatDateDDMMYYYY(inv.invoice_date)}</p>
+        </div>
+
+        <table>
+            <thead>
+                <tr>
+                    <th>Item</th>
+                    <th style="width:120px;">Qty</th>
+                </tr>
+            </thead>
+
+            <tbody>
+                ${items.map(item => `
+                    <tr>
+                        <td>${item.description || ""}</td>
+                        <td>${item.quantity || ""}</td>
+                    </tr>
+                `).join("")}
+            </tbody>
+        </table>
+
+        <div class="signature-box">
+            <p>Received By: __________________________</p>
+            <p>Signature: ____________________________</p>
+        </div>
+
     </div>
 
     <script>window.print();</script>
