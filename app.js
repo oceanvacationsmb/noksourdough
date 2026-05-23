@@ -267,7 +267,6 @@ async function saveCustomer() {
         return;
     }
 
-    alert(id ? "Customer updated" : "Customer saved");
 
     closeCustomerModal();
 
@@ -613,7 +612,7 @@ async function saveCompany() {
             ]);
     }
 
-    alert("Company saved");
+    
     await loadCompanyProfile();
 }
 
@@ -862,7 +861,6 @@ async function saveInvoice() {
         ]);
 }
 
-alert(editingId ? "Invoice updated" : "Invoice #" + invoiceNumber + " saved");
 
 closeInvoiceModal();
 
