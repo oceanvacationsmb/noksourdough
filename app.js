@@ -290,43 +290,55 @@ function editCustomer(id) {
     openCustomerModal();
 }
 
-async function deleteCustomer(id) {
-    if (!confirm("Delete this customer?")) return;
-
-    const result = await db.from("customers").delete().eq("id", id);
-
-    if (result.error) {
-        alert(result.error.message);
-        return;
-    }
-
-    await loadCustomers();
-    await loadDashboard();
-}
-
 async function saveProduct() {
-    const name = document.getElementById("productName").value;
-    const price = document.getElementById("productPrice").value;
+
+    const id =
+        document.getElementById("editingProductId")?.value || "";
+
+    const name =
+        document.getElementById("productName").value.trim();
+
+    const price =
+        document.getElementById("productPrice").value;
 
     if (!name) {
         alert("Product name required");
         return;
     }
 
-    const result = await db.from("products").insert([
-        {
-            name,
-            price: Number(price)
-        }
-    ]);
+    let result;
+
+    if (id) {
+
+        result = await db
+            .from("products")
+            .update({
+                name,
+                price: Number(price)
+            })
+            .eq("id", id);
+
+    } else {
+
+        result = await db
+            .from("products")
+            .insert([
+                {
+                    name,
+                    price: Number(price)
+                }
+            ]);
+
+    }
 
     if (result.error) {
         alert(result.error.message);
         return;
     }
 
-    alert("Product saved");
+    alert(id ? "Product updated" : "Product saved");
 
+    document.getElementById("editingProductId").value = "";
     document.getElementById("productName").value = "";
     document.getElementById("productPrice").value = "";
 
@@ -335,30 +347,61 @@ async function saveProduct() {
 }
 
 async function loadProducts() {
-    const result = await db.from("products").select("*").order("name");
+
+    const result =
+        await db
+        .from("products")
+        .select("*")
+        .order("name");
 
     productsCache = result.data || [];
 
-    const table = document.getElementById("productTableBody");
-    const select = document.getElementById("invoiceProduct");
+    const table =
+        document.getElementById("productTableBody");
+
+    const select =
+        document.getElementById("invoiceProduct");
 
     if (table) table.innerHTML = "";
+
     if (select) select.innerHTML = "";
 
     productsCache.forEach(product => {
+
         if (table) {
+
             table.innerHTML += `
             <tr>
                 <td>${product.name}</td>
                 <td>${MONEY}${Number(product.price || 0).toFixed(2)}</td>
+                <td>
+                    <button class="primary"
+                        onclick="editProduct(${product.id})">
+                        Edit
+                    </button>
+
+                    <button class="danger"
+                        onclick="deleteProduct(${product.id})">
+                        Delete
+                    </button>
+                </td>
             </tr>
             `;
         }
 
         if (select) {
-            select.innerHTML += `<option value="${product.id}" data-price="${product.price}">${product.name}</option>`;
+
+            select.innerHTML += `
+            <option
+                value="${product.id}"
+                data-price="${product.price}">
+                ${product.name}
+            </option>
+            `;
         }
+
     });
+
 }
 
 async function saveCompany() {
@@ -912,4 +955,47 @@ async function runReport() {
     document.getElementById("reportPaidSales").innerText = MONEY + paidSales.toFixed(2);
     document.getElementById("reportUnpaidSales").innerText = MONEY + unpaidSales.toFixed(2);
     document.getElementById("reportInvoiceCount").innerText = invoices.length;
+}
+
+function editProduct(id) {
+
+    const product =
+        productsCache.find(
+            p => String(p.id) === String(id)
+        );
+
+    if (!product) return;
+
+    document.getElementById("editingProductId").value =
+        product.id;
+
+    document.getElementById("productName").value =
+        product.name || "";
+
+    document.getElementById("productPrice").value =
+        product.price || "";
+
+}
+
+async function deleteProduct(id) {
+
+    if (!confirm("Delete this product?"))
+        return;
+
+    const result =
+        await db
+        .from("products")
+        .delete()
+        .eq("id", id);
+
+    if (result.error) {
+
+        alert(result.error.message);
+
+        return;
+    }
+
+    await loadProducts();
+    await loadDashboard();
+
 }
