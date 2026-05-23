@@ -387,21 +387,6 @@ async function saveProduct() {
     await loadDashboard();
 }
 
-    if (result.error) {
-        alert(result.error.message);
-        return;
-    }
-
-    document.getElementById("editingProductId").value = "";
-    document.getElementById("productName").value = "";
-    document.getElementById("productPrice").value = "";
-
-    closeProductModal();
-
-    await loadProducts();
-    await loadDashboard();
-}
-
 async function loadProducts() {
     const result = await db.from("products").select("*").order("name");
 
