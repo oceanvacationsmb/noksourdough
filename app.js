@@ -1,15 +1,57 @@
+const SUPABASE_URL = "https://rbowvjsylgpdunpbrgye.supabase.co";
+const SUPABASE_KEY = "PASTE_YOUR_PUBLISHABLE_KEY_HERE";
+
+const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+
 document.getElementById("addCustomerBtn").onclick = function () {
-  alert("Add Customer clicked");
+  document.getElementById("sidePanel").classList.add("open");
 };
 
-document.getElementById("addProductBtn").onclick = function () {
-  alert("Add Product clicked");
+document.getElementById("closePanel").onclick = function () {
+  document.getElementById("sidePanel").classList.remove("open");
 };
 
-document.getElementById("createInvoiceBtn").onclick = function () {
-  alert("Create Invoice clicked");
+document.getElementById("saveCustomerBtn").onclick = async function () {
+  const name = document.getElementById("customerName").value;
+  const phone = document.getElementById("customerPhone").value;
+  const email = document.getElementById("customerEmail").value;
+  const address = document.getElementById("customerAddress").value;
+
+  if (!name) {
+    alert("Customer name is required");
+    return;
+  }
+
+  const { error } = await supabase.from("customers").insert({
+    name: name,
+    phone: phone,
+    email: email,
+    address: address
+  });
+
+  if (error) {
+    alert(error.message);
+    return;
+  }
+
+  alert("Customer saved");
+
+  document.getElementById("customerName").value = "";
+  document.getElementById("customerPhone").value = "";
+  document.getElementById("customerEmail").value = "";
+  document.getElementById("customerAddress").value = "";
+
+  document.getElementById("sidePanel").classList.remove("open");
+
+  loadCounts();
 };
 
-document.getElementById("exportPdfBtn").onclick = function () {
-  window.print();
-};
+async function loadCounts() {
+  const { count: customersCount } = await supabase
+    .from("customers")
+    .select("*", { count: "exact", head: true });
+
+  document.getElementById("customersCount").innerText = customersCount || 0;
+}
+
+loadCounts();
