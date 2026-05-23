@@ -657,14 +657,6 @@ async function loadInvoiceNumber() {
     invoiceNumber.value = result.data[0].next_number;
 }
 
-    if (result.error || !result.data || result.data.length === 0) {
-        invoiceNumber.value = "1000";
-        return;
-    }
-
-    invoiceNumber.value = result.data[0].next_number;
-}
-
 function addInvoiceItem() {
 
     const customerId =
