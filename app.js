@@ -1222,12 +1222,12 @@ async function printInvoicePdf(id) {
                 </div>
 
                 <div class="company-info">
-                    ${company.company_address || ""}<br>
-                    ${company.company_phone || ""}<br>
-                    ${company.company_email || ""}<br>
-                    ${company.website || ""}<br>
-                    Tax ID: ${company.tax_id || ""}
-                </div>
+    <div>${company.company_address || ""}</div>
+    <div>${company.company_phone || ""}</div>
+    <div>${company.company_email || ""}</div>
+    <div>${company.website || ""}</div>
+    <div>Tax ID: ${company.tax_id || ""}</div>
+</div>
             </div>
 
             <div class="invoice-card">
