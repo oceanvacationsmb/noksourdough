@@ -1200,8 +1200,14 @@ const html = `
 <style>
 body{
     font-family:Arial, sans-serif;
-    padding:35px;
+    padding:20px;
     color:#111827;
+    background:white;
+}
+
+.pdf-content{
+    width:7.5in;
+    margin:0 auto;
     background:white;
 }
 
@@ -1214,7 +1220,7 @@ body{
     background:white;
     margin:0;
     position:relative;
-    left:-20px;
+    left:0;
 }
 
 .delivery-page{
@@ -1229,8 +1235,8 @@ body{
 
 .invoice-header{
     display:grid;
-    grid-template-columns:1fr 260px;
-    gap:30px;
+    grid-template-columns:1fr 240px;
+    gap:24px;
     align-items:start;
     border-bottom:4px solid #111827;
     padding-bottom:14px;
