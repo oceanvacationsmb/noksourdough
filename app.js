@@ -1200,28 +1200,21 @@ const html = `
 <style>
 body{
     font-family:Arial, sans-serif;
-    padding:20px;
+    padding:35px;
     color:#111827;
-    background:white;
-}
-
-.pdf-content{
-    width:100%;
-    max-width:7.5in;
-    margin:0 auto;
     background:white;
 }
 
 .page{
     width:100%;
-    min-height:auto;
-    padding:0.25in;
+    min-height:11in;
+    padding:0.35in;
     box-sizing:border-box;
     page-break-after:auto;
     background:white;
     margin:0;
     position:relative;
-    left:0;
+    left:-20px;
 }
 
 .delivery-page{
@@ -1239,9 +1232,8 @@ body{
     justify-content:space-between;
     align-items:flex-start;
     border-bottom:4px solid #111827;
-    padding-bottom:16px;
+    padding-bottom:22px;
     margin-bottom:20px;
-    width:100%;
 }
 
 .company-card{
@@ -1249,12 +1241,11 @@ body{
 }
 
 .company-name{
-    font-size:30px;
+    font-size:34px;
     font-weight:900;
-    margin:0 0 8px 0;
+    margin:0 0 10px 0;
     color:#111827;
-    letter-spacing:4px;
-    line-height:1.15;
+    letter-spacing:.5px;
 }
 
 .company-info{
@@ -1268,33 +1259,30 @@ body{
 }
 
 .invoice-card{
-    background:transparent;
-    border-radius:0;
-    padding:0;
-    width:250px;
+    background:#f3f4f6;
+    border-radius:12px;
+    padding:20px 28px;
+    min-width:250px;
     text-align:left;
-    margin-top:6px;
-    flex-shrink:0;
 }
 
 .invoice-title{
-    font-size:22px;
+    font-size:38px;
     font-weight:900;
-    margin:0 0 14px 0;
+    margin:0;
     color:#111827;
-    line-height:1.25;
-    letter-spacing:2px;
+    line-height:1.05;
 }
 
 .invoice-small-meta{
-    margin-top:0;
-    font-size:18px;
+    margin-top:18px;
+    font-size:16px;
 }
 
 .invoice-small-meta div{
     display:grid;
-    grid-template-columns:70px 1fr;
-    margin:8px 0;
+    grid-template-columns:110px 1fr;
+    margin:12px 0;
     align-items:center;
 }
 
@@ -1305,7 +1293,6 @@ body{
 
 .invoice-small-meta span{
     color:#111827;
-    font-weight:500;
 }
 
 .invoice-meta-row{
@@ -1350,9 +1337,6 @@ body{
     border-radius:12px;
     padding:18px 20px;
     margin:0 0 24px 0;
-    width:100%;
-    clear:both;
-    box-sizing:border-box;
 }
 
 .section-title{
@@ -1567,17 +1551,23 @@ th{
         </div>
 
         <div class="invoice-card">
-    <div class="invoice-title">
-        INVOICE ORIGINAL #${inv.invoice_number}
-    </div>
+            <div class="invoice-title">
+                INVOICE<br>ORIGINAL
+            </div>
 
-    <div class="invoice-small-meta">
-        <div>
-            <b>Date</b>
-            <span>${formatDateDDMMYYYY(inv.invoice_date)}</span>
+            <div class="invoice-small-meta">
+                <div>
+                    <b>Invoice #</b>
+                    <span>${inv.invoice_number}</span>
+                </div>
+
+                <div>
+                    <b>Date</b>
+                    <span>${formatDateDDMMYYYY(inv.invoice_date)}</span>
+                </div>
+            </div>
         </div>
     </div>
-</div>
 
     <div class="bill-card">
         <div class="section-title">Bill To</div>
@@ -1700,7 +1690,7 @@ function downloadPdf() {
     backgroundColor: "#ffffff"
 },
 pagebreak: {
-    mode: ["css"]
+    mode: ["css","legacy"]
 },
             jsPDF: {
                 unit: "in",
