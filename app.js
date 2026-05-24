@@ -1244,8 +1244,8 @@ const rowsThai = items.map(item => {
 
    .customer-grid{
     display:grid;
-    grid-template-columns:68% 32%;
-    gap:20px;
+    grid-template-columns:58% 42%;
+    gap:30px;
     align-items:start;
 }
 
@@ -1253,19 +1253,20 @@ const rowsThai = items.map(item => {
     display:flex;
     gap:12px;
     align-items:flex-start;
-    padding-right:20px;
+    padding-right:25px;
     border-right:1px solid #d1d5db;
 }
 
 .address-icon{
-    font-size:22px;
+    font-size:18px;
     line-height:1;
-    margin-top:2px;
+    margin-top:4px;
+    flex-shrink:0;
 }
 
 .address-text{
     font-size:15px;
-    line-height:1.8;
+    line-height:2;
     color:#111827;
     width:100%;
 }
@@ -1273,26 +1274,28 @@ const rowsThai = items.map(item => {
 .customer-contact{
     display:flex;
     flex-direction:column;
-    gap:14px;
-    padding-left:10px;
+    gap:18px;
+    padding-left:20px;
 }
 
 .contact-row{
     display:grid;
-    grid-template-columns:28px 75px 1fr;
+    grid-template-columns:30px 90px 1fr;
     align-items:center;
-    column-gap:10px;
+    column-gap:14px;
 }
 
 .contact-icon{
     font-size:18px;
     text-align:center;
+    width:30px;
 }
 
 .contact-label{
-    font-size:14px;
+    font-size:15px;
     font-weight:700;
     color:#111827;
+    white-space:nowrap;
 }
 
 .info-row{
@@ -1444,8 +1447,10 @@ tbody tr:nth-child(even){
         </div>
 
         <div class="address-text">
-            ${customer.address || ""}
-        </div>
+    ${(customer.address || "")
+        .split(/tel\.|fax\.|e-mail\.|email\./i)[0]
+        .trim()}
+</div>
 
     </div>
 
