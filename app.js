@@ -1316,6 +1316,12 @@ thead{
     display:table-header-group;
 }
 
+thead::before{
+    content:"";
+    display:block;
+    height:20px;
+}
+
 tr{
     page-break-inside:avoid;
     break-inside:avoid;
