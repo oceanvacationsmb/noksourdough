@@ -1521,25 +1521,44 @@ async function printInvoicePdf(id) {
 
    const pdfWindow = document.createElement("div");
 pdfWindow.innerHTML = html;
+
+pdfWindow.style.position = "fixed";
+pdfWindow.style.left = "0";
+pdfWindow.style.top = "0";
+pdfWindow.style.width = "8.5in";
+pdfWindow.style.background = "#ffffff";
+pdfWindow.style.zIndex = "-1";
+
 document.body.appendChild(pdfWindow);
 
-html2pdf()
-    .set({
-        margin: 0,
-        filename: `Invoice-${inv.invoice_number}.pdf`,
-        image: { type: "jpeg", quality: 0.98 },
-        html2canvas: { scale: 2 },
-        jsPDF: {
-            unit: "in",
-            format: "letter",
-            orientation: "portrait"
-        }
-    })
-    .from(pdfWindow)
-    .save()
-    .then(() => {
-        document.body.removeChild(pdfWindow);
-    });
+setTimeout(() => {
+
+    html2pdf()
+        .set({
+            margin: 0,
+            filename: `Invoice-${inv.invoice_number}.pdf`,
+            image: {
+                type: "jpeg",
+                quality: 0.98
+            },
+            html2canvas: {
+                scale: 2,
+                useCORS: true,
+                backgroundColor: "#ffffff"
+            },
+            jsPDF: {
+                unit: "in",
+                format: "letter",
+                orientation: "portrait"
+            }
+        })
+        .from(pdfWindow)
+        .save()
+        .then(() => {
+            document.body.removeChild(pdfWindow);
+        });
+
+}, 500);
 }
 
  async function runReport() {
