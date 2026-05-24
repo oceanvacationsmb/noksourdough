@@ -1206,7 +1206,8 @@ body{
 }
 
 .pdf-content{
-    width:7.5in;
+    width:100%;
+    max-width:7.5in;
     margin:0 auto;
     background:white;
 }
@@ -1234,17 +1235,17 @@ body{
 }
 
 .invoice-header{
-    display:grid;
-    grid-template-columns:1fr 240px;
-    gap:24px;
-    align-items:start;
+    display:flex;
+    justify-content:space-between;
+    align-items:flex-start;
     border-bottom:4px solid #111827;
-    padding-bottom:14px;
-    margin-bottom:18px;
+    padding-bottom:16px;
+    margin-bottom:20px;
+    width:100%;
 }
 
 .company-card{
-    max-width:none;
+    max-width:58%;
 }
 
 .company-name{
@@ -1270,13 +1271,14 @@ body{
     background:transparent;
     border-radius:0;
     padding:0;
-    min-width:0;
+    width:250px;
     text-align:left;
-    margin-top:4px;
+    margin-top:6px;
+    flex-shrink:0;
 }
 
 .invoice-title{
-    font-size:20px;
+    font-size:22px;
     font-weight:900;
     margin:0 0 14px 0;
     color:#111827;
@@ -1348,6 +1350,9 @@ body{
     border-radius:12px;
     padding:18px 20px;
     margin:0 0 24px 0;
+    width:100%;
+    clear:both;
+    box-sizing:border-box;
 }
 
 .section-title{
