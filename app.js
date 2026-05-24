@@ -1335,10 +1335,10 @@ th{
     break-inside:avoid;
 }
 
-      .total-box{
+   .total-box{
     margin-top:22px;
     text-align:right;
-    padding-right:80px;
+    padding-right:30px;
 }
 
         .total-inner{
@@ -1357,7 +1357,7 @@ th{
             font-size:34px;
             font-weight:900;
             text-align:center;
-            margin:60px 0 35px 0;
+            margin:20px 0 25px 0;
             color:#111827;
         }
 
