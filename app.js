@@ -1211,11 +1211,12 @@ async function printInvoicePdf(id) {
         }
 
         .customer-contact{
-            display:flex;
-            flex-direction:column;
-            gap:16px;
-            padding-left:14px;
-        }
+    display:flex;
+    flex-direction:column;
+    gap:18px;
+    padding-left:0;
+    margin-left:-40px;
+}
 
         .contact-row{
             display:grid;
