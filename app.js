@@ -1597,54 +1597,61 @@ async function printInvoicePdf(id) {
     const body =
         document.getElementById("reportTableBody");
 
-    if (!body) return;
+if (!body) return;
 
-    body.innerHTML = "";
+body.innerHTML = "";
 
-    invoices.forEach(inv => {
+invoices.forEach(inv => {
 
-        const total =
-            Number(inv.total || 0);
+    const total =
+        Number(inv.total || 0);
 
-        const customer =
-            customersCache.find(
-                c => Number(c.id) === Number(inv.customer_id)
-            );
+    const customer =
+        customersCache.find(
+            c => Number(c.id) === Number(inv.customer_id)
+        );
 
-        totalSales += total;
+    totalSales += total;
 
-        if (inv.status === "Paid") {
-            paidSales += total;
-        } else {
-            unpaidSales += total;
-        }
+    if (inv.status === "Paid") {
+        paidSales += total;
+    } else {
+        unpaidSales += total;
+    }
 
-        body.innerHTML += `
-        <tr>
-            <td>${inv.invoice_number}</td>
-            <td>${customer ? customer.name : ""}</td>
-            <td>${formatDateDDMMYYYY(inv.invoice_date)}</td>
-            <td>${formatDateDDMMYYYY(inv.due_date)}</td>
-            <td>${MONEY}${total.toFixed(2)}</td>
-            <td>${inv.status || "Unpaid"}</td>
-        </tr>
-        `;
-    });
+    body.innerHTML += `
+    <tr>
+        <td>${inv.invoice_number}</td>
+        <td>${customer ? customer.name : ""}</td>
+        <td>${formatDateDDMMYYYY(inv.invoice_date)}</td>
+        <td>${formatDateDDMMYYYY(inv.due_date)}</td>
+        <td>${MONEY}${total.toFixed(2)}</td>
+        <td>${inv.status || "Unpaid"}</td>
+    </tr>
+    `;
+});
 
-    document.getElementById("reportTotalSales").innerText =
-        MONEY + totalSales.toFixed(2);
+document.getElementById("reportTotalSales").innerText =
+    MONEY + totalSales.toFixed(2);
 
-    document.getElementById("reportPaidSales").innerText =
-        MONEY + paidSales.toFixed(2);
+document.getElementById("reportPaidSales").innerText =
+    MONEY + paidSales.toFixed(2);
 
-    document.getElementById("reportUnpaidSales").innerText =
-        MONEY + unpaidSales.toFixed(2);
+document.getElementById("reportUnpaidSales").innerText =
+    MONEY + unpaidSales.toFixed(2);
 
-    document.getElementById("reportInvoiceCount").innerText =
-        invoices.length;
+document.getElementById("reportInvoiceCount").innerText =
+    invoices.length;
 }
 
 function toggleReportPeriod() {
+
+    const periodType =
+        document.getElementById("reportPeriodType")?.value;
+
+    const monthBox =
+        document.getElementById("reportMonthBox");
+
     const yearBox =
         document.getElementById("reportYearBox");
 
@@ -1712,7 +1719,7 @@ function populateReportYears() {
         if (reportYearOnly) {
             reportYearOnly.innerHTML += option;
         }
-
+    }
 
     if (reportYear) {
         reportYear.value = currentYear;
@@ -1724,11 +1731,14 @@ function populateReportYears() {
 }
 
 function formatDateDDMMYYYY(dateValue) {
+
     if (!dateValue) return "";
 
     const parts = dateValue.split("-");
 
-    if (parts.length !== 3) return dateValue;
+    if (parts.length !== 3) {
+        return dateValue;
+    }
 
     return `${parts[2]}/${parts[1]}/${parts[0]}`;
 }
