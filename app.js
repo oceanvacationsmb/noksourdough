@@ -1373,6 +1373,8 @@ async function printInvoicePdf(id) {
     <button onclick="downloadPdf()">Download PDF</button>
     </div>
 
+    <div class="pdf-content">
+
     <div class="page">
 
         <div class="invoice-header">
@@ -1517,12 +1519,14 @@ async function printInvoicePdf(id) {
         </div>
 
     </div>
-
+    
+</div>
    <script>
 function downloadPdf() {
 
+
     const invoicePage =
-    document.body;
+    document.querySelector(".pdf-content");
 
     html2pdf()
         .set({
