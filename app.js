@@ -1207,8 +1207,8 @@ body{
 
 .page{
     width:100%;
-    min-height:11in;
-    padding:0.35in;
+    min-height:auto;
+    padding:0.25in;
     box-sizing:border-box;
     page-break-after:auto;
     background:white;
@@ -1690,7 +1690,7 @@ function downloadPdf() {
     backgroundColor: "#ffffff"
 },
 pagebreak: {
-    mode: ["css","legacy"]
+    mode: ["css"]
 },
             jsPDF: {
                 unit: "in",
