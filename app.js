@@ -1228,24 +1228,26 @@ body{
 }
 
 .invoice-header{
-    display:flex;
-    justify-content:space-between;
-    align-items:flex-start;
+    display:grid;
+    grid-template-columns:1fr 260px;
+    gap:30px;
+    align-items:start;
     border-bottom:4px solid #111827;
-    padding-bottom:22px;
-    margin-bottom:20px;
+    padding-bottom:14px;
+    margin-bottom:18px;
 }
 
 .company-card{
-    max-width:58%;
+    max-width:none;
 }
 
 .company-name{
-    font-size:34px;
+    font-size:30px;
     font-weight:900;
-    margin:0 0 10px 0;
+    margin:0 0 8px 0;
     color:#111827;
-    letter-spacing:.5px;
+    letter-spacing:4px;
+    line-height:1.15;
 }
 
 .company-info{
@@ -1262,29 +1264,29 @@ body{
     background:transparent;
     border-radius:0;
     padding:0;
-    min-width:260px;
+    min-width:0;
     text-align:left;
+    margin-top:4px;
 }
 
 .invoice-title{
-    font-size:22px;
+    font-size:20px;
     font-weight:900;
-    margin:0 0 10px 0;
+    margin:0 0 14px 0;
     color:#111827;
     line-height:1.25;
-    letter-spacing:.5px;
+    letter-spacing:2px;
 }
 
 .invoice-small-meta{
     margin-top:0;
-    font-size:20px;
-    font-weight:900;
+    font-size:18px;
 }
 
 .invoice-small-meta div{
     display:grid;
-    grid-template-columns:90px 1fr;
-    margin:10px 0;
+    grid-template-columns:70px 1fr;
+    margin:8px 0;
     align-items:center;
 }
 
