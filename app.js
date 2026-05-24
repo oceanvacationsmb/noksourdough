@@ -1345,7 +1345,7 @@ th{
             color:#000000;
             padding:0;
             border-radius:0;
-            font-size:26px;
+            font-size:22px;
             font-weight:900;
             min-width:auto;
             text-align:left;
