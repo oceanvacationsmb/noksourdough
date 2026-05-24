@@ -1259,30 +1259,32 @@ body{
 }
 
 .invoice-card{
-    background:#f3f4f6;
-    border-radius:12px;
-    padding:20px 28px;
-    min-width:250px;
+    background:transparent;
+    border-radius:0;
+    padding:0;
+    min-width:260px;
     text-align:left;
 }
 
 .invoice-title{
-    font-size:38px;
+    font-size:22px;
     font-weight:900;
-    margin:0;
+    margin:0 0 10px 0;
     color:#111827;
-    line-height:1.05;
+    line-height:1.25;
+    letter-spacing:.5px;
 }
 
 .invoice-small-meta{
-    margin-top:18px;
-    font-size:16px;
+    margin-top:0;
+    font-size:20px;
+    font-weight:900;
 }
 
 .invoice-small-meta div{
     display:grid;
-    grid-template-columns:110px 1fr;
-    margin:12px 0;
+    grid-template-columns:90px 1fr;
+    margin:10px 0;
     align-items:center;
 }
 
@@ -1293,6 +1295,7 @@ body{
 
 .invoice-small-meta span{
     color:#111827;
+    font-weight:500;
 }
 
 .invoice-meta-row{
@@ -1551,23 +1554,17 @@ th{
         </div>
 
         <div class="invoice-card">
-            <div class="invoice-title">
-                INVOICE<br>ORIGINAL
-            </div>
+    <div class="invoice-title">
+        INVOICE ORIGINAL #${inv.invoice_number}
+    </div>
 
-            <div class="invoice-small-meta">
-                <div>
-                    <b>Invoice #</b>
-                    <span>${inv.invoice_number}</span>
-                </div>
-
-                <div>
-                    <b>Date</b>
-                    <span>${formatDateDDMMYYYY(inv.invoice_date)}</span>
-                </div>
-            </div>
+    <div class="invoice-small-meta">
+        <div>
+            <b>Date</b>
+            <span>${formatDateDDMMYYYY(inv.invoice_date)}</span>
         </div>
     </div>
+</div>
 
     <div class="bill-card">
         <div class="section-title">Bill To</div>
