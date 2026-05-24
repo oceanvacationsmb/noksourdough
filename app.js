@@ -1101,6 +1101,10 @@ async function printInvoicePdf(id) {
     left: -20px;
 }
 
+.delivery-page{
+    page-break-before:always;
+    break-before:page;
+}
         .invoice-header{
             display:flex;
             justify-content:space-between;
@@ -1505,7 +1509,7 @@ th{
 
     </div>
 
-    <div class="page">
+   <div class="page delivery-page">
 
         <div class="delivery-title">
             DELIVERY NOTE COPY
