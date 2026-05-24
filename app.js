@@ -1140,6 +1140,27 @@ async function printInvoicePdf(id) {
             line-height:1.05;
         }
 
+.invoice-small-meta{
+    margin-top:18px;
+    font-size:16px;
+}
+
+.invoice-small-meta div{
+    display:grid;
+    grid-template-columns:110px 1fr;
+    margin:12px 0;
+    align-items:center;
+}
+
+.invoice-small-meta b{
+    font-weight:900;
+    color:#000000;
+}
+
+.invoice-small-meta span{
+    color:#111827;
+}
+
         .invoice-meta-row{
             display:grid;
             grid-template-columns:repeat(3,1fr);
@@ -1358,28 +1379,25 @@ async function printInvoicePdf(id) {
             </div>
 
             <div class="invoice-card">
-                <div class="invoice-title">
-                    INVOICE<br>ORIGINAL
-                </div>
-            </div>
+    <div class="invoice-title">
+        INVOICE<br>ORIGINAL
+    </div>
+
+    <div class="invoice-small-meta">
+        <div>
+            <b>Invoice #</b>
+            <span>${inv.invoice_number}</span>
         </div>
 
-        <div class="invoice-meta-row">
-            <div>
-                <span>Invoice #</span>
-                <b>${inv.invoice_number}</b>
-            </div>
-
-            <div>
-                <span>Date</span>
-                <b>${formatDateDDMMYYYY(inv.invoice_date)}</b>
-            </div>
-
-            <div>
-                <span>Due</span>
-                <b>${formatDateDDMMYYYY(inv.due_date)}</b>
-            </div>
+        <div>
+            <b>Date</b>
+            <span>${formatDateDDMMYYYY(inv.invoice_date)}</span>
         </div>
+    </div>
+</div>
+        </div>
+
+        
 
         <div class="bill-card">
             <div class="section-title">Bill To</div>
