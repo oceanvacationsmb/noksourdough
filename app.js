@@ -1312,6 +1312,21 @@ async function printInvoicePdf(id) {
             background:#f9fafb;
         }
 
+thead{
+    display:table-header-group;
+}
+
+tr{
+    page-break-inside:avoid;
+    break-inside:avoid;
+}
+
+td,
+th{
+    page-break-inside:avoid;
+    break-inside:avoid;
+}
+
         .total-box{
             margin-top:22px;
             display:flex;
