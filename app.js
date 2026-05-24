@@ -1109,14 +1109,14 @@ const splitItemsIntoPages = (allItems, firstPageLimit, nextPageLimit) => {
     return pages;
 };
 
-const invoicePages = splitItemsIntoPages(items, 14, 26);
-const deliveryPages = splitItemsIntoPages(items, 18, 30);
+const invoicePages = splitItemsIntoPages(items, 8, 12);
+const deliveryPages = splitItemsIntoPages(items, 12, 16);
 
 const rows = buildInvoiceRows(invoicePages[0] || []);
 const deliveryRows = buildDeliveryRows(deliveryPages[0] || []);
 
 const invoiceContinuationPages = invoicePages.slice(1).map((pageItems, index) => `
-<div class="page">
+<div class="page continuation-page">
     <div class="continuation-title">
         INVOICE CONTINUED
     </div>
@@ -1190,6 +1190,11 @@ const deliveryContinuationPages = deliveryPages.slice(1).map((pageItems, index) 
 }
 
 .delivery-page{
+    page-break-before:always;
+    break-before:page;
+}
+
+.continuation-page{
     page-break-before:always;
     break-before:page;
 }
@@ -1424,9 +1429,13 @@ th{
 
    .total-box{
     margin-top:22px;
-    display:flex;
-    justify-content:flex-end;
-    padding-right:30px;
+    text-align:right;
+    padding-right:0;
+}
+
+.total-inner{
+    display:inline-block;
+    text-align:right;
 }
 
         .total-inner{
