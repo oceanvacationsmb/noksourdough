@@ -1712,7 +1712,7 @@ function populateReportYears() {
         if (reportYearOnly) {
             reportYearOnly.innerHTML += option;
         }
-    }
+
 
     if (reportYear) {
         reportYear.value = currentYear;
