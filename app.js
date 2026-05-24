@@ -1315,13 +1315,8 @@ async function printInvoicePdf(id) {
         }
 
 thead{
-    display:table-header-group;
-}
-
-thead::before{
-    content:"";
-    display:block;
-    height:20px;
+thead{
+    display:table-row-group;
 }
 
 tr{
