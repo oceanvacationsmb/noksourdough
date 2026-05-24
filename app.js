@@ -886,7 +886,7 @@ await loadDashboard();
 await loadInvoices();
 await runReport();
 
-await printInvoicePdf(invoiceId);
+
 }
 
 async function loadInvoices() {
