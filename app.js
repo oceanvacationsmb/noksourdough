@@ -1116,11 +1116,18 @@ const rows = buildInvoiceRows(invoicePages[0] || []);
 const deliveryRows = buildDeliveryRows(deliveryPages[0] || []);
 
 const invoiceTotalHtml = `
-${mainInvoiceTotal}
+<div class="total-box">
+    <div class="total-inner">
+        Total: ${MONEY}${formatMoney(inv.total || 0)}
+    </div>
+</div>
 `;
 
 const deliverySignatureHtml = `
-${mainDeliverySignature}
+<div class="signature-box">
+    <p>Received By: __________________________</p>
+    <p>Signature: ____________________________</p>
+</div>
 `;
 
 const mainInvoiceTotal = invoicePages.length === 1 ? invoiceTotalHtml : "";
