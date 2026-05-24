@@ -1295,8 +1295,7 @@ async function printInvoicePdf(id) {
 
         table{
     width:100%;
-    border-collapse:separate;
-    border-spacing:0;
+    border-collapse:collapse;
     margin-top:18px;
     font-size:14px;
 }
@@ -1337,8 +1336,9 @@ th{
 
    .total-box{
     margin-top:22px;
-    text-align:right;
-    padding-right:0;
+    display:flex;
+    justify-content:flex-end;
+    padding-right:30px;
 }
 
         .total-inner{
