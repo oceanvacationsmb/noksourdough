@@ -1519,46 +1519,37 @@ async function printInvoicePdf(id) {
     </html>
     `;
 
-   const pdfWindow = document.createElement("div");
-pdfWindow.innerHTML = html;
+   const win = window.open("", "_blank");
 
-pdfWindow.style.position = "fixed";
-pdfWindow.style.left = "0";
-pdfWindow.style.top = "0";
-pdfWindow.style.width = "8.5in";
-pdfWindow.style.background = "#ffffff";
-pdfWindow.style.zIndex = "-1";
+win.document.open();
+win.document.write(html);
+win.document.close();
 
-document.body.appendChild(pdfWindow);
-
-setTimeout(() => {
-
-    html2pdf()
-        .set({
-            margin: 0,
-            filename: `Invoice-${inv.invoice_number}.pdf`,
-            image: {
-                type: "jpeg",
-                quality: 0.98
-            },
-            html2canvas: {
-                scale: 2,
-                useCORS: true,
-                backgroundColor: "#ffffff"
-            },
-            jsPDF: {
-                unit: "in",
-                format: "letter",
-                orientation: "portrait"
-            }
-        })
-        .from(pdfWindow)
-        .save()
-        .then(() => {
-            document.body.removeChild(pdfWindow);
-        });
-
-}, 500);
+win.onload = function () {
+    setTimeout(() => {
+        html2pdf()
+            .set({
+                margin: 0,
+                filename: `Invoice-${inv.invoice_number}.pdf`,
+                image: {
+                    type: "jpeg",
+                    quality: 0.98
+                },
+                html2canvas: {
+                    scale: 2,
+                    useCORS: true,
+                    backgroundColor: "#ffffff"
+                },
+                jsPDF: {
+                    unit: "in",
+                    format: "letter",
+                    orientation: "portrait"
+                }
+            })
+            .from(win.document.body)
+            .save();
+    }, 800);
+};
 }
 
  async function runReport() {
