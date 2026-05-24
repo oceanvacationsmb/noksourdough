@@ -767,8 +767,11 @@ function renderInvoiceItems() {
             </td>
 
             <td>
-                ${MONEY}${Number(item.line_total).toFixed(2)}
-            </td>
+    ${MONEY}${Number(item.line_total).toLocaleString("en-US", {
+        minimumFractionDigits: 2,
+        maximumFractionDigits: 2
+    })}
+</td>
 
             <td>
                 <button
@@ -1183,8 +1186,8 @@ async function printInvoicePdf(id) {
 
         .customer-grid{
     display:grid;
-    grid-template-columns:52% 48%;
-    gap:20px;
+    grid-template-columns:48% 52%;
+    gap:18px;
     align-items:start;
 }
 
@@ -1213,15 +1216,15 @@ async function printInvoicePdf(id) {
         .customer-contact{
     display:flex;
     flex-direction:column;
-    gap:18px;
-    padding-left:35px;
+    gap:16px;
+    padding-left:8px;
 }
 
         .contact-row{
     display:grid;
-    grid-template-columns:24px 90px 1fr;
+    grid-template-columns:22px 70px minmax(0,1fr);
     align-items:center;
-    column-gap:10px;
+    column-gap:8px;
 }
         .contact-icon{
             font-size:15px;
@@ -1237,10 +1240,12 @@ async function printInvoicePdf(id) {
         }
 
         .contact-value{
-            font-size:15px;
-            color:#111827;
-            white-space:nowrap;
-        }
+    font-size:15px;
+    color:#111827;
+    white-space:nowrap;
+    overflow:hidden;
+    text-overflow:ellipsis;
+}
 
         table{
             width:100%;
