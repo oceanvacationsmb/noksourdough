@@ -1182,11 +1182,11 @@ async function printInvoicePdf(id) {
         }
 
         .customer-grid{
-            display:grid;
-            grid-template-columns:50% 50%;
-            gap:24px;
-            align-items:start;
-        }
+    display:grid;
+    grid-template-columns:52% 48%;
+    gap:20px;
+    align-items:start;
+}
 
         .customer-address{
             display:flex;
@@ -1214,17 +1214,15 @@ async function printInvoicePdf(id) {
     display:flex;
     flex-direction:column;
     gap:18px;
-    padding-left:0;
-    margin-left:-40px;
+    padding-left:35px;
 }
 
         .contact-row{
-            display:grid;
-            grid-template-columns:24px 75px minmax(0,1fr);
-            align-items:center;
-            column-gap:10px;
-        }
-
+    display:grid;
+    grid-template-columns:24px 90px 1fr;
+    align-items:center;
+    column-gap:10px;
+}
         .contact-icon{
             font-size:15px;
             text-align:center;
