@@ -1562,10 +1562,13 @@ function downloadPdf() {
                 quality: 0.98
             },
             html2canvas: {
-                scale: 2,
-                useCORS: true,
-                backgroundColor: "#ffffff"
-            },
+    scale: 2,
+    useCORS: true,
+    backgroundColor: "#ffffff"
+},
+pagebreak: {
+    mode: ["css","legacy"]
+},
             jsPDF: {
                 unit: "in",
                 format: "letter",
