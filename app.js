@@ -1094,7 +1094,7 @@ async function printInvoicePdf(id) {
     min-height:11in;
     padding:0.35in;
     box-sizing:border-box;
-    page-break-after:always;
+    page-break-after:auto;
     background:white;
     margin:0 auto;
 }
@@ -1555,7 +1555,7 @@ function downloadPdf() {
 
     html2pdf()
     .set({
-        margin: [0.35, 0.25, 0.35, 0.25],
+        margin: [0.35, 0.45, 0.35, 0.45],
             filename: "Invoice-${inv.invoice_number}.pdf",
             image: {
                 type: "jpeg",
