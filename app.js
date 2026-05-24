@@ -1268,14 +1268,12 @@ const rowsThai = items.map(item => {
 
 .contact-row{
     display:grid;
-    grid-template-columns:30px 90px 1fr;
-    align-items:center;
-    column-gap:10px;
-}
+    grid-template-columns:24px 80px 1fr;
 
 .contact-icon{
-    font-size:22px;
+    font-size:18px;
     text-align:center;
+    opacity:.8;
 }
 
 .contact-label{
@@ -1425,17 +1423,21 @@ const rowsThai = items.map(item => {
 
         <div class="customer-grid">
 
-    <div class="customer-address">
+   <div class="customer-address">
 
-        <div class="info-row">
-            <span class="info-icon">📍</span>
+    <div class="info-row">
+        <span class="info-icon">📍</span>
 
-            <div>
-                ${customer.address || ""}
-            </div>
+        <div>
+            ${customer.address
+                .replace(/tel\..*/i, "")
+                .replace(/fax.*/i, "")
+                .replace(/E-mail.*/i, "")
+            }
         </div>
-
     </div>
+
+</div>
 
     <div class="customer-contact">
 
