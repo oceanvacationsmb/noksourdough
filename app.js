@@ -1392,19 +1392,19 @@ async function printInvoicePdf(id) {
                     <div class="contact-row">
                         <span class="contact-icon">☎</span>
                         <span class="contact-label">Phone:</span>
-                        <span class="contact-value">${customer.phone || ""}</span>
+                        <span class="contact-value">${customer.phone || ((customer.address || "").match(/tel\.?\s*([^fE]+)/i)?.[1] || "").trim()}</span>
                     </div>
 
                     <div class="contact-row">
                         <span class="contact-icon">🖨</span>
                         <span class="contact-label">Fax:</span>
-                        <span class="contact-value">${customer.fax || ""}</span>
+                        <span class="contact-value">${customer.fax || ((customer.address || "").match(/fax\.?\s*([^E]+)/i)?.[1] || "").trim()}</span>
                     </div>
 
                     <div class="contact-row">
                         <span class="contact-icon">✉</span>
                         <span class="contact-label">Email:</span>
-                        <span class="contact-value">${customer.email || ""}</span>
+                        <span class="contact-value">${customer.email || ((customer.address || "").match(/(?:e-mail\.?|email:?)\s*(.*)/i)?.[1] || "").replace(/^fs\s+/i, "").trim()}</span>
                     </div>
 
                 </div>
