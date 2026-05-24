@@ -1519,9 +1519,27 @@ async function printInvoicePdf(id) {
     </html>
     `;
 
-    const win = window.open("", "_blank");
-    win.document.write(html);
-    win.document.close();
+   const pdfWindow = document.createElement("div");
+pdfWindow.innerHTML = html;
+document.body.appendChild(pdfWindow);
+
+html2pdf()
+    .set({
+        margin: 0,
+        filename: `Invoice-${inv.invoice_number}.pdf`,
+        image: { type: "jpeg", quality: 0.98 },
+        html2canvas: { scale: 2 },
+        jsPDF: {
+            unit: "in",
+            format: "letter",
+            orientation: "portrait"
+        }
+    })
+    .from(pdfWindow)
+    .save()
+    .then(() => {
+        document.body.removeChild(pdfWindow);
+    });
 }
 
  async function runReport() {
