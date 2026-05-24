@@ -1053,665 +1053,642 @@ async function printInvoicePdf(id) {
     const company = companyCache || {};
     const items = itemResult.data || [];
 
-    const formatMoney = (amount) => {
-        return Number(amount || 0).toLocaleString("en-US", {
-            minimumFractionDigits: 2,
-            maximumFractionDigits: 2
-        });
-    };
-
     const cleanAddress = (customer.address || "")
         .split(/tel\.|phone:|fax\.|e-mail\.|email:/i)[0]
         .trim();
 
+    const getCustomerPhone = () => {
+        return customer.phone ||
+            ((customer.address || "").match(/tel\.?\s*([^fE]+)/i)?.[1] || "").trim();
+    };
+
+    const getCustomerFax = () => {
+        return customer.fax ||
+            ((customer.address || "").match(/fax\.?\s*([^E]+)/i)?.[1] || "").trim();
+    };
+
+    const getCustomerEmail = () => {
+        return customer.email ||
+            ((customer.address || "").match(/(?:e-mail\.?|email:?)\s*(.*)/i)?.[1] || "")
+                .replace(/^fs\s+/i, "")
+                .trim();
+    };
+
+    const splitItemsIntoPages = (allItems, firstPageLimit, nextPageLimit) => {
+        const pages = [];
+
+        pages.push(allItems.slice(0, firstPageLimit));
+
+        let index = firstPageLimit;
+
+        while (index < allItems.length) {
+            pages.push(allItems.slice(index, index + nextPageLimit));
+            index += nextPageLimit;
+        }
+
+        return pages;
+    };
+
     const buildInvoiceRows = (pageItems) => {
-    let html = "";
+        let html = "";
 
-    pageItems.forEach(item => {
-        html += `
-        <tr>
-            <td>${item.description || ""}</td>
-            <td>${item.quantity || ""}</td>
-            <td>${MONEY}${formatMoney(item.unit_price || 0)}</td>
-            <td>${MONEY}${formatMoney(item.line_total || 0)}</td>
-        </tr>`;
-    });
-
-    return html;
-};
-
-const buildDeliveryRows = (pageItems) => {
-    let html = "";
-
-    pageItems.forEach(item => {
-        html += `
-        <tr>
-            <td>${item.description || ""}</td>
-            <td>${item.quantity || ""}</td>
-        </tr>`;
-    });
-
-    return html;
-};
-
-const splitItemsIntoPages = (allItems, firstPageLimit, nextPageLimit) => {
-    const pages = [];
-
-    pages.push(allItems.slice(0, firstPageLimit));
-
-    let index = firstPageLimit;
-
-    while (index < allItems.length) {
-        pages.push(allItems.slice(index, index + nextPageLimit));
-        index += nextPageLimit;
-    }
-
-    return pages;
-};
-
-const invoicePages = splitItemsIntoPages(items, 8, 12);
-const deliveryPages = splitItemsIntoPages(items, 12, 16);
-
-const rows = buildInvoiceRows(invoicePages[0] || []);
-const deliveryRows = buildDeliveryRows(deliveryPages[0] || []);
-
-const invoiceTotalHtml = `
-<div class="total-box">
-    <div class="total-inner">
-        Total: ${MONEY}${formatMoney(inv.total || 0)}
-    </div>
-</div>
-`;
-
-const deliverySignatureHtml = `
-<div class="signature-box">
-    <p>Received By: __________________________</p>
-    <p>Signature: ____________________________</p>
-</div>
-`;
-
-const mainInvoiceTotal =
-    invoicePages.length === 1 ? invoiceTotalHtml : "";
-
-const mainDeliverySignature =
-    deliveryPages.length === 1 ? deliverySignatureHtml : "";
-
-const invoiceContinuationPages = invoicePages.slice(1).map((pageItems, index, arr) => {
-    const isLastInvoicePage = index === arr.length - 1;
-
-    return `
-<div class="page continuation-page">
-    <div class="continuation-title">
-        INVOICE CONTINUED
-    </div>
-
-    <table>
-        <thead>
+        pageItems.forEach(item => {
+            html += `
             <tr>
-                <th>Item</th>
-                <th style="width:90px;">Qty</th>
-                <th style="width:110px;">Price</th>
-                <th style="width:110px;">Total</th>
-            </tr>
-        </thead>
+                <td>${item.description || ""}</td>
+                <td>${item.quantity || ""}</td>
+                <td>${MONEY}${formatMoney(item.unit_price || 0)}</td>
+                <td>${MONEY}${formatMoney(item.line_total || 0)}</td>
+            </tr>`;
+        });
 
-        <tbody>
-            ${buildInvoiceRows(pageItems)}
-        </tbody>
-    </table>
+        return html;
+    };
 
-    ${isLastInvoicePage ? invoiceTotalHtml : ""}
-</div>
-`;
-}).join("");
+    const buildDeliveryRows = (pageItems) => {
+        let html = "";
 
-const deliveryContinuationPages = deliveryPages.slice(1).map((pageItems, index, arr) => {
-    const isLastDeliveryPage = index === arr.length - 1;
-
-    return `
-<div class="page delivery-page">
-    <div class="delivery-title">
-        DELIVERY NOTE COPY
-    </div>
-
-    <table>
-        <thead>
+        pageItems.forEach(item => {
+            html += `
             <tr>
-                <th>Item</th>
-                <th style="width:90px;">Qty</th>
-            </tr>
-        </thead>
+                <td>${item.description || ""}</td>
+                <td>${item.quantity || ""}</td>
+            </tr>`;
+        });
 
-        <tbody>
-            ${buildDeliveryRows(pageItems)}
-        </tbody>
-    </table>
+        return html;
+    };
 
-    ${isLastDeliveryPage ? deliverySignatureHtml : ""}
-</div>
-`;
-}).join("");
-    
-const html = `
-<html>
-<head>
-<title>Invoice ${inv.invoice_number}</title>
+    const invoicePages = splitItemsIntoPages(items, 8, 15);
+    const deliveryPages = splitItemsIntoPages(items, 12, 18);
 
-<style>
-body{
-    font-family:Arial, sans-serif;
-    padding:35px;
-    color:#111827;
-    background:white;
-}
-
-.page{
-    width:100%;
-    min-height:11in;
-    padding:0.35in;
-    box-sizing:border-box;
-    page-break-after:auto;
-    background:white;
-    margin:0;
-    position:relative;
-    left:-20px;
-}
-
-.delivery-page{
-    page-break-before:always;
-    break-before:page;
-}
-
-.continuation-page{
-    page-break-before:always;
-    break-before:page;
-}
-
-.invoice-header{
-    display:flex;
-    justify-content:space-between;
-    align-items:flex-start;
-    border-bottom:4px solid #111827;
-    padding-bottom:22px;
-    margin-bottom:20px;
-}
-
-.company-card{
-    max-width:58%;
-}
-
-.company-name{
-    font-size:34px;
-    font-weight:900;
-    margin:0 0 10px 0;
-    color:#111827;
-    letter-spacing:.5px;
-}
-
-.company-info{
-    font-size:15px;
-    line-height:1.35;
-    color:#374151;
-}
-
-.company-info div{
-    margin:2px 0;
-}
-
-.invoice-card{
-    background:#f3f4f6;
-    border-radius:12px;
-    padding:20px 28px;
-    min-width:250px;
-    text-align:left;
-}
-
-.invoice-title{
-    font-size:38px;
-    font-weight:900;
-    margin:0;
-    color:#111827;
-    line-height:1.05;
-}
-
-.invoice-small-meta{
-    margin-top:18px;
-    font-size:16px;
-}
-
-.invoice-small-meta div{
-    display:grid;
-    grid-template-columns:110px 1fr;
-    margin:12px 0;
-    align-items:center;
-}
-
-.invoice-small-meta b{
-    font-weight:900;
-    color:#000000;
-}
-
-.invoice-small-meta span{
-    color:#111827;
-}
-
-.invoice-meta-row{
-    display:grid;
-    grid-template-columns:repeat(3,1fr);
-    margin:20px 0 28px 0;
-    border:2px solid #111827;
-    border-radius:8px;
-    overflow:hidden;
-    background:#ffffff;
-}
-
-.invoice-meta-row div{
-    text-align:center;
-    padding:12px 10px;
-    border-right:1px solid #d1d5db;
-}
-
-.invoice-meta-row div:last-child{
-    border-right:none;
-}
-
-.invoice-meta-row span{
-    display:block;
-    font-size:13px;
-    color:#374151;
-    text-transform:uppercase;
-    letter-spacing:.4px;
-    margin-bottom:5px;
-}
-
-.invoice-meta-row b{
-    display:block;
-    font-size:16px;
-    color:#111827;
-    font-weight:800;
-}
-
-.bill-card{
-    background:#f9fafb;
-    border:1px solid #e5e7eb;
-    border-radius:12px;
-    padding:18px 20px;
-    margin:0 0 24px 0;
-}
-
-.section-title{
-    font-size:20px;
-    font-weight:900;
-    margin:0 0 12px 0;
-    color:#111827;
-}
-
-.customer-name{
-    font-size:17px;
-    font-weight:900;
-    margin-bottom:16px;
-}
-
-.customer-grid{
-    display:grid;
-    grid-template-columns:48% 52%;
-    gap:18px;
-    align-items:start;
-}
-
-.customer-address{
-    display:flex;
-    gap:12px;
-    align-items:flex-start;
-    padding-right:22px;
-    border-right:1px solid #d1d5db;
-}
-
-.address-icon{
-    font-size:16px;
-    line-height:1;
-    margin-top:5px;
-    flex-shrink:0;
-}
-
-.address-text{
-    font-size:15px;
-    line-height:1.8;
-    color:#111827;
-    width:100%;
-}
-
-.customer-contact{
-    display:flex;
-    flex-direction:column;
-    gap:16px;
-    padding-left:8px;
-}
-
-.contact-row{
-    display:grid;
-    grid-template-columns:22px 70px minmax(0,1fr);
-    align-items:center;
-    column-gap:8px;
-}
-
-.contact-icon{
-    font-size:15px;
-    text-align:center;
-    width:24px;
-}
-
-.contact-label{
-    font-size:15px;
-    font-weight:700;
-    color:#111827;
-    white-space:nowrap;
-}
-
-.contact-value{
-    font-size:15px;
-    color:#111827;
-    white-space:nowrap;
-    overflow:hidden;
-    text-overflow:ellipsis;
-}
-
-table{
-    width:100%;
-    border-collapse:collapse;
-    margin-top:18px;
-    font-size:14px;
-}
-
-th{
-    background:#111827;
-    color:white;
-    padding:12px;
-    text-align:left;
-    border:1px solid #111827;
-    font-weight:800;
-}
-
-td{
-    padding:12px;
-    border:1px solid #d1d5db;
-}
-
-tbody tr:nth-child(even){
-    background:#f9fafb;
-}
-
-thead{
-    display:table-row-group;
-}
-
-tr{
-    page-break-inside:avoid;
-    break-inside:avoid;
-}
-
-td,
-th{
-    page-break-inside:avoid;
-    break-inside:avoid;
-}
-
-.total-box{
-    margin-top:22px;
-    text-align:right;
-    padding-right:0;
-}
-
-.total-inner{
-    display:inline-block;
-    text-align:right;
-    background:transparent;
-    color:#000000;
-    padding:0;
-    border-radius:0;
-    font-size:24px;
-    font-weight:900;
-    min-width:auto;
-    border:none;
-}
-
-.continuation-title{
-    font-size:26px;
-    font-weight:900;
-    text-align:center;
-    margin:25px 0 25px 0;
-    color:#111827;
-    letter-spacing:2px;
-}
-
-.delivery-title{
-    font-size:34px;
-    font-weight:900;
-    text-align:center;
-    margin:35px 0 18px 0;
-    color:#111827;
-}
-
-.delivery-info-card{
-    max-width:520px;
-    margin:0 auto 32px auto;
-}
-
-.delivery-info-card p{
-    margin:10px 0;
-    font-size:15px;
-}
-
-.signature-box{
-    margin:45px auto 0 auto;
-    border:1px solid #d1d5db;
-    border-radius:12px;
-    padding:22px 26px;
-    max-width:620px;
-    font-size:16px;
-    line-height:2.2;
-}
-
-@media print{
-    body{
-        padding:25px;
-    }
-
-    table{
-        margin-top:20px;
-    }
-}
-</style>
-
-<script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
-</head>
-
-<body>
-
-<div class="pdf-toolbar">
-    <button onclick="downloadPdf()">Download PDF</button>
-</div>
-
-<div class="pdf-content">
-
-<div class="page">
-
-    <div class="invoice-header">
-        <div class="company-card">
-            <div class="company-name">
-                ${company.company_name || "Company"}
-            </div>
-
-            <div class="company-info">
-                <div>${company.company_address || ""}</div>
-                <div>${company.company_phone || ""}</div>
-                <div>${company.company_email || ""}</div>
-                <div>Tax ID: ${company.tax_id || ""}</div>
-            </div>
-        </div>
-
-        <div class="invoice-card">
-            <div class="invoice-title">
-                INVOICE<br>ORIGINAL
-            </div>
-
-            <div class="invoice-small-meta">
-                <div>
-                    <b>Invoice #</b>
-                    <span>${inv.invoice_number}</span>
-                </div>
-
-                <div>
-                    <b>Date</b>
-                    <span>${formatDateDDMMYYYY(inv.invoice_date)}</span>
-                </div>
-            </div>
+    const invoiceTotalHtml = `
+    <div class="total-box">
+        <div class="total-inner">
+            Total: ${MONEY}${formatMoney(inv.total || 0)}
         </div>
     </div>
+    `;
 
-    <div class="bill-card">
-        <div class="section-title">Bill To</div>
+    const deliverySignatureHtml = `
+    <div class="signature-box">
+        <p>Received By: __________________________</p>
+        <p>Signature: ____________________________</p>
+    </div>
+    `;
 
-        <div class="customer-name">
-            ${customer.name || ""}
-        </div>
+    const makeInvoicePage = (pageItems, pageNumber, totalPages) => {
+        const isFirstPage = pageNumber === 1;
+        const isLastPage = pageNumber === totalPages;
+        const pageClass = isFirstPage ? "page" : "page force-new-page";
 
-        <div class="customer-grid">
+        return `
+        <div class="${pageClass}">
 
-            <div class="customer-address">
-                <div class="address-icon">📍</div>
+            ${isFirstPage ? `
+            <div class="invoice-header">
+                <div class="company-card">
+                    <div class="company-name">
+                        ${company.company_name || "Company"}
+                    </div>
 
-                <div class="address-text">
-                    ${cleanAddress}
+                    <div class="company-info">
+                        <div>${company.company_address || ""}</div>
+                        <div>${company.company_phone || ""}</div>
+                        <div>${company.company_email || ""}</div>
+                        <div>Tax ID: ${company.tax_id || ""}</div>
+                    </div>
+                </div>
+
+                <div class="invoice-card">
+                    <div class="invoice-title">
+                        INVOICE ORIGINAL #${inv.invoice_number}
+                    </div>
+
+                    <div class="invoice-small-meta">
+                        <div>
+                            <b>Date</b>
+                            <span>${formatDateDDMMYYYY(inv.invoice_date)}</span>
+                        </div>
+
+                        <div>
+                            <b>Page</b>
+                            <span>${pageNumber} of ${totalPages}</span>
+                        </div>
+                    </div>
                 </div>
             </div>
 
-            <div class="customer-contact">
+            <div class="bill-card">
+                <div class="section-title">Bill To</div>
 
-                <div class="contact-row">
-                    <span class="contact-icon">🪪</span>
-                    <span class="contact-label">Tax ID:</span>
-                    <span class="contact-value">${customer.tax_id || ""}</span>
+                <div class="customer-name">
+                    ${customer.name || ""}
                 </div>
 
-                <div class="contact-row">
-                    <span class="contact-icon">☎</span>
-                    <span class="contact-label">Phone:</span>
-                    <span class="contact-value">${customer.phone || ((customer.address || "").match(/tel\.?\s*([^fE]+)/i)?.[1] || "").trim()}</span>
-                </div>
+                <div class="customer-grid">
 
-                <div class="contact-row">
-                    <span class="contact-icon">🖨</span>
-                    <span class="contact-label">Fax:</span>
-                    <span class="contact-value">${customer.fax || ((customer.address || "").match(/fax\.?\s*([^E]+)/i)?.[1] || "").trim()}</span>
-                </div>
+                    <div class="customer-address">
+                        <div class="address-icon">📍</div>
 
-                <div class="contact-row">
-                    <span class="contact-icon">✉</span>
-                    <span class="contact-label">Email:</span>
-                    <span class="contact-value">${customer.email || ((customer.address || "").match(/(?:e-mail\.?|email:?)\s*(.*)/i)?.[1] || "").replace(/^fs\s+/i, "").trim()}</span>
+                        <div class="address-text">
+                            ${cleanAddress}
+                        </div>
+                    </div>
+
+                    <div class="customer-contact">
+
+                        <div class="contact-row">
+                            <span class="contact-icon">🪪</span>
+                            <span class="contact-label">Tax ID:</span>
+                            <span class="contact-value">${customer.tax_id || ""}</span>
+                        </div>
+
+                        <div class="contact-row">
+                            <span class="contact-icon">☎</span>
+                            <span class="contact-label">Phone:</span>
+                            <span class="contact-value">${getCustomerPhone()}</span>
+                        </div>
+
+                        <div class="contact-row">
+                            <span class="contact-icon">🖨</span>
+                            <span class="contact-label">Fax:</span>
+                            <span class="contact-value">${getCustomerFax()}</span>
+                        </div>
+
+                        <div class="contact-row">
+                            <span class="contact-icon">✉</span>
+                            <span class="contact-label">Email:</span>
+                            <span class="contact-value">${getCustomerEmail()}</span>
+                        </div>
+
+                    </div>
+
                 </div>
             </div>
+            ` : `
+            <div class="continuation-title">
+                INVOICE ORIGINAL #${inv.invoice_number}
+                <span>Page ${pageNumber} of ${totalPages}</span>
+            </div>
+            `}
+
+            <table>
+                <thead>
+                    <tr>
+                        <th>Item</th>
+                        <th style="width:90px;">Qty</th>
+                        <th style="width:110px;">Price</th>
+                        <th style="width:110px;">Total</th>
+                    </tr>
+                </thead>
+
+                <tbody>
+                    ${buildInvoiceRows(pageItems)}
+                </tbody>
+            </table>
+
+            ${isLastPage ? invoiceTotalHtml : ""}
 
         </div>
-    </div>
+        `;
+    };
 
-    <table>
-        <thead>
-            <tr>
-                <th>Item</th>
-                <th style="width:90px;">Qty</th>
-                <th style="width:110px;">Price</th>
-                <th style="width:110px;">Total</th>
-            </tr>
-        </thead>
+    const makeDeliveryPage = (pageItems, pageNumber, totalPages) => {
+        const pageClass = "page force-new-page";
+        const isLastPage = pageNumber === totalPages;
 
-        <tbody>
-            ${rows}
-        </tbody>
-    </table>
+        return `
+        <div class="${pageClass}">
 
-    ${mainInvoiceTotal}
+            <div class="delivery-title">
+                DELIVERY NOTE COPY
+                <span>Page ${pageNumber} of ${totalPages}</span>
+            </div>
 
-</div>
+            ${pageNumber === 1 ? `
+            <div class="bill-card delivery-info-card">
+                <p><b>Invoice #:</b> ${inv.invoice_number}</p>
+                <p><b>Customer:</b> ${customer.name || ""}</p>
+                <p><b>Date:</b> ${formatDateDDMMYYYY(inv.invoice_date)}</p>
+            </div>
+            ` : ""}
 
-${invoiceContinuationPages}
+            <table>
+                <thead>
+                    <tr>
+                        <th>Item</th>
+                        <th style="width:120px;">Qty</th>
+                    </tr>
+                </thead>
 
-<div class="page delivery-page">
+                <tbody>
+                    ${buildDeliveryRows(pageItems)}
+                </tbody>
+            </table>
 
-    <div class="delivery-title">
-        DELIVERY NOTE COPY
-    </div>
+            ${isLastPage ? deliverySignatureHtml : ""}
 
-    <div class="bill-card delivery-info-card">
-        <p><b>Invoice #:</b> ${inv.invoice_number}</p>
-        <p><b>Customer:</b> ${customer.name || ""}</p>
-        <p><b>Date:</b> ${formatDateDDMMYYYY(inv.invoice_date)}</p>
-    </div>
+        </div>
+        `;
+    };
 
-    <table>
-        <thead>
-            <tr>
-                <th>Item</th>
-                <th style="width:120px;">Qty</th>
-            </tr>
-        </thead>
+    const invoicePagesHtml =
+        invoicePages
+            .map((pageItems, index) =>
+                makeInvoicePage(pageItems, index + 1, invoicePages.length)
+            )
+            .join("");
 
-        <tbody>
-            ${deliveryRows}
-        </tbody>
-    </table>
+    const deliveryPagesHtml =
+        deliveryPages
+            .map((pageItems, index) =>
+                makeDeliveryPage(pageItems, index + 1, deliveryPages.length)
+            )
+            .join("");
 
-    ${mainDeliverySignature}
+    const html = `
+    <html>
+    <head>
+    <title>Invoice ${inv.invoice_number}</title>
 
-</div>
+    <style>
+        body{
+            font-family:Arial, sans-serif;
+            margin:0;
+            padding:18px;
+            color:#111827;
+            background:#ffffff;
+        }
 
-${deliveryContinuationPages}
+        .pdf-toolbar{
+            margin:0 0 16px 0;
+        }
 
-</div>
-<script>
-function downloadPdf() {
+        .pdf-toolbar button{
+            padding:8px 14px;
+            font-size:14px;
+            cursor:pointer;
+        }
 
+        .pdf-content{
+            width:7.5in;
+            margin:0 auto;
+            background:#ffffff;
+        }
 
-    const invoicePage =
-    document.querySelector(".pdf-content");
+        .page{
+            width:100%;
+            padding:0.25in;
+            box-sizing:border-box;
+            background:#ffffff;
+            page-break-inside:avoid;
+            break-inside:avoid;
+        }
 
-    html2pdf()
-    .set({
-        margin: [0.55, 0.45, 0.35, 0.45],
-            filename: "Invoice-${inv.invoice_number}.pdf",
-            image: {
-                type: "jpeg",
-                quality: 0.98
-            },
-            html2canvas: {
-    scale: 2,
-    useCORS: true,
-    backgroundColor: "#ffffff"
-},
-pagebreak: {
-    mode: ["css","legacy"]
-},
-            jsPDF: {
-                unit: "in",
-                format: "letter",
-                orientation: "portrait"
+        .force-new-page{
+            page-break-before:always;
+            break-before:page;
+        }
+
+        .invoice-header{
+            display:flex;
+            justify-content:space-between;
+            align-items:flex-start;
+            border-bottom:4px solid #111827;
+            padding-bottom:16px;
+            margin-bottom:18px;
+            width:100%;
+            gap:24px;
+        }
+
+        .company-card{
+            max-width:58%;
+        }
+
+        .company-name{
+            font-size:30px;
+            font-weight:900;
+            margin:0 0 8px 0;
+            color:#111827;
+            letter-spacing:4px;
+            line-height:1.15;
+        }
+
+        .company-info{
+            font-size:15px;
+            line-height:1.35;
+            color:#374151;
+        }
+
+        .company-info div{
+            margin:2px 0;
+        }
+
+        .invoice-card{
+            background:transparent;
+            border-radius:0;
+            padding:0;
+            width:260px;
+            text-align:left;
+            margin-top:2px;
+            flex-shrink:0;
+        }
+
+        .invoice-title{
+            font-size:22px;
+            font-weight:900;
+            margin:0 0 12px 0;
+            color:#111827;
+            line-height:1.25;
+            letter-spacing:2px;
+        }
+
+        .invoice-small-meta{
+            margin-top:0;
+            font-size:17px;
+        }
+
+        .invoice-small-meta div{
+            display:grid;
+            grid-template-columns:70px 1fr;
+            margin:8px 0;
+            align-items:center;
+        }
+
+        .invoice-small-meta b{
+            font-weight:900;
+            color:#000000;
+        }
+
+        .invoice-small-meta span{
+            color:#111827;
+            font-weight:500;
+        }
+
+        .bill-card{
+            background:#f9fafb;
+            border:1px solid #e5e7eb;
+            border-radius:12px;
+            padding:18px 20px;
+            margin:0 0 22px 0;
+            width:100%;
+            box-sizing:border-box;
+            clear:both;
+        }
+
+        .section-title{
+            font-size:20px;
+            font-weight:900;
+            margin:0 0 12px 0;
+            color:#111827;
+        }
+
+        .customer-name{
+            font-size:17px;
+            font-weight:900;
+            margin-bottom:16px;
+        }
+
+        .customer-grid{
+            display:grid;
+            grid-template-columns:48% 52%;
+            gap:18px;
+            align-items:start;
+        }
+
+        .customer-address{
+            display:flex;
+            gap:12px;
+            align-items:flex-start;
+            padding-right:22px;
+            border-right:1px solid #d1d5db;
+        }
+
+        .address-icon{
+            font-size:16px;
+            line-height:1;
+            margin-top:5px;
+            flex-shrink:0;
+        }
+
+        .address-text{
+            font-size:15px;
+            line-height:1.8;
+            color:#111827;
+            width:100%;
+        }
+
+        .customer-contact{
+            display:flex;
+            flex-direction:column;
+            gap:16px;
+            padding-left:8px;
+        }
+
+        .contact-row{
+            display:grid;
+            grid-template-columns:22px 70px minmax(0,1fr);
+            align-items:center;
+            column-gap:8px;
+        }
+
+        .contact-icon{
+            font-size:15px;
+            text-align:center;
+            width:24px;
+        }
+
+        .contact-label{
+            font-size:15px;
+            font-weight:700;
+            color:#111827;
+            white-space:nowrap;
+        }
+
+        .contact-value{
+            font-size:15px;
+            color:#111827;
+            white-space:nowrap;
+            overflow:hidden;
+            text-overflow:ellipsis;
+        }
+
+        table{
+            width:100%;
+            border-collapse:collapse;
+            margin-top:18px;
+            font-size:14px;
+            page-break-inside:auto;
+            break-inside:auto;
+        }
+
+        th{
+            background:#111827;
+            color:white;
+            padding:12px;
+            text-align:left;
+            border:1px solid #111827;
+            font-weight:800;
+        }
+
+        td{
+            padding:12px;
+            border:1px solid #d1d5db;
+        }
+
+        tbody tr:nth-child(even){
+            background:#f9fafb;
+        }
+
+        tr{
+            page-break-inside:avoid;
+            break-inside:avoid;
+        }
+
+        .total-box{
+            margin-top:22px;
+            text-align:right;
+            padding-right:0;
+        }
+
+        .total-inner{
+            display:inline-block;
+            text-align:right;
+            background:transparent;
+            color:#000000;
+            padding:0;
+            border-radius:0;
+            font-size:24px;
+            font-weight:900;
+            min-width:auto;
+            border:none;
+        }
+
+        .continuation-title{
+            font-size:26px;
+            font-weight:900;
+            text-align:center;
+            margin:10px 0 24px 0;
+            color:#111827;
+            letter-spacing:2px;
+            line-height:1.3;
+        }
+
+        .continuation-title span{
+            display:block;
+            font-size:15px;
+            font-weight:700;
+            letter-spacing:0;
+            margin-top:4px;
+        }
+
+        .delivery-title{
+            font-size:30px;
+            font-weight:900;
+            text-align:center;
+            margin:10px 0 18px 0;
+            color:#111827;
+            letter-spacing:3px;
+            line-height:1.3;
+        }
+
+        .delivery-title span{
+            display:block;
+            font-size:15px;
+            font-weight:700;
+            letter-spacing:0;
+            margin-top:4px;
+        }
+
+        .delivery-info-card{
+            max-width:520px;
+            margin:0 auto 28px auto;
+        }
+
+        .delivery-info-card p{
+            margin:10px 0;
+            font-size:15px;
+        }
+
+        .signature-box{
+            margin:45px auto 0 auto;
+            border:1px solid #d1d5db;
+            border-radius:12px;
+            padding:22px 26px;
+            max-width:620px;
+            font-size:16px;
+            line-height:2.2;
+        }
+
+        @media print{
+            .pdf-toolbar{
+                display:none;
             }
-        })
-        .from(invoicePage)
-        .save();
-}
-</script>
+
+            body{
+                padding:0;
+            }
+        }
+    </style>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+    </head>
+
+    <body>
+
+    <div class="pdf-toolbar">
+        <button onclick="downloadPdf()">Download PDF</button>
+    </div>
+
+    <div class="pdf-content">
+        ${invoicePagesHtml}
+        ${deliveryPagesHtml}
+    </div>
+
+    <script>
+    function downloadPdf() {
+        const invoicePage =
+            document.querySelector(".pdf-content");
+
+        html2pdf()
+            .set({
+                margin: [0.25, 0.25, 0.25, 0.25],
+                filename: "Invoice-${inv.invoice_number}.pdf",
+                image: {
+                    type: "jpeg",
+                    quality: 0.98
+                },
+                html2canvas: {
+                    scale: 2,
+                    useCORS: true,
+                    backgroundColor: "#ffffff",
+                    scrollY: 0
+                },
+                pagebreak: {
+                    mode: ["css"],
+                    avoid: ["tr", ".bill-card", ".signature-box"]
+                },
+                jsPDF: {
+                    unit: "in",
+                    format: "letter",
+                    orientation: "portrait"
+                }
+            })
+            .from(invoicePage)
+            .save();
+    }
+    </script>
 
     </body>
     </html>
     `;
 
-   const win = window.open("", "_blank");
+    const win = window.open("", "_blank");
 
-win.document.open();
-win.document.write(html);
-win.document.close();
+    win.document.open();
+    win.document.write(html);
+    win.document.close();
 }
 
  async function runReport() {
