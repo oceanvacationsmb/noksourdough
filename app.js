@@ -1380,10 +1380,14 @@ th{
         }
 
         @media print{
-            body{
-                padding:25px;
-            }
-        }
+    body{
+        padding:25px;
+    }
+
+    table{
+        margin-top:20px;
+    }
+}
     </style>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
     </head>
