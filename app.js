@@ -1557,7 +1557,7 @@ function downloadPdf() {
 
     html2pdf()
     .set({
-        margin: [0.35, 0.45, 0.35, 0.45],
+        margin: [0.55, 0.45, 0.35, 0.45],
             filename: "Invoice-${inv.invoice_number}.pdf",
             image: {
                 type: "jpeg",
