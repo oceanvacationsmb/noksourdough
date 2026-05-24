@@ -1244,8 +1244,8 @@ const rowsThai = items.map(item => {
 
    .customer-grid{
     display:grid;
-    grid-template-columns:58% 42%;
-    gap:30px;
+    grid-template-columns:50% 50%;
+    gap:24px;
     align-items:start;
 }
 
@@ -1253,47 +1253,54 @@ const rowsThai = items.map(item => {
     display:flex;
     gap:12px;
     align-items:flex-start;
-    padding-right:25px;
+    padding-right:22px;
     border-right:1px solid #d1d5db;
 }
 
 .address-icon{
-    font-size:18px;
+    font-size:16px;
     line-height:1;
-    margin-top:4px;
+    margin-top:5px;
     flex-shrink:0;
 }
 
 .address-text{
     font-size:15px;
-    line-height:2;
+    line-height:1.8;
     color:#111827;
     width:100%;
+    word-break:normal;
 }
 
 .customer-contact{
     display:flex;
     flex-direction:column;
-    gap:18px;
-    padding-left:20px;
+    gap:16px;
+    padding-left:14px;
 }
 
 .contact-row{
     display:grid;
-    grid-template-columns:30px 90px 1fr;
+    grid-template-columns:24px 75px minmax(0,1fr);
     align-items:center;
-    column-gap:14px;
+    column-gap:10px;
 }
 
 .contact-icon{
-    font-size:18px;
+    font-size:15px;
     text-align:center;
-    width:30px;
+    width:24px;
 }
 
 .contact-label{
     font-size:15px;
     font-weight:700;
+    color:#111827;
+    white-space:nowrap;
+}
+
+.contact-value{
+    font-size:15px;
     color:#111827;
     white-space:nowrap;
 }
@@ -1456,28 +1463,48 @@ tbody tr:nth-child(even){
 
     <div class="customer-contact">
 
+       <div class="customer-grid">
+
+    <div class="customer-address">
+        <div class="address-icon">📍</div>
+
+        <div class="address-text">
+            ${(customer.address || "")
+                .split(/tel\.|phone:|fax\.|e-mail\.|email:/i)[0]
+                .trim()}
+        </div>
+    </div>
+
+    <div class="customer-contact">
+
         <div class="contact-row">
             <span class="contact-icon">🪪</span>
             <span class="contact-label">Tax ID:</span>
-            <span>${customer.tax_id || ""}</span>
+            <span class="contact-value">${customer.tax_id || ""}</span>
         </div>
 
         <div class="contact-row">
             <span class="contact-icon">☎</span>
             <span class="contact-label">Phone:</span>
-            <span>${customer.phone || ""}</span>
+            <span class="contact-value">
+                ${customer.phone || ((customer.address || "").match(/tel\.?\s*([^fE]+)/i)?.[1] || "").trim()}
+            </span>
         </div>
 
         <div class="contact-row">
-            <span class="contact-icon">🖨️</span>
+            <span class="contact-icon">🖨</span>
             <span class="contact-label">Fax:</span>
-            <span>038-723517</span>
+            <span class="contact-value">
+                ${customer.fax || ((customer.address || "").match(/fax\.?\s*([^E]+)/i)?.[1] || "").trim()}
+            </span>
         </div>
 
         <div class="contact-row">
             <span class="contact-icon">✉</span>
             <span class="contact-label">Email:</span>
-            <span>${customer.email || ""}</span>
+            <span class="contact-value">
+                ${customer.email || ((customer.address || "").match(/(?:e-mail\.?|email:?)\s*(.*)/i)?.[1] || "").replace(/^fs\s+/i, "").trim()}
+            </span>
         </div>
 
     </div>
