@@ -1244,143 +1244,145 @@ const rowsThai = items.map(item => {
 
    .customer-grid{
     display:grid;
-    grid-template-columns:1fr 420px;
-    gap:35px;
+    grid-template-columns:68% 32%;
+    gap:20px;
     align-items:start;
 }
 
 .customer-address{
     display:flex;
-    gap:18px;
+    gap:12px;
     align-items:flex-start;
-    padding-right:30px;
+    padding-right:20px;
     border-right:1px solid #d1d5db;
 }
 
 .address-icon{
-    font-size:30px;
+    font-size:22px;
     line-height:1;
-    margin-top:4px;
+    margin-top:2px;
 }
 
 .address-text{
     font-size:15px;
-    line-height:2;
+    line-height:1.8;
     color:#111827;
+    width:100%;
 }
 
 .customer-contact{
     display:flex;
     flex-direction:column;
-    gap:22px;
+    gap:14px;
+    padding-left:10px;
 }
 
 .contact-row{
     display:grid;
-    grid-template-columns:40px 95px 1fr;
+    grid-template-columns:28px 75px 1fr;
     align-items:center;
-    column-gap:14px;
+    column-gap:10px;
 }
 
 .contact-icon{
-    font-size:24px;
+    font-size:18px;
     text-align:center;
 }
 
 .contact-label{
-    font-size:15px;
+    font-size:14px;
     font-weight:700;
     color:#111827;
 }
 
-    .info-row{
-        display:flex;
-        align-items:flex-start;
-        gap:10px;
-    }
+.info-row{
+    display:flex;
+    align-items:flex-start;
+    gap:10px;
+}
 
-    .info-icon{
-        font-size:18px;
-        font-weight:800;
-        line-height:1.2;
-    }
+.info-icon{
+    font-size:18px;
+    font-weight:800;
+    line-height:1.2;
+}
 
-    table{
-        width:100%;
-        border-collapse:collapse;
-        margin-top:18px;
-        font-size:14px;
-    }
+table{
+    width:100%;
+    border-collapse:collapse;
+    margin-top:18px;
+    font-size:14px;
+}
 
-    th{
-        background:#111827;
-        color:white;
-        padding:12px;
-        text-align:left;
-        border:1px solid #111827;
-        font-weight:800;
-    }
+th{
+    background:#111827;
+    color:white;
+    padding:12px;
+    text-align:left;
+    border:1px solid #111827;
+    font-weight:800;
+}
 
-    td{
-        padding:12px;
-        border:1px solid #d1d5db;
-    }
+td{
+    padding:12px;
+    border:1px solid #d1d5db;
+}
 
-    tbody tr:nth-child(even){
-        background:#f9fafb;
-    }
+tbody tr:nth-child(even){
+    background:#f9fafb;
+}
 
-    .total-box{
-        margin-top:22px;
-        display:flex;
-        justify-content:flex-end;
-    }
+.total-box{
+    margin-top:22px;
+    display:flex;
+    justify-content:flex-end;
+}
 
-    .total-inner{
-        background:transparent;
-        color:#000000;
-        padding:0;
-        border-radius:0;
-        font-size:26px;
-        font-weight:900;
-        min-width:auto;
-        text-align:right;
-        border:none;
-    }
+.total-inner{
+    background:transparent;
+    color:#000000;
+    padding:0;
+    border-radius:0;
+    font-size:26px;
+    font-weight:900;
+    min-width:auto;
+    text-align:right;
+    border:none;
+}
 
-    .delivery-title{
-        font-size:34px;
-        font-weight:900;
-        text-align:center;
-        margin:60px 0 35px 0;
-        color:#111827;
-    }
+.delivery-title{
+    font-size:34px;
+    font-weight:900;
+    text-align:center;
+    margin:60px 0 35px 0;
+    color:#111827;
+}
 
-    .delivery-info-card{
-        max-width:520px;
-        margin:0 auto 32px auto;
-    }
+.delivery-info-card{
+    max-width:520px;
+    margin:0 auto 32px auto;
+}
 
-    .delivery-info-card p{
-        margin:10px 0;
-        font-size:15px;
-    }
+.delivery-info-card p{
+    margin:10px 0;
+    font-size:15px;
+}
 
-    .signature-box{
-        margin:45px auto 0 auto;
-        border:1px solid #d1d5db;
-        border-radius:12px;
-        padding:22px 26px;
-        max-width:620px;
-        font-size:16px;
-        line-height:2.2;
-    }
+.signature-box{
+    margin:45px auto 0 auto;
+    border:1px solid #d1d5db;
+    border-radius:12px;
+    padding:22px 26px;
+    max-width:620px;
+    font-size:16px;
+    line-height:2.2;
+}
 
-    @media print{
-        body{
-            padding:25px;
-        }
+@media print{
+    body{
+        padding:25px;
     }
+}
 </style>
 </head>
 
