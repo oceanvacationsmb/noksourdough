@@ -1115,7 +1115,21 @@ const deliveryPages = splitItemsIntoPages(items, 12, 16);
 const rows = buildInvoiceRows(invoicePages[0] || []);
 const deliveryRows = buildDeliveryRows(deliveryPages[0] || []);
 
-const invoiceContinuationPages = invoicePages.slice(1).map((pageItems, index) => `
+const invoiceTotalHtml = `
+${mainInvoiceTotal}
+`;
+
+const deliverySignatureHtml = `
+${mainDeliverySignature}
+`;
+
+const mainInvoiceTotal = invoicePages.length === 1 ? invoiceTotalHtml : "";
+const mainDeliverySignature = deliveryPages.length === 1 ? deliverySignatureHtml : "";
+
+const invoiceContinuationPages = invoicePages.slice(1).map((pageItems, index, arr) => {
+    const isLastInvoicePage = index === arr.length - 1;
+
+    return `
 <div class="page continuation-page">
     <div class="continuation-title">
         INVOICE CONTINUED
@@ -1135,10 +1149,16 @@ const invoiceContinuationPages = invoicePages.slice(1).map((pageItems, index) =>
             ${buildInvoiceRows(pageItems)}
         </tbody>
     </table>
-</div>
-`).join("");
 
-const deliveryContinuationPages = deliveryPages.slice(1).map((pageItems, index) => `
+    ${isLastInvoicePage ? invoiceTotalHtml : ""}
+</div>
+`;
+}).join("");
+
+const deliveryContinuationPages = deliveryPages.slice(1).map((pageItems, index, arr) => {
+    const isLastDeliveryPage = index === arr.length - 1;
+
+    return `
 <div class="page delivery-page">
     <div class="delivery-title">
         DELIVERY NOTE COPY
@@ -1157,12 +1177,10 @@ const deliveryContinuationPages = deliveryPages.slice(1).map((pageItems, index) 
         </tbody>
     </table>
 
-    <div class="signature-box">
-        <p>Received By: __________________________</p>
-        <p>Signature: ____________________________</p>
-    </div>
+    ${isLastDeliveryPage ? deliverySignatureHtml : ""}
 </div>
-`).join("");
+`;
+}).join("");
     
     const html = `
     <html>
