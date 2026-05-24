@@ -1244,39 +1244,51 @@ const rowsThai = items.map(item => {
 
    .customer-grid{
     display:grid;
-    grid-template-columns:1.15fr .85fr;
-    gap:28px;
+    grid-template-columns:1fr 420px;
+    gap:35px;
     align-items:start;
 }
 
-    .customer-address{
-    font-size:15px;
-    line-height:1.85;
-    color:#111827;
-    padding-right:28px;
+.customer-address{
+    display:flex;
+    gap:18px;
+    align-items:flex-start;
+    padding-right:30px;
     border-right:1px solid #d1d5db;
 }
 
-    .customer-contact{
-    font-size:14px;
+.address-icon{
+    font-size:30px;
+    line-height:1;
+    margin-top:4px;
+}
+
+.address-text{
+    font-size:15px;
+    line-height:2;
     color:#111827;
+}
+
+.customer-contact{
     display:flex;
     flex-direction:column;
-    gap:18px;
-    padding-left:12px;
+    gap:22px;
 }
 
 .contact-row{
     display:grid;
-    grid-template-columns:24px 80px 1fr;
+    grid-template-columns:40px 95px 1fr;
+    align-items:center;
+    column-gap:14px;
+}
 
 .contact-icon{
-    font-size:18px;
+    font-size:24px;
     text-align:center;
-    opacity:.8;
 }
 
 .contact-label{
+    font-size:15px;
     font-weight:700;
     color:#111827;
 }
@@ -1423,21 +1435,17 @@ const rowsThai = items.map(item => {
 
         <div class="customer-grid">
 
-   <div class="customer-address">
+    <div class="customer-address">
 
-    <div class="info-row">
-        <span class="info-icon">📍</span>
-
-        <div>
-            ${customer.address
-                .replace(/tel\..*/i, "")
-                .replace(/fax.*/i, "")
-                .replace(/E-mail.*/i, "")
-            }
+        <div class="address-icon">
+            📍
         </div>
-    </div>
 
-</div>
+        <div class="address-text">
+            ${customer.address || ""}
+        </div>
+
+    </div>
 
     <div class="customer-contact">
 
@@ -1454,7 +1462,7 @@ const rowsThai = items.map(item => {
         </div>
 
         <div class="contact-row">
-            <span class="contact-icon">📠</span>
+            <span class="contact-icon">🖨️</span>
             <span class="contact-label">Fax:</span>
             <span>038-723517</span>
         </div>
