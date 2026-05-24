@@ -1090,13 +1090,13 @@ async function printInvoicePdf(id) {
         }
 
         .page{
-    width:8.5in;
+    width:100%;
     min-height:11in;
     padding:0.35in;
     box-sizing:border-box;
     page-break-after:auto;
     background:white;
-    margin:0 auto;
+    margin:0;
 }
 
         .invoice-header{
