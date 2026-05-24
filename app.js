@@ -1333,11 +1333,10 @@ th{
     break-inside:avoid;
 }
 
-        .total-box{
+      .total-box{
     margin-top:22px;
-    display:flex;
-    justify-content:flex-end;
-    padding-right:40px;
+    text-align:right;
+    padding-right:80px;
 }
 
         .total-inner{
