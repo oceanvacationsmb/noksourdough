@@ -1090,7 +1090,7 @@ async function printInvoicePdf(id) {
         }
 
         .page{
-    width:7.8in;
+    width:8.5in;
     min-height:11in;
     padding:0.35in;
     box-sizing:border-box;
@@ -1334,10 +1334,11 @@ th{
 }
 
         .total-box{
-            margin-top:22px;
-            display:flex;
-            justify-content:flex-end;
-        }
+    margin-top:22px;
+    display:flex;
+    justify-content:flex-end;
+    padding-right:40px;
+}
 
         .total-inner{
             background:transparent;
