@@ -1497,32 +1497,67 @@ async function printInvoicePdf(id) {
 
     if (periodType === "month") {
         const month = document.getElementById("reportMonth")?.value;
-        const year = document.getElementById("reportYear")?.value;
+ async function runReport() {
+
+    const customerId =
+        document.getElementById("reportCustomer")?.value || "all";
+
+    const status =
+        document.getElementById("reportStatus")?.value || "all";
+
+    const periodType =
+        document.getElementById("reportPeriodType")?.value || "month";
+
+    let startDate = "";
+    let endDate = "";
+
+    if (periodType === "month") {
+
+        const month =
+            document.getElementById("reportMonth")?.value;
+
+        const year =
+            document.getElementById("reportYear")?.value;
 
         if (month && year) {
+
             startDate = `${year}-${month}-01`;
 
-            const lastDay = new Date(Number(year), Number(month), 0).getDate();
+            const lastDay =
+                new Date(
+                    Number(year),
+                    Number(month),
+                    0
+                ).getDate();
 
-            endDate = `${year}-${month}-${String(lastDay).padStart(2, "0")}`;
+            endDate =
+                `${year}-${month}-${String(lastDay).padStart(2, "0")}`;
         }
     }
 
     if (periodType === "year") {
-        const year = document.getElementById("reportYearOnly")?.value;
+
+        const year =
+            document.getElementById("reportYearOnly")?.value;
 
         if (year) {
+
             startDate = `${year}-01-01`;
             endDate = `${year}-12-31`;
         }
     }
 
     if (periodType === "dates") {
-        startDate = document.getElementById("reportStartDate")?.value;
-        endDate = document.getElementById("reportEndDate")?.value;
+
+        startDate =
+            document.getElementById("reportStartDate")?.value;
+
+        endDate =
+            document.getElementById("reportEndDate")?.value;
     }
 
-    let query = db.from("invoices")
+    let query = db
+        .from("invoices")
         .select("*")
         .eq("deleted", false);
 
@@ -1542,7 +1577,11 @@ async function printInvoicePdf(id) {
         query = query.lte("invoice_date", endDate);
     }
 
-    const result = await query.order("invoice_date", { ascending: false });
+    const result =
+        await query.order(
+            "invoice_date",
+            { ascending: false }
+        );
 
     if (result.error) {
         alert(result.error.message);
@@ -1555,14 +1594,22 @@ async function printInvoicePdf(id) {
     let paidSales = 0;
     let unpaidSales = 0;
 
-    const body = document.getElementById("reportTableBody");
+    const body =
+        document.getElementById("reportTableBody");
+
     if (!body) return;
 
     body.innerHTML = "";
 
     invoices.forEach(inv => {
-        const total = Number(inv.total || 0);
-        const customer = customersCache.find(c => Number(c.id) === Number(inv.customer_id));
+
+        const total =
+            Number(inv.total || 0);
+
+        const customer =
+            customersCache.find(
+                c => Number(c.id) === Number(inv.customer_id)
+            );
 
         totalSales += total;
 
@@ -1584,20 +1631,20 @@ async function printInvoicePdf(id) {
         `;
     });
 
-    document.getElementById("reportTotalSales").innerText = MONEY + totalSales.toFixed(2);
-    document.getElementById("reportPaidSales").innerText = MONEY + paidSales.toFixed(2);
-    document.getElementById("reportUnpaidSales").innerText = MONEY + unpaidSales.toFixed(2);
-    document.getElementById("reportInvoiceCount").innerText = invoices.length;
+    document.getElementById("reportTotalSales").innerText =
+        MONEY + totalSales.toFixed(2);
+
+    document.getElementById("reportPaidSales").innerText =
+        MONEY + paidSales.toFixed(2);
+
+    document.getElementById("reportUnpaidSales").innerText =
+        MONEY + unpaidSales.toFixed(2);
+
+    document.getElementById("reportInvoiceCount").innerText =
+        invoices.length;
 }
 
 function toggleReportPeriod() {
-
-    const periodType =
-        document.getElementById("reportPeriodType")?.value;
-
-    const monthBox =
-        document.getElementById("reportMonthBox");
-
     const yearBox =
         document.getElementById("reportYearBox");
 
