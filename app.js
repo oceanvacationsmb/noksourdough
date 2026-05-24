@@ -4,6 +4,14 @@ const SUPABASE_KEY = "sb_publishable_5ES5DIUJCJnFMLVQFFgl4g_2LIISqZF";
 const db = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 const MONEY = "฿";
 
+function formatMoney(value) {
+    return Number(value || 0).toLocaleString("en-US", {
+        minimumFractionDigits: 2,
+        maximumFractionDigits: 2
+    });
+}
+
+
 let invoiceItems = [];
 let customersCache = [];
 let productsCache = [];
@@ -227,9 +235,9 @@ async function loadDashboard() {
     document.getElementById("productsCount").innerText = products.count || 0;
     document.getElementById("invoicesCount").innerText = invoiceData.length;
     document.getElementById("pastDueCount").innerText = pastDueCount;
-    document.getElementById("dashboardSalesTotal").innerText = MONEY + totalSales.toFixed(2);
+    document.getElementById("dashboardSalesTotal").innerText = MONEY + formatMoney(totalSales);
     document.getElementById("dashboardUnpaidCount").innerText = unpaidCount;
-    document.getElementById("dashboardUnpaidTotal").innerText = MONEY + unpaidTotal.toFixed(2);
+    document.getElementById("dashboardUnpaidTotal").innerText = MONEY + formatMoney(unpaidTotal);
 }
 
 async function saveCustomer() {
@@ -934,9 +942,9 @@ async function loadInvoices() {
         `;
     });
 
-    document.getElementById("salesTotal").innerText = MONEY + sales.toFixed(2);
-    document.getElementById("paidTotal").innerText = MONEY + paid.toFixed(2);
-    document.getElementById("unpaidTotal").innerText = MONEY + unpaid.toFixed(2);
+    document.getElementById("document.getElementById("salesTotal").innerText = MONEY + formatMoney(sales);
+document.getElementById("paidTotal").innerText = MONEY + formatMoney(paid);
+document.getElementById("unpaidTotal").innerText = MONEY + formatMoney(unpaid);
 }
 
 async function markInvoicePaid(id) {
@@ -1502,7 +1510,7 @@ async function printInvoicePdf(id) {
         document.getElementById("reportStatus")?.value || "all";
 
     const periodType =
-        document.getElementById("reportPeriodType")?.value || "month";
+        document.getElementById("reportPeriodType")?.value || "year";
 
     let startDate = "";
     let endDate = "";
@@ -1628,13 +1636,13 @@ invoices.forEach(inv => {
 });
 
 document.getElementById("reportTotalSales").innerText =
-    MONEY + totalSales.toFixed(2);
+    MONEY + formatMoney(totalSales);
 
 document.getElementById("reportPaidSales").innerText =
-    MONEY + paidSales.toFixed(2);
+    MONEY + formatMoney(paidSales);
 
 document.getElementById("reportUnpaidSales").innerText =
-    MONEY + unpaidSales.toFixed(2);
+    MONEY + formatMoney(unpaidSales);
 
 document.getElementById("reportInvoiceCount").innerText =
     invoices.length;
