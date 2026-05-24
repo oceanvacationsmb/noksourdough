@@ -1130,8 +1130,11 @@ const deliverySignatureHtml = `
 </div>
 `;
 
-const mainInvoiceTotal = invoicePages.length === 1 ? invoiceTotalHtml : "";
-const mainDeliverySignature = deliveryPages.length === 1 ? deliverySignatureHtml : "";
+const mainInvoiceTotal =
+    invoicePages.length === 1 ? invoiceTotalHtml : "";
+
+const mainDeliverySignature =
+    deliveryPages.length === 1 ? deliverySignatureHtml : "";
 
 const invoiceContinuationPages = invoicePages.slice(1).map((pageItems, index, arr) => {
     const isLastInvoicePage = index === arr.length - 1;
@@ -1189,20 +1192,20 @@ const deliveryContinuationPages = deliveryPages.slice(1).map((pageItems, index, 
 `;
 }).join("");
     
-    const html = `
-    <html>
-    <head>
-    <title>Invoice ${inv.invoice_number}</title>
+const html = `
+<html>
+<head>
+<title>Invoice ${inv.invoice_number}</title>
 
-    <style>
-        body{
-            font-family:Arial, sans-serif;
-            padding:35px;
-            color:#111827;
-            background:white;
-        }
+<style>
+body{
+    font-family:Arial, sans-serif;
+    padding:35px;
+    color:#111827;
+    background:white;
+}
 
-        .page{
+.page{
     width:100%;
     min-height:11in;
     padding:0.35in;
@@ -1210,8 +1213,8 @@ const deliveryContinuationPages = deliveryPages.slice(1).map((pageItems, index, 
     page-break-after:auto;
     background:white;
     margin:0;
-    position: relative;
-    left: -20px;
+    position:relative;
+    left:-20px;
 }
 
 .delivery-page{
@@ -1223,52 +1226,53 @@ const deliveryContinuationPages = deliveryPages.slice(1).map((pageItems, index, 
     page-break-before:always;
     break-before:page;
 }
-        .invoice-header{
-            display:flex;
-            justify-content:space-between;
-            align-items:flex-start;
-            border-bottom:4px solid #111827;
-            padding-bottom:22px;
-            margin-bottom:20px;
-        }
 
-        .company-card{
-            max-width:58%;
-        }
+.invoice-header{
+    display:flex;
+    justify-content:space-between;
+    align-items:flex-start;
+    border-bottom:4px solid #111827;
+    padding-bottom:22px;
+    margin-bottom:20px;
+}
 
-        .company-name{
-            font-size:34px;
-            font-weight:900;
-            margin:0 0 10px 0;
-            color:#111827;
-            letter-spacing:.5px;
-        }
+.company-card{
+    max-width:58%;
+}
 
-        .company-info{
-            font-size:15px;
-            line-height:1.35;
-            color:#374151;
-        }
+.company-name{
+    font-size:34px;
+    font-weight:900;
+    margin:0 0 10px 0;
+    color:#111827;
+    letter-spacing:.5px;
+}
 
-        .company-info div{
-            margin:2px 0;
-        }
+.company-info{
+    font-size:15px;
+    line-height:1.35;
+    color:#374151;
+}
 
-        .invoice-card{
-            background:#f3f4f6;
-            border-radius:12px;
-            padding:20px 28px;
-            min-width:250px;
-            text-align:left;
-        }
+.company-info div{
+    margin:2px 0;
+}
 
-        .invoice-title{
-            font-size:38px;
-            font-weight:900;
-            margin:0;
-            color:#111827;
-            line-height:1.05;
-        }
+.invoice-card{
+    background:#f3f4f6;
+    border-radius:12px;
+    padding:20px 28px;
+    min-width:250px;
+    text-align:left;
+}
+
+.invoice-title{
+    font-size:38px;
+    font-weight:900;
+    margin:0;
+    color:#111827;
+    line-height:1.05;
+}
 
 .invoice-small-meta{
     margin-top:18px;
@@ -1291,119 +1295,120 @@ const deliveryContinuationPages = deliveryPages.slice(1).map((pageItems, index, 
     color:#111827;
 }
 
-        .invoice-meta-row{
-            display:grid;
-            grid-template-columns:repeat(3,1fr);
-            margin:20px 0 28px 0;
-            border:2px solid #111827;
-            border-radius:8px;
-            overflow:hidden;
-            background:#ffffff;
-        }
+.invoice-meta-row{
+    display:grid;
+    grid-template-columns:repeat(3,1fr);
+    margin:20px 0 28px 0;
+    border:2px solid #111827;
+    border-radius:8px;
+    overflow:hidden;
+    background:#ffffff;
+}
 
-        .invoice-meta-row div{
-            text-align:center;
-            padding:12px 10px;
-            border-right:1px solid #d1d5db;
-        }
+.invoice-meta-row div{
+    text-align:center;
+    padding:12px 10px;
+    border-right:1px solid #d1d5db;
+}
 
-        .invoice-meta-row div:last-child{
-            border-right:none;
-        }
+.invoice-meta-row div:last-child{
+    border-right:none;
+}
 
-        .invoice-meta-row span{
-            display:block;
-            font-size:13px;
-            color:#374151;
-            text-transform:uppercase;
-            letter-spacing:.4px;
-            margin-bottom:5px;
-        }
+.invoice-meta-row span{
+    display:block;
+    font-size:13px;
+    color:#374151;
+    text-transform:uppercase;
+    letter-spacing:.4px;
+    margin-bottom:5px;
+}
 
-        .invoice-meta-row b{
-            display:block;
-            font-size:16px;
-            color:#111827;
-            font-weight:800;
-        }
+.invoice-meta-row b{
+    display:block;
+    font-size:16px;
+    color:#111827;
+    font-weight:800;
+}
 
-        .bill-card{
-            background:#f9fafb;
-            border:1px solid #e5e7eb;
-            border-radius:12px;
-            padding:18px 20px;
-            margin:0 0 24px 0;
-        }
+.bill-card{
+    background:#f9fafb;
+    border:1px solid #e5e7eb;
+    border-radius:12px;
+    padding:18px 20px;
+    margin:0 0 24px 0;
+}
 
-        .section-title{
-            font-size:20px;
-            font-weight:900;
-            margin:0 0 12px 0;
-            color:#111827;
-        }
+.section-title{
+    font-size:20px;
+    font-weight:900;
+    margin:0 0 12px 0;
+    color:#111827;
+}
 
-        .customer-name{
-            font-size:17px;
-            font-weight:900;
-            margin-bottom:16px;
-        }
+.customer-name{
+    font-size:17px;
+    font-weight:900;
+    margin-bottom:16px;
+}
 
-        .customer-grid{
+.customer-grid{
     display:grid;
     grid-template-columns:48% 52%;
     gap:18px;
     align-items:start;
 }
 
-        .customer-address{
-            display:flex;
-            gap:12px;
-            align-items:flex-start;
-            padding-right:22px;
-            border-right:1px solid #d1d5db;
-        }
+.customer-address{
+    display:flex;
+    gap:12px;
+    align-items:flex-start;
+    padding-right:22px;
+    border-right:1px solid #d1d5db;
+}
 
-        .address-icon{
-            font-size:16px;
-            line-height:1;
-            margin-top:5px;
-            flex-shrink:0;
-        }
+.address-icon{
+    font-size:16px;
+    line-height:1;
+    margin-top:5px;
+    flex-shrink:0;
+}
 
-        .address-text{
-            font-size:15px;
-            line-height:1.8;
-            color:#111827;
-            width:100%;
-        }
+.address-text{
+    font-size:15px;
+    line-height:1.8;
+    color:#111827;
+    width:100%;
+}
 
-        .customer-contact{
+.customer-contact{
     display:flex;
     flex-direction:column;
     gap:16px;
     padding-left:8px;
 }
 
-        .contact-row{
+.contact-row{
     display:grid;
     grid-template-columns:22px 70px minmax(0,1fr);
     align-items:center;
     column-gap:8px;
 }
-        .contact-icon{
-            font-size:15px;
-            text-align:center;
-            width:24px;
-        }
 
-        .contact-label{
-            font-size:15px;
-            font-weight:700;
-            color:#111827;
-            white-space:nowrap;
-        }
+.contact-icon{
+    font-size:15px;
+    text-align:center;
+    width:24px;
+}
 
-        .contact-value{
+.contact-label{
+    font-size:15px;
+    font-weight:700;
+    color:#111827;
+    white-space:nowrap;
+}
+
+.contact-value{
     font-size:15px;
     color:#111827;
     white-space:nowrap;
@@ -1411,32 +1416,31 @@ const deliveryContinuationPages = deliveryPages.slice(1).map((pageItems, index, 
     text-overflow:ellipsis;
 }
 
-        table{
+table{
     width:100%;
     border-collapse:collapse;
     margin-top:18px;
     font-size:14px;
 }
 
-        th{
-            background:#111827;
-            color:white;
-            padding:12px;
-            text-align:left;
-            border:1px solid #111827;
-            font-weight:800;
-        }
+th{
+    background:#111827;
+    color:white;
+    padding:12px;
+    text-align:left;
+    border:1px solid #111827;
+    font-weight:800;
+}
 
-        td{
-            padding:12px;
-            border:1px solid #d1d5db;
-        }
+td{
+    padding:12px;
+    border:1px solid #d1d5db;
+}
 
-        tbody tr:nth-child(even){
-            background:#f9fafb;
-        }
+tbody tr:nth-child(even){
+    background:#f9fafb;
+}
 
-thead{
 thead{
     display:table-row-group;
 }
@@ -1452,7 +1456,7 @@ th{
     break-inside:avoid;
 }
 
-   .total-box{
+.total-box{
     margin-top:22px;
     text-align:right;
     padding-right:0;
@@ -1461,21 +1465,26 @@ th{
 .total-inner{
     display:inline-block;
     text-align:right;
+    background:transparent;
+    color:#000000;
+    padding:0;
+    border-radius:0;
+    font-size:24px;
+    font-weight:900;
+    min-width:auto;
+    border:none;
 }
 
-        .total-inner{
-            background:transparent;
-            color:#000000;
-            padding:0;
-            border-radius:0;
-            font-size:22px;
-            font-weight:900;
-            min-width:auto;
-            text-align:left;
-            border:none;
-        }
+.continuation-title{
+    font-size:26px;
+    font-weight:900;
+    text-align:center;
+    margin:25px 0 25px 0;
+    color:#111827;
+    letter-spacing:2px;
+}
 
-        .delivery-title{
+.delivery-title{
     font-size:34px;
     font-weight:900;
     text-align:center;
@@ -1483,27 +1492,27 @@ th{
     color:#111827;
 }
 
-        .delivery-info-card{
-            max-width:520px;
-            margin:0 auto 32px auto;
-        }
+.delivery-info-card{
+    max-width:520px;
+    margin:0 auto 32px auto;
+}
 
-        .delivery-info-card p{
-            margin:10px 0;
-            font-size:15px;
-        }
+.delivery-info-card p{
+    margin:10px 0;
+    font-size:15px;
+}
 
-        .signature-box{
-            margin:45px auto 0 auto;
-            border:1px solid #d1d5db;
-            border-radius:12px;
-            padding:22px 26px;
-            max-width:620px;
-            font-size:16px;
-            line-height:2.2;
-        }
+.signature-box{
+    margin:45px auto 0 auto;
+    border:1px solid #d1d5db;
+    border-radius:12px;
+    padding:22px 26px;
+    max-width:620px;
+    font-size:16px;
+    line-height:2.2;
+}
 
-        @media print{
+@media print{
     body{
         padding:25px;
     }
@@ -1512,157 +1521,148 @@ th{
         margin-top:20px;
     }
 }
-    </style>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
-    </head>
+</style>
 
-    <body>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+</head>
+
+<body>
 
 <div class="pdf-toolbar">
     <button onclick="downloadPdf()">Download PDF</button>
-    </div>
-
-    <div class="pdf-content">
-
-    <div class="page">
-
-        <div class="invoice-header">
-            <div class="company-card">
-                <div class="company-name">
-                    ${company.company_name || "Company"}
-                </div>
-
-                <div class="company-info">
-                    <div>${company.company_address || ""}</div>
-                    <div>${company.company_phone || ""}</div>
-                    <div>${company.company_email || ""}</div>
-                    <div>Tax ID: ${company.tax_id || ""}</div>
-                </div>
-            </div>
-
-            <div class="invoice-card">
-    <div class="invoice-title">
-        INVOICE<br>ORIGINAL
-    </div>
-
-    <div class="invoice-small-meta">
-        <div>
-            <b>Invoice #</b>
-            <span>${inv.invoice_number}</span>
-        </div>
-
-        <div>
-            <b>Date</b>
-            <span>${formatDateDDMMYYYY(inv.invoice_date)}</span>
-        </div>
-    </div>
 </div>
-        </div>
 
-        
+<div class="pdf-content">
 
-        <div class="bill-card">
-            <div class="section-title">Bill To</div>
+<div class="page">
 
-            <div class="customer-name">
-                ${customer.name || ""}
+    <div class="invoice-header">
+        <div class="company-card">
+            <div class="company-name">
+                ${company.company_name || "Company"}
             </div>
 
-            <div class="customer-grid">
+            <div class="company-info">
+                <div>${company.company_address || ""}</div>
+                <div>${company.company_phone || ""}</div>
+                <div>${company.company_email || ""}</div>
+                <div>Tax ID: ${company.tax_id || ""}</div>
+            </div>
+        </div>
 
-                <div class="customer-address">
-                    <div class="address-icon">📍</div>
+        <div class="invoice-card">
+            <div class="invoice-title">
+                INVOICE<br>ORIGINAL
+            </div>
 
-                    <div class="address-text">
-                        ${cleanAddress}
-                    </div>
+            <div class="invoice-small-meta">
+                <div>
+                    <b>Invoice #</b>
+                    <span>${inv.invoice_number}</span>
                 </div>
 
-                <div class="customer-contact">
-
-                    <div class="contact-row">
-                        <span class="contact-icon">🪪</span>
-                        <span class="contact-label">Tax ID:</span>
-                        <span class="contact-value">${customer.tax_id || ""}</span>
-                    </div>
-
-                    <div class="contact-row">
-                        <span class="contact-icon">☎</span>
-                        <span class="contact-label">Phone:</span>
-                        <span class="contact-value">${customer.phone || ((customer.address || "").match(/tel\.?\s*([^fE]+)/i)?.[1] || "").trim()}</span>
-                    </div>
-
-                    <div class="contact-row">
-                        <span class="contact-icon">🖨</span>
-                        <span class="contact-label">Fax:</span>
-                        <span class="contact-value">${customer.fax || ((customer.address || "").match(/fax\.?\s*([^E]+)/i)?.[1] || "").trim()}</span>
-                    </div>
-
-                    <div class="contact-row">
-                        <span class="contact-icon">✉</span>
-                        <span class="contact-label">Email:</span>
-                        <span class="contact-value">${customer.email || ((customer.address || "").match(/(?:e-mail\.?|email:?)\s*(.*)/i)?.[1] || "").replace(/^fs\s+/i, "").trim()}</span>
-                    </div>
+                <div>
+                    <b>Date</b>
+                    <span>${formatDateDDMMYYYY(inv.invoice_date)}</span>
                 </div>
-
             </div>
         </div>
-
-        <table>
-            <thead>
-                <tr>
-                    <th>Item</th>
-                    <th style="width:90px;">Qty</th>
-                    <th style="width:110px;">Price</th>
-                    <th style="width:110px;">Total</th>
-                </tr>
-            </thead>
-
-            <tbody>
-                ${rows}
-            </tbody>
-        </table>
-
-        <div class="total-box">
-            <div class="total-inner">
-                Total: ${MONEY}${formatMoney(inv.total || 0)}
-            </div>
-        </div>
-
     </div>
 
-    ${invoiceContinuationPages}
+    <div class="bill-card">
+        <div class="section-title">Bill To</div>
 
-    <div class="page delivery-page">
-
-        <div class="delivery-title">
-            DELIVERY NOTE COPY
+        <div class="customer-name">
+            ${customer.name || ""}
         </div>
 
-        <div class="bill-card delivery-info-card">
-            <p><b>Invoice #:</b> ${inv.invoice_number}</p>
-            <p><b>Customer:</b> ${customer.name || ""}</p>
-            <p><b>Date:</b> ${formatDateDDMMYYYY(inv.invoice_date)}</p>
+        <div class="customer-grid">
+
+            <div class="customer-address">
+                <div class="address-icon">📍</div>
+
+                <div class="address-text">
+                    ${cleanAddress}
+                </div>
+            </div>
+
+            <div class="customer-contact">
+
+                <div class="contact-row">
+                    <span class="contact-icon">🪪</span>
+                    <span class="contact-label">Tax ID:</span>
+                    <span class="contact-value">${customer.tax_id || ""}</span>
+                </div>
+
+                <div class="contact-row">
+                    <span class="contact-icon">☎</span>
+                    <span class="contact-label">Phone:</span>
+                    <span class="contact-value">${customer.phone || ((customer.address || "").match(/tel\.?\s*([^fE]+)/i)?.[1] || "").trim()}</span>
+                </div>
+
+                <div class="contact-row">
+                    <span class="contact-icon">🖨</span>
+                    <span class="contact-label">Fax:</span>
+                    <span class="contact-value">${customer.fax || ((customer.address || "").match(/fax\.?\s*([^E]+)/i)?.[1] || "").trim()}</span>
+                </div>
+
+                <div class="contact-row">
+                    <span class="contact-icon">✉</span>
+                    <span class="contact-label">Email:</span>
+                    <span class="contact-value">${customer.email || ((customer.address || "").match(/(?:e-mail\.?|email:?)\s*(.*)/i)?.[1] || "").replace(/^fs\s+/i, "").trim()}</span>
+                </div>
+            </div>
+
         </div>
+    </div>
 
-        <table>
-            <thead>
-                <tr>
-                    <th>Item</th>
-                    <th style="width:120px;">Qty</th>
-                </tr>
-            </thead>
+    <table>
+        <thead>
+            <tr>
+                <th>Item</th>
+                <th style="width:90px;">Qty</th>
+                <th style="width:110px;">Price</th>
+                <th style="width:110px;">Total</th>
+            </tr>
+        </thead>
 
-            <tbody>
-                ${deliveryRows}
-            </tbody>
+        <tbody>
+            ${rows}
+        </tbody>
+    </table>
 
-        </table>
+    ${mainInvoiceTotal}
 
-        <div class="signature-box">
-    <p>Received By: __________________________</p>
-    <p>Signature: ____________________________</p>
 </div>
+
+${invoiceContinuationPages}
+
+<div class="page delivery-page">
+
+    <div class="delivery-title">
+        DELIVERY NOTE COPY
+    </div>
+
+    <div class="bill-card delivery-info-card">
+        <p><b>Invoice #:</b> ${inv.invoice_number}</p>
+        <p><b>Customer:</b> ${customer.name || ""}</p>
+        <p><b>Date:</b> ${formatDateDDMMYYYY(inv.invoice_date)}</p>
+    </div>
+
+    <table>
+        <thead>
+            <tr>
+                <th>Item</th>
+                <th style="width:120px;">Qty</th>
+            </tr>
+        </thead>
+
+        <tbody>
+            ${deliveryRows}
+        </tbody>
+    </table>
+
+    ${mainDeliverySignature}
 
 </div>
 
