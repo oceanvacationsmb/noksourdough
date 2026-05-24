@@ -1490,8 +1490,8 @@ th{
                 <tr>
                     <th>Item</th>
                     <th style="width:90px;">Qty</th>
-                    <th style="width:150px;">Price</th>
-                    <th style="width:150px;">Total</th>
+                   <th style="width:110px;">Price</th>
+                    <th style="width:110px;">Total</th>
                 </tr>
             </thead>
 
