@@ -1090,8 +1090,14 @@ async function printInvoicePdf(id) {
         }
 
         .page{
-            page-break-after:always;
-        }
+    width:8.5in;
+    min-height:11in;
+    padding:0.35in;
+    box-sizing:border-box;
+    page-break-after:always;
+    background:white;
+    margin:0 auto;
+}
 
         .invoice-header{
             display:flex;
@@ -1365,8 +1371,7 @@ async function printInvoicePdf(id) {
 
 <div class="pdf-toolbar">
     <button onclick="downloadPdf()">Download PDF</button>
-    <button onclick="window.print()">Print</button>
-</div>
+    </div>
 
     <div class="page">
 
