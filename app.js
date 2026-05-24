@@ -1522,7 +1522,7 @@ async function printInvoicePdf(id) {
 function downloadPdf() {
 
     const invoicePage =
-        document.querySelector(".page");
+    document.body;
 
     html2pdf()
         .set({
