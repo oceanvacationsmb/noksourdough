@@ -1294,11 +1294,12 @@ async function printInvoicePdf(id) {
 }
 
         table{
-            width:100%;
-            border-collapse:collapse;
-            margin-top:18px;
-            font-size:14px;
-        }
+    width:100%;
+    border-collapse:separate;
+    border-spacing:0;
+    margin-top:18px;
+    font-size:14px;
+}
 
         th{
             background:#111827;
@@ -1337,7 +1338,7 @@ th{
    .total-box{
     margin-top:22px;
     text-align:right;
-    padding-right:30px;
+    padding-right:0;
 }
 
         .total-inner{
@@ -1353,12 +1354,12 @@ th{
         }
 
         .delivery-title{
-            font-size:34px;
-            font-weight:900;
-            text-align:center;
-            margin:60px 0 35px 0;
-            color:#111827;
-        }
+    font-size:34px;
+    font-weight:900;
+    text-align:center;
+    margin:35px 0 18px 0;
+    color:#111827;
+}
 
         .delivery-info-card{
             max-width:520px;
