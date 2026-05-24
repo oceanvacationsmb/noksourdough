@@ -1347,7 +1347,7 @@ th{
             font-size:26px;
             font-weight:900;
             min-width:auto;
-            text-align:right;
+            text-align:left;
             border:none;
         }
 
