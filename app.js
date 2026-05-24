@@ -1357,7 +1357,7 @@ th{
             font-size:34px;
             font-weight:900;
             text-align:center;
-            margin:20px 0 25px 0;
+            margin:60px 0 35px 0;
             color:#111827;
         }
 
