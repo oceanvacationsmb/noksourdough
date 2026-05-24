@@ -1037,6 +1037,17 @@ async function printInvoicePdf(id) {
     const company = companyCache || {};
     const items = itemResult.data || [];
 
+    const formatMoney = (amount) => {
+        return Number(amount || 0).toLocaleString("en-US", {
+            minimumFractionDigits: 2,
+            maximumFractionDigits: 2
+        });
+    };
+
+    const cleanAddress = (customer.address || "")
+        .split(/tel\.|phone:|fax\.|e-mail\.|email:/i)[0]
+        .trim();
+
     let rows = "";
 
     items.forEach(item => {
@@ -1044,675 +1055,439 @@ async function printInvoicePdf(id) {
         <tr>
             <td>${item.description || ""}</td>
             <td>${item.quantity || ""}</td>
-            <td>${MONEY}${Number(item.unit_price || 0).toFixed(2)}</td>
-            <td>${MONEY}${Number(item.line_total || 0).toFixed(2)}</td>
+            <td>${MONEY}${formatMoney(item.unit_price || 0)}</td>
+            <td>${MONEY}${formatMoney(item.line_total || 0)}</td>
         </tr>`;
     });
 
-    const logo = company.company_logo
-        ? `<img src="${company.company_logo}" style="max-width:60px;max-height:60px;margin-bottom:10px;">`
-        : "";
-
-const formatMoney = (amount) => {
-    return Number(amount || 0).toLocaleString("en-US", {
-        minimumFractionDigits: 2,
-        maximumFractionDigits: 2
-    });
-};
-
-const formatDateThai = (dateValue) => {
-    const d = new Date(dateValue);
-    if (isNaN(d)) return formatDateDDMMYYYY(dateValue);
-
-    const day = String(d.getDate()).padStart(2, "0");
-    const month = String(d.getMonth() + 1).padStart(2, "0");
-    const year = d.getFullYear() + 543;
-
-    return `${day}/${month}/${year}`;
-};
-
-const thaiCompany = {
-    name: "นก ซาวร์โดว์",
-    address: "95, 29 หนองไม้แก่น 19, เมืองพัทยา, อำเภอบางละมุง, ชลบุรี",
-    phone: company.company_phone || "",
-    email: company.company_email || "",
-    tax_id: company.tax_id || ""
-};
-
-const thaiCustomer = {
-    name: "เฟรนด์ชิป ซูเปอร์มาร์เก็ต",
-    address: "บริษัท เฟรนด์ชิป ซูเปอร์มาร์เก็ต จำกัด สำนักงานใหญ่<br>20/390 หมู่ 10 ถนนพัทยาใต้<br>หนองปรือ บางละมุง<br>ชลบุรี 20150",
-    phone: customer.phone || "038-723513-6",
-    fax: "038-723517",
-    email: customer.email || "friendshipmail@yahoo.com",
-    tax_id: customer.tax_id || ""
-};
-
-const translateItem = (name) => {
-    const translations = {
-        "Ciabatta bread": "ขนมปังเซียบัตต้า",
-        "Original 1kg": "ขนมปังออริจินัล 1 กก.",
-        "Sesame 1kg": "ขนมปังงา 1 กก.",
-        "Original 400 g": "ขนมปังออริจินัล 400 กรัม",
-        "Whole wheat 1 kg": "ขนมปังโฮลวีต 1 กก.",
-        "Whole wheat 400 g": "ขนมปังโฮลวีต 400 กรัม"
-    };
-
-    return translations[name] || name;
-};
-
-const rowsThai = items.map(item => {
-    const qty = Number(item.quantity || 0);
-    const price = Number(item.price || 0);
-    const total = qty * price;
-
-    return `
-        <tr>
-            <td>${translateItem(item.description || "")}</td>
-            <td>${item.quantity || ""}</td>
-            <td>${MONEY}${formatMoney(price)}</td>
-            <td>${MONEY}${formatMoney(total)}</td>
-        </tr>
-    `;
-}).join("");
-
-    
     const html = `
     <html>
     <head>
     <title>Invoice ${inv.invoice_number}</title>
 
     <style>
-    body{
-        font-family:Arial, sans-serif;
-        padding:35px;
-        color:#111827;
-        background:white;
-    }
-
-    .thai-text{
-        font-family:Arial, "Tahoma", sans-serif;
-    }
-
-    .page{
-        page-break-after:always;
-    }
-
-    .invoice-header{
-        display:flex;
-        justify-content:space-between;
-        align-items:flex-start;
-        border-bottom:4px solid #111827;
-        padding-bottom:22px;
-        margin-bottom:20px;
-    }
-
-    .company-card{
-        max-width:58%;
-    }
-
-    .company-name{
-        font-size:34px;
-        font-weight:900;
-        margin:0 0 10px 0;
-        color:#111827;
-        letter-spacing:.5px;
-    }
-
-    .company-info{
-        font-size:15px;
-        line-height:1.35;
-        color:#374151;
-    }
-
-    .company-info div{
-        margin:2px 0;
-    }
-
-    .invoice-card{
-        background:#f3f4f6;
-        border-radius:12px;
-        padding:20px 28px;
-        min-width:250px;
-        text-align:left;
-    }
-
-    .invoice-title{
-        font-size:38px;
-        font-weight:900;
-        margin:0;
-        color:#111827;
-        line-height:1.05;
-    }
-
-    .invoice-meta-row{
-        display:grid;
-        grid-template-columns:repeat(3,1fr);
-        margin:20px 0 28px 0;
-        border:2px solid #111827;
-        border-radius:8px;
-        overflow:hidden;
-        background:#ffffff;
-    }
-
-    .invoice-meta-row div{
-        text-align:center;
-        padding:12px 10px;
-        border-right:1px solid #d1d5db;
-    }
-
-    .invoice-meta-row div:last-child{
-        border-right:none;
-    }
-
-    .invoice-meta-row span{
-        display:block;
-        font-size:13px;
-        color:#374151;
-        text-transform:uppercase;
-        letter-spacing:.4px;
-        margin-bottom:5px;
-    }
-
-    .invoice-meta-row b{
-        display:block;
-        font-size:16px;
-        color:#111827;
-        font-weight:800;
-    }
-
-    .bill-card{
-        background:#f9fafb;
-        border:1px solid #e5e7eb;
-        border-radius:12px;
-        padding:18px 20px;
-        margin:0 0 24px 0;
-    }
-
-    .section-title{
-        font-size:20px;
-        font-weight:900;
-        margin:0 0 12px 0;
-        color:#111827;
-    }
-
-    .customer-name{
-        font-size:17px;
-        font-weight:900;
-        margin-bottom:12px;
-    }
-
-   .customer-grid{
-    display:grid;
-    grid-template-columns:50% 50%;
-    gap:24px;
-    align-items:start;
-}
-
-.customer-address{
-    display:flex;
-    gap:12px;
-    align-items:flex-start;
-    padding-right:22px;
-    border-right:1px solid #d1d5db;
-}
-
-.address-icon{
-    font-size:16px;
-    line-height:1;
-    margin-top:5px;
-    flex-shrink:0;
-}
-
-.address-text{
-    font-size:15px;
-    line-height:1.8;
-    color:#111827;
-    width:100%;
-    word-break:normal;
-}
-
-.customer-contact{
-    display:flex;
-    flex-direction:column;
-    gap:16px;
-    padding-left:14px;
-}
-
-.contact-row{
-    display:grid;
-    grid-template-columns:24px 75px minmax(0,1fr);
-    align-items:center;
-    column-gap:10px;
-}
-
-.contact-icon{
-    font-size:15px;
-    text-align:center;
-    width:24px;
-}
-
-.contact-label{
-    font-size:15px;
-    font-weight:700;
-    color:#111827;
-    white-space:nowrap;
-}
-
-.contact-value{
-    font-size:15px;
-    color:#111827;
-    white-space:nowrap;
-}
-
-.info-row{
-    display:flex;
-    align-items:flex-start;
-    gap:10px;
-}
-
-.info-icon{
-    font-size:18px;
-    font-weight:800;
-    line-height:1.2;
-}
-
-table{
-    width:100%;
-    border-collapse:collapse;
-    margin-top:18px;
-    font-size:14px;
-}
-
-th{
-    background:#111827;
-    color:white;
-    padding:12px;
-    text-align:left;
-    border:1px solid #111827;
-    font-weight:800;
-}
-
-td{
-    padding:12px;
-    border:1px solid #d1d5db;
-}
-
-tbody tr:nth-child(even){
-    background:#f9fafb;
-}
-
-.total-box{
-    margin-top:22px;
-    display:flex;
-    justify-content:flex-end;
-}
-
-.total-inner{
-    background:transparent;
-    color:#000000;
-    padding:0;
-    border-radius:0;
-    font-size:26px;
-    font-weight:900;
-    min-width:auto;
-    text-align:right;
-    border:none;
-}
-
-.delivery-title{
-    font-size:34px;
-    font-weight:900;
-    text-align:center;
-    margin:60px 0 35px 0;
-    color:#111827;
-}
-
-.delivery-info-card{
-    max-width:520px;
-    margin:0 auto 32px auto;
-}
-
-.delivery-info-card p{
-    margin:10px 0;
-    font-size:15px;
-}
-
-.signature-box{
-    margin:45px auto 0 auto;
-    border:1px solid #d1d5db;
-    border-radius:12px;
-    padding:22px 26px;
-    max-width:620px;
-    font-size:16px;
-    line-height:2.2;
-}
-
-@media print{
-    body{
-        padding:25px;
-    }
-}
-</style>
-</head>
-
-<body>
-
-<div class="page">
-
-    <div class="invoice-header">
-        <div class="company-card no-logo">
-            <div class="company-name">
-                ${company.company_name || "Company"}
-            </div>
-
-            <div class="company-info">
-                <div>${company.company_address || ""}</div>
-                <div>${company.company_phone || ""}</div>
-                <div>${company.company_email || ""}</div>
-                <div>Tax ID: ${company.tax_id || ""}</div>
-            </div>
-        </div>
-
-        <div class="invoice-card">
-            <div class="invoice-title">
-                INVOICE<br>ORIGINAL
-            </div>
-        </div>
-    </div>
-
-    <div class="invoice-meta-row">
-        <div>
-            <span>Invoice #</span>
-            <b>${inv.invoice_number}</b>
-        </div>
-
-        <div>
-            <span>Date</span>
-            <b>${formatDateDDMMYYYY(inv.invoice_date)}</b>
-        </div>
-
-        <div>
-            <span>Due</span>
-            <b>${formatDateDDMMYYYY(inv.due_date)}</b>
-        </div>
-    </div>
-
-    <div class="bill-card">
-        <div class="section-title">Bill To</div>
-
-        <div class="customer-name">
-            ${customer.name || ""}
-        </div>
-
-        <div class="customer-grid">
-
-    <div class="customer-address">
-
-        <div class="address-icon">
-            ⌖
-        </div>
-
-        <div class="address-text">
-    ${(customer.address || "")
-        .split(/tel\.|fax\.|e-mail\.|email\./i)[0]
-        .trim()}
-</div>
-
-    </div>
-
-    <div class="customer-contact">
-
-       <div class="customer-grid">
-
-    <div class="customer-address">
-        <div class="address-icon">📍</div>
-
-        <div class="address-text">
-            ${(customer.address || "")
-                .split(/tel\.|phone:|fax\.|e-mail\.|email:/i)[0]
-                .trim()}
-        </div>
-    </div>
-
-    <div class="customer-contact">
-
-        <div class="contact-row">
-            <span class="contact-icon">🪪</span>
-            <span class="contact-label">Tax ID:</span>
-            <span class="contact-value">${customer.tax_id || ""}</span>
-        </div>
-
-        <div class="contact-row">
-            <span class="contact-icon">☎</span>
-            <span class="contact-label">Phone:</span>
-            <span class="contact-value">
-                ${customer.phone || ((customer.address || "").match(/tel\.?\s*([^fE]+)/i)?.[1] || "").trim()}
-            </span>
-        </div>
-
-        <div class="contact-row">
-            <span class="contact-icon">🖨</span>
-            <span class="contact-label">Fax:</span>
-            <span class="contact-value">
-                ${customer.fax || ((customer.address || "").match(/fax\.?\s*([^E]+)/i)?.[1] || "").trim()}
-            </span>
-        </div>
-
-        <div class="contact-row">
-            <span class="contact-icon">✉</span>
-            <span class="contact-label">Email:</span>
-            <span class="contact-value">
-                ${customer.email || ((customer.address || "").match(/(?:e-mail\.?|email:?)\s*(.*)/i)?.[1] || "").replace(/^fs\s+/i, "").trim()}
-            </span>
-        </div>
-
-    </div>
-
-</div>
-
-    <table>
-        <thead>
-            <tr>
-                <th>Item</th>
-                <th style="width:90px;">Qty</th>
-                <th style="width:150px;">Price</th>
-                <th style="width:150px;">Total</th>
-            </tr>
-        </thead>
-
-        <tbody>
-            ${rows}
-        </tbody>
-    </table>
-
-    <div class="total-box">
-        <div class="total-inner">
-            Total: ${MONEY}${formatMoney(inv.total || 0)}
-        </div>
-    </div>
-
-</div>
-
-<div class="page">
-
-    <div class="delivery-title">
-        DELIVERY NOTE COPY
-    </div>
-
-    <div class="bill-card delivery-info-card">
-        <p><b>Invoice #:</b> ${inv.invoice_number}</p>
-        <p><b>Customer:</b> ${customer.name || ""}</p>
-        <p><b>Date:</b> ${formatDateDDMMYYYY(inv.invoice_date)}</p>
-    </div>
-
-    <table>
-        <thead>
-            <tr>
-                <th>Item</th>
-                <th style="width:120px;">Qty</th>
-            </tr>
-        </thead>
-
-        <tbody>
-            ${items.map(item => `
-                <tr>
-                    <td>${item.description || ""}</td>
-                    <td>${item.quantity || ""}</td>
-                </tr>
-            `).join("")}
-        </tbody>
-    </table>
-
-    <div class="signature-box">
-        <p>Received By: __________________________</p>
-        <p>Signature: ____________________________</p>
-    </div>
-
-</div>
-
-<div class="page">
-
-    <div class="invoice-header">
-        <div class="company-card no-logo">
-            <div class="company-name thai-text">
-                ${thaiCompany.name}
-            </div>
-
-            <div class="company-info thai-text">
-                <div>${thaiCompany.address}</div>
-                <div>${thaiCompany.phone}</div>
-                <div>${thaiCompany.email}</div>
-                <div>เลขประจำตัวผู้เสียภาษี: ${thaiCompany.tax_id}</div>
-            </div>
-        </div>
-
-        <div class="invoice-card">
-            <div class="invoice-title thai-text">
-                ใบแจ้งหนี้<br>ต้นฉบับ
-            </div>
-        </div>
-    </div>
-
-    <div class="invoice-meta-row">
-        <div>
-            <span>เลขที่ใบแจ้งหนี้</span>
-            <b>${inv.invoice_number}</b>
-        </div>
-
-        <div>
-            <span>วันที่</span>
-            <b>${formatDateThai(inv.invoice_date)}</b>
-        </div>
-
-        <div>
-            <span>กำหนดชำระ</span>
-            <b>${formatDateThai(inv.due_date)}</b>
-        </div>
-    </div>
-
-    <div class="bill-card">
-        <div class="section-title thai-text">ลูกค้า</div>
-
-        <div class="customer-name thai-text">
-            ${thaiCustomer.name}
-        </div>
-
-        <div class="customer-grid">
-            <div class="customer-address thai-text">
-                <div class="info-row">
-                    <span class="info-icon">⌖</span>
-                    <div>${thaiCustomer.address}</div>
+        body{
+            font-family:Arial, sans-serif;
+            padding:35px;
+            color:#111827;
+            background:white;
+        }
+
+        .page{
+            page-break-after:always;
+        }
+
+        .invoice-header{
+            display:flex;
+            justify-content:space-between;
+            align-items:flex-start;
+            border-bottom:4px solid #111827;
+            padding-bottom:22px;
+            margin-bottom:20px;
+        }
+
+        .company-card{
+            max-width:58%;
+        }
+
+        .company-name{
+            font-size:34px;
+            font-weight:900;
+            margin:0 0 10px 0;
+            color:#111827;
+            letter-spacing:.5px;
+        }
+
+        .company-info{
+            font-size:15px;
+            line-height:1.35;
+            color:#374151;
+        }
+
+        .company-info div{
+            margin:2px 0;
+        }
+
+        .invoice-card{
+            background:#f3f4f6;
+            border-radius:12px;
+            padding:20px 28px;
+            min-width:250px;
+            text-align:left;
+        }
+
+        .invoice-title{
+            font-size:38px;
+            font-weight:900;
+            margin:0;
+            color:#111827;
+            line-height:1.05;
+        }
+
+        .invoice-meta-row{
+            display:grid;
+            grid-template-columns:repeat(3,1fr);
+            margin:20px 0 28px 0;
+            border:2px solid #111827;
+            border-radius:8px;
+            overflow:hidden;
+            background:#ffffff;
+        }
+
+        .invoice-meta-row div{
+            text-align:center;
+            padding:12px 10px;
+            border-right:1px solid #d1d5db;
+        }
+
+        .invoice-meta-row div:last-child{
+            border-right:none;
+        }
+
+        .invoice-meta-row span{
+            display:block;
+            font-size:13px;
+            color:#374151;
+            text-transform:uppercase;
+            letter-spacing:.4px;
+            margin-bottom:5px;
+        }
+
+        .invoice-meta-row b{
+            display:block;
+            font-size:16px;
+            color:#111827;
+            font-weight:800;
+        }
+
+        .bill-card{
+            background:#f9fafb;
+            border:1px solid #e5e7eb;
+            border-radius:12px;
+            padding:18px 20px;
+            margin:0 0 24px 0;
+        }
+
+        .section-title{
+            font-size:20px;
+            font-weight:900;
+            margin:0 0 12px 0;
+            color:#111827;
+        }
+
+        .customer-name{
+            font-size:17px;
+            font-weight:900;
+            margin-bottom:16px;
+        }
+
+        .customer-grid{
+            display:grid;
+            grid-template-columns:50% 50%;
+            gap:24px;
+            align-items:start;
+        }
+
+        .customer-address{
+            display:flex;
+            gap:12px;
+            align-items:flex-start;
+            padding-right:22px;
+            border-right:1px solid #d1d5db;
+        }
+
+        .address-icon{
+            font-size:16px;
+            line-height:1;
+            margin-top:5px;
+            flex-shrink:0;
+        }
+
+        .address-text{
+            font-size:15px;
+            line-height:1.8;
+            color:#111827;
+            width:100%;
+        }
+
+        .customer-contact{
+            display:flex;
+            flex-direction:column;
+            gap:16px;
+            padding-left:14px;
+        }
+
+        .contact-row{
+            display:grid;
+            grid-template-columns:24px 75px minmax(0,1fr);
+            align-items:center;
+            column-gap:10px;
+        }
+
+        .contact-icon{
+            font-size:15px;
+            text-align:center;
+            width:24px;
+        }
+
+        .contact-label{
+            font-size:15px;
+            font-weight:700;
+            color:#111827;
+            white-space:nowrap;
+        }
+
+        .contact-value{
+            font-size:15px;
+            color:#111827;
+            white-space:nowrap;
+        }
+
+        table{
+            width:100%;
+            border-collapse:collapse;
+            margin-top:18px;
+            font-size:14px;
+        }
+
+        th{
+            background:#111827;
+            color:white;
+            padding:12px;
+            text-align:left;
+            border:1px solid #111827;
+            font-weight:800;
+        }
+
+        td{
+            padding:12px;
+            border:1px solid #d1d5db;
+        }
+
+        tbody tr:nth-child(even){
+            background:#f9fafb;
+        }
+
+        .total-box{
+            margin-top:22px;
+            display:flex;
+            justify-content:flex-end;
+        }
+
+        .total-inner{
+            background:transparent;
+            color:#000000;
+            padding:0;
+            border-radius:0;
+            font-size:26px;
+            font-weight:900;
+            min-width:auto;
+            text-align:right;
+            border:none;
+        }
+
+        .delivery-title{
+            font-size:34px;
+            font-weight:900;
+            text-align:center;
+            margin:60px 0 35px 0;
+            color:#111827;
+        }
+
+        .delivery-info-card{
+            max-width:520px;
+            margin:0 auto 32px auto;
+        }
+
+        .delivery-info-card p{
+            margin:10px 0;
+            font-size:15px;
+        }
+
+        .signature-box{
+            margin:45px auto 0 auto;
+            border:1px solid #d1d5db;
+            border-radius:12px;
+            padding:22px 26px;
+            max-width:620px;
+            font-size:16px;
+            line-height:2.2;
+        }
+
+        @media print{
+            body{
+                padding:25px;
+            }
+        }
+    </style>
+    </head>
+
+    <body>
+
+    <div class="page">
+
+        <div class="invoice-header">
+            <div class="company-card">
+                <div class="company-name">
+                    ${company.company_name || "Company"}
+                </div>
+
+                <div class="company-info">
+                    <div>${company.company_address || ""}</div>
+                    <div>${company.company_phone || ""}</div>
+                    <div>${company.company_email || ""}</div>
+                    <div>Tax ID: ${company.tax_id || ""}</div>
                 </div>
             </div>
 
-            <div class="customer-contact thai-text">
-                <div><b>เลขประจำตัวผู้เสียภาษี:</b> ${thaiCustomer.tax_id}</div>
-                <div><b>โทรศัพท์:</b> ${thaiCustomer.phone}</div>
-                <div><b>แฟกซ์:</b> ${thaiCustomer.fax}</div>
-                <div><b>อีเมล:</b> ${thaiCustomer.email}</div>
+            <div class="invoice-card">
+                <div class="invoice-title">
+                    INVOICE<br>ORIGINAL
+                </div>
             </div>
         </div>
-    </div>
 
-    <table>
-        <thead>
-            <tr>
-                <th>รายการ</th>
-                <th style="width:90px;">จำนวน</th>
-                <th style="width:150px;">ราคา</th>
-                <th style="width:150px;">รวม</th>
-            </tr>
-        </thead>
+        <div class="invoice-meta-row">
+            <div>
+                <span>Invoice #</span>
+                <b>${inv.invoice_number}</b>
+            </div>
 
-        <tbody>
-            ${rowsThai}
-        </tbody>
-    </table>
+            <div>
+                <span>Date</span>
+                <b>${formatDateDDMMYYYY(inv.invoice_date)}</b>
+            </div>
 
-    <div class="total-box">
-        <div class="total-inner thai-text">
-            ยอดรวม: ${MONEY}${formatMoney(inv.total || 0)}
+            <div>
+                <span>Due</span>
+                <b>${formatDateDDMMYYYY(inv.due_date)}</b>
+            </div>
         </div>
-    </div>
 
-</div>
+        <div class="bill-card">
+            <div class="section-title">Bill To</div>
 
-<div class="page">
+            <div class="customer-name">
+                ${customer.name || ""}
+            </div>
 
-    <div class="delivery-title thai-text">
-        สำเนาใบส่งสินค้า
-    </div>
+            <div class="customer-grid">
 
-    <div class="bill-card delivery-info-card thai-text">
-        <p><b>เลขที่ใบแจ้งหนี้:</b> ${inv.invoice_number}</p>
-        <p><b>ลูกค้า:</b> ${thaiCustomer.name}</p>
-        <p><b>วันที่:</b> ${formatDateThai(inv.invoice_date)}</p>
-    </div>
+                <div class="customer-address">
+                    <div class="address-icon">📍</div>
 
-    <table>
-        <thead>
-            <tr>
-                <th>รายการ</th>
-                <th style="width:120px;">จำนวน</th>
-            </tr>
-        </thead>
+                    <div class="address-text">
+                        ${cleanAddress}
+                    </div>
+                </div>
 
-        <tbody>
-            ${items.map(item => `
+                <div class="customer-contact">
+
+                    <div class="contact-row">
+                        <span class="contact-icon">🪪</span>
+                        <span class="contact-label">Tax ID:</span>
+                        <span class="contact-value">${customer.tax_id || ""}</span>
+                    </div>
+
+                    <div class="contact-row">
+                        <span class="contact-icon">☎</span>
+                        <span class="contact-label">Phone:</span>
+                        <span class="contact-value">${customer.phone || ""}</span>
+                    </div>
+
+                    <div class="contact-row">
+                        <span class="contact-icon">🖨</span>
+                        <span class="contact-label">Fax:</span>
+                        <span class="contact-value">${customer.fax || ""}</span>
+                    </div>
+
+                    <div class="contact-row">
+                        <span class="contact-icon">✉</span>
+                        <span class="contact-label">Email:</span>
+                        <span class="contact-value">${customer.email || ""}</span>
+                    </div>
+
+                </div>
+
+            </div>
+        </div>
+
+        <table>
+            <thead>
                 <tr>
-                    <td>${translateItem(item.description || "")}</td>
-                    <td>${item.quantity || ""}</td>
+                    <th>Item</th>
+                    <th style="width:90px;">Qty</th>
+                    <th style="width:150px;">Price</th>
+                    <th style="width:150px;">Total</th>
                 </tr>
-            `).join("")}
-        </tbody>
-    </table>
+            </thead>
 
-    <div class="signature-box thai-text">
-        <p>ผู้รับสินค้า: __________________________</p>
-        <p>ลายเซ็น: ____________________________</p>
+            <tbody>
+                ${rows}
+            </tbody>
+        </table>
+
+        <div class="total-box">
+            <div class="total-inner">
+                Total: ${MONEY}${formatMoney(inv.total || 0)}
+            </div>
+        </div>
+
     </div>
 
-</div>
+    <div class="page">
 
-<script>
-    window.onload = function(){
-        setTimeout(function(){
-            window.print();
-        }, 500);
-    };
-</script>
+        <div class="delivery-title">
+            DELIVERY NOTE COPY
+        </div>
 
-</body>
-</html>
-`;
+        <div class="bill-card delivery-info-card">
+            <p><b>Invoice #:</b> ${inv.invoice_number}</p>
+            <p><b>Customer:</b> ${customer.name || ""}</p>
+            <p><b>Date:</b> ${formatDateDDMMYYYY(inv.invoice_date)}</p>
+        </div>
+
+        <table>
+            <thead>
+                <tr>
+                    <th>Item</th>
+                    <th style="width:120px;">Qty</th>
+                </tr>
+            </thead>
+
+            <tbody>
+                ${items.map(item => `
+                    <tr>
+                        <td>${item.description || ""}</td>
+                        <td>${item.quantity || ""}</td>
+                    </tr>
+                `).join("")}
+            </tbody>
+        </table>
+
+        <div class="signature-box">
+            <p>Received By: __________________________</p>
+            <p>Signature: ____________________________</p>
+        </div>
+
+    </div>
+
+    <script>
+        window.onload = function(){
+            setTimeout(function(){
+                window.print();
+            }, 500);
+        };
+    </script>
+
+    </body>
+    </html>
+    `;
 
     const win = window.open("", "_blank");
     win.document.write(html);
     win.document.close();
 }
-
-async function runReport() {
     const customerId = document.getElementById("reportCustomer")?.value || "all";
     const status = document.getElementById("reportStatus")?.value || "all";
     const periodType = document.getElementById("reportPeriodType")?.value || "month";
