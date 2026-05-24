@@ -1440,7 +1440,7 @@ tbody tr:nth-child(even){
     <div class="customer-address">
 
         <div class="address-icon">
-            📍
+            ⌖
         </div>
 
         <div class="address-text">
@@ -1458,7 +1458,7 @@ tbody tr:nth-child(even){
         </div>
 
         <div class="contact-row">
-            <span class="contact-icon">📞</span>
+            <span class="contact-icon">☎</span>
             <span class="contact-label">Phone:</span>
             <span>${customer.phone || ""}</span>
         </div>
@@ -1470,7 +1470,7 @@ tbody tr:nth-child(even){
         </div>
 
         <div class="contact-row">
-            <span class="contact-icon">✉️</span>
+            <span class="contact-icon">✉</span>
             <span class="contact-label">Email:</span>
             <span>${customer.email || ""}</span>
         </div>
