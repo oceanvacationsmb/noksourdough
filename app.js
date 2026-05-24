@@ -942,9 +942,14 @@ async function loadInvoices() {
         `;
     });
 
-    document.getElementById("document.getElementById("salesTotal").innerText = MONEY + formatMoney(sales);
-document.getElementById("paidTotal").innerText = MONEY + formatMoney(paid);
-document.getElementById("unpaidTotal").innerText = MONEY + formatMoney(unpaid);
+    document.getElementById("salesTotal").innerText =
+    MONEY + formatMoney(sales);
+
+document.getElementById("paidTotal").innerText =
+    MONEY + formatMoney(paid);
+
+document.getElementById("unpaidTotal").innerText =
+    MONEY + formatMoney(unpaid);
 }
 
 async function markInvoicePaid(id) {
