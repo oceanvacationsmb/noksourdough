@@ -1488,15 +1488,7 @@ async function printInvoicePdf(id) {
     win.document.write(html);
     win.document.close();
 }
-    const customerId = document.getElementById("reportCustomer")?.value || "all";
-    const status = document.getElementById("reportStatus")?.value || "all";
-    const periodType = document.getElementById("reportPeriodType")?.value || "month";
 
-    let startDate = "";
-    let endDate = "";
-
-    if (periodType === "month") {
-        const month = document.getElementById("reportMonth")?.value;
  async function runReport() {
 
     const customerId =
