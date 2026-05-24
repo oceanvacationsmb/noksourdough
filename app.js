@@ -1097,6 +1097,8 @@ async function printInvoicePdf(id) {
     page-break-after:auto;
     background:white;
     margin:0;
+    position: relative;
+    left: -20px;
 }
 
         .invoice-header{
