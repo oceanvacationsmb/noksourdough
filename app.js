@@ -1064,10 +1064,11 @@ async function printInvoicePdf(id) {
         .split(/tel\.|phone:|fax\.|e-mail\.|email:/i)[0]
         .trim();
 
-    let rows = "";
+    const buildInvoiceRows = (pageItems) => {
+    let html = "";
 
-    items.forEach(item => {
-        rows += `
+    pageItems.forEach(item => {
+        html += `
         <tr>
             <td>${item.description || ""}</td>
             <td>${item.quantity || ""}</td>
@@ -1076,6 +1077,93 @@ async function printInvoicePdf(id) {
         </tr>`;
     });
 
+    return html;
+};
+
+const buildDeliveryRows = (pageItems) => {
+    let html = "";
+
+    pageItems.forEach(item => {
+        html += `
+        <tr>
+            <td>${item.description || ""}</td>
+            <td>${item.quantity || ""}</td>
+        </tr>`;
+    });
+
+    return html;
+};
+
+const splitItemsIntoPages = (allItems, firstPageLimit, nextPageLimit) => {
+    const pages = [];
+
+    pages.push(allItems.slice(0, firstPageLimit));
+
+    let index = firstPageLimit;
+
+    while (index < allItems.length) {
+        pages.push(allItems.slice(index, index + nextPageLimit));
+        index += nextPageLimit;
+    }
+
+    return pages;
+};
+
+const invoicePages = splitItemsIntoPages(items, 14, 26);
+const deliveryPages = splitItemsIntoPages(items, 18, 30);
+
+const rows = buildInvoiceRows(invoicePages[0] || []);
+const deliveryRows = buildDeliveryRows(deliveryPages[0] || []);
+
+const invoiceContinuationPages = invoicePages.slice(1).map((pageItems, index) => `
+<div class="page">
+    <div class="continuation-title">
+        INVOICE CONTINUED
+    </div>
+
+    <table>
+        <thead>
+            <tr>
+                <th>Item</th>
+                <th style="width:90px;">Qty</th>
+                <th style="width:110px;">Price</th>
+                <th style="width:110px;">Total</th>
+            </tr>
+        </thead>
+
+        <tbody>
+            ${buildInvoiceRows(pageItems)}
+        </tbody>
+    </table>
+</div>
+`).join("");
+
+const deliveryContinuationPages = deliveryPages.slice(1).map((pageItems, index) => `
+<div class="page delivery-page">
+    <div class="delivery-title">
+        DELIVERY NOTE COPY
+    </div>
+
+    <table>
+        <thead>
+            <tr>
+                <th>Item</th>
+                <th style="width:90px;">Qty</th>
+            </tr>
+        </thead>
+
+        <tbody>
+            ${buildDeliveryRows(pageItems)}
+        </tbody>
+    </table>
+
+    <div class="signature-box">
+        <p>Received By: __________________________</p>
+        <p>Signature: ____________________________</p>
+    </div>
+</div>
+`).join("");
+    
     const html = `
     <html>
     <head>
@@ -1481,7 +1569,6 @@ th{
                         <span class="contact-label">Email:</span>
                         <span class="contact-value">${customer.email || ((customer.address || "").match(/(?:e-mail\.?|email:?)\s*(.*)/i)?.[1] || "").replace(/^fs\s+/i, "").trim()}</span>
                     </div>
-
                 </div>
 
             </div>
@@ -1492,7 +1579,7 @@ th{
                 <tr>
                     <th>Item</th>
                     <th style="width:90px;">Qty</th>
-                   <th style="width:110px;">Price</th>
+                    <th style="width:110px;">Price</th>
                     <th style="width:110px;">Total</th>
                 </tr>
             </thead>
@@ -1510,7 +1597,9 @@ th{
 
     </div>
 
-   <div class="page delivery-page">
+    ${invoiceContinuationPages}
+
+    <div class="page delivery-page">
 
         <div class="delivery-title">
             DELIVERY NOTE COPY
@@ -1531,24 +1620,22 @@ th{
             </thead>
 
             <tbody>
-                ${items.map(item => `
-                    <tr>
-                        <td>${item.description || ""}</td>
-                        <td>${item.quantity || ""}</td>
-                    </tr>
-                `).join("")}
+                ${deliveryRows}
             </tbody>
+
         </table>
 
         <div class="signature-box">
-            <p>Received By: __________________________</p>
-            <p>Signature: ____________________________</p>
-        </div>
-
-    </div>
-    
+    <p>Received By: __________________________</p>
+    <p>Signature: ____________________________</p>
 </div>
-   <script>
+
+</div>
+
+${deliveryContinuationPages}
+
+</div>
+<script>
 function downloadPdf() {
 
 
