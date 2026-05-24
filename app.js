@@ -1338,18 +1338,15 @@ async function printInvoicePdf(id) {
         }
 
         .page{
-            width:100%;
-            padding:0.25in;
-            box-sizing:border-box;
-            background:#ffffff;
-            page-break-inside:avoid;
-            break-inside:avoid;
-        }
+    width:100%;
+    padding:0.25in;
+    box-sizing:border-box;
+    background:#ffffff;
+}
 
         .force-new-page{
-            page-break-before:always;
-            break-before:page;
-        }
+    page-break-before:always;
+}
 
         .invoice-header{
             display:flex;
@@ -1666,9 +1663,9 @@ async function printInvoicePdf(id) {
                     scrollY: 0
                 },
                 pagebreak: {
-                    mode: ["css"],
-                    avoid: ["tr", ".bill-card", ".signature-box"]
-                },
+    mode: ["css"],
+    avoid: ["tr"]
+},
                 jsPDF: {
                     unit: "in",
                     format: "letter",
